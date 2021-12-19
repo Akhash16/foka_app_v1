@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:foka_app_v1/screens/forgot_password.dart';
 import 'package:foka_app_v1/screens/home_screen.dart';
 import 'package:foka_app_v1/screens/login_screen.dart';
 import 'package:foka_app_v1/screens/onboarding.dart';
@@ -18,10 +19,11 @@ class MyApp extends StatelessWidget {
       title: "Foka Tech",
       initialRoute: Onboarding.id,
       routes: {
-         LoginScreen.id: (context) =>   const LoginScreen(),
-        RegisterScreen.id: (context) =>  const RegisterScreen(),
-        HomeScreen.id: (context)=> const HomeScreen(),
-        Onboarding.id:(context)=> const Onboarding(),
+        LoginScreen.id: (context) => const LoginScreen(),
+        RegisterScreen.id: (context) => const RegisterScreen(),
+        HomeScreen.id: (context) => const HomeScreen(),
+        Onboarding.id: (context) => const Onboarding(),
+        ForgotPassword.id: (context) => const ForgotPassword(),
       },
     );
   }
