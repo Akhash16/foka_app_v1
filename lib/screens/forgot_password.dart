@@ -11,6 +11,7 @@ class ForgotPassword extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: const Color(0xff1A1E20),
         leading: IconButton(
           icon: const Icon(
             Icons.arrow_back_ios,
@@ -18,69 +19,79 @@ class ForgotPassword extends StatelessWidget {
           ),
           onPressed: () {},
         ),
-        title: const Text(
-          "Forgot Password",
-          style: TextStyle(color: Colors.white),
+        title: const Padding(
+          padding: EdgeInsets.fromLTRB(50,0,0,0),
+          child: Text(
+            "Forgot Password",
+            style: TextStyle(color: Colors.white),
+          ),
         ),
       ),
-      body: Column(
-        children: [
-          TextFormField(
-            // controller: emailAddressController,
-            obscureText: false,
-            decoration: InputDecoration(
-              labelText: 'Email Address',
-              labelStyle: GoogleFonts.lexendDeca(
-                textStyle: const TextStyle(
-                  color: Color(0xFF95A1AC),
-                  fontSize: 14,
-                  fontWeight: FontWeight.normal,
+      body: Container(
+        color: const Color(0xff1A1E20),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(18,38,18,18),
+              child: TextFormField(
+                // controller: emailAddressController,
+                obscureText: false,
+                decoration: InputDecoration(
+                  labelText: 'Email Address',
+                  labelStyle: GoogleFonts.lexendDeca(
+                    textStyle: const TextStyle(
+                      color: Color(0xFF95A1AC),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  hintText: 'Enter your email here...',
+                  hintStyle: GoogleFonts.lexendDeca(
+                    textStyle: const TextStyle(
+                      color: Color(0xFF95A1AC),
+                      fontSize: 14,
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(
+                      color: Color(0xff111417),
+                      width: 1,
+                    ),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(
+                      color: Color(0xFF111417),
+                      width: 2,
+                    ),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  filled: true,
+                  fillColor: const Color(0xff111417),
+                  contentPadding:
+                      const EdgeInsetsDirectional.fromSTEB(16, 20, 0, 24),
+                ),
+                style: GoogleFonts.lexendDeca(
+                  textStyle: const TextStyle(
+                    color: Color(0xFF2B343A),
+                    fontSize: 14,
+                    fontWeight: FontWeight.normal,
+                  ),
                 ),
               ),
-              hintText: 'Enter your email here...',
-              hintStyle: GoogleFonts.lexendDeca(
-                textStyle: const TextStyle(
-                  color: Color(0xFF95A1AC),
-                  fontSize: 14,
-                  fontWeight: FontWeight.normal,
-                ),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderSide: const BorderSide(
-                  color: Color(0xFFDBE2E7),
-                  width: 2,
-                ),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderSide: const BorderSide(
-                  color: Color(0xFFDBE2E7),
-                  width: 2,
-                ),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              filled: true,
-              fillColor: Colors.white,
-              contentPadding:
-                  const EdgeInsetsDirectional.fromSTEB(16, 20, 0, 24),
             ),
-            style: GoogleFonts.lexendDeca(
-              textStyle: const TextStyle(
-                color: Color(0xFF2B343A),
-                fontSize: 14,
-                fontWeight: FontWeight.normal,
-              ),
-            ),
-          ),
-          const Expanded(
-            child: Text(
-              'We will send you an email with a link to reset your password, please enter the email associated with your account above.',
-              style: TextStyle(color: kCustomColor1),
-            ),
-          ),
-          RoundedButton(
-              title: "Send Reset Link", color: kPrimaryColor, onPressed: () {})
-        ],
+             Padding(
+               padding: const  EdgeInsets.all(18.0),
+               child: Text(
+                 'We rend you an email with a link to reset your password, please enter the email associated with your account above.',
+                 style: GoogleFonts.lexendDeca(color: Colors.white,fontSize: 14,fontWeight: FontWeight.w400),
+               ),
+             ),
+            RoundedButton(
+                title: "Send Reset Link", color: kPrimaryColor, onPressed: () {})
+          ],
+        ),
       ),
     );
   }
