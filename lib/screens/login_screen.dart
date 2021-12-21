@@ -1,6 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:foka_app_v1/components/constants.dart';
+import 'package:foka_app_v1/components/error_alert.dart';
 import 'package:foka_app_v1/components/rounded_button.dart';
+import 'package:foka_app_v1/screens/forgot_password.dart';
 import 'package:foka_app_v1/screens/register_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -13,7 +16,16 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  TextEditingController emailAddressController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+
+  RegExp emailRegex = RegExp(r'[A-Za-z0-9.-_]+@[A-Za-z0-9.-_]+\.[A-Za-z]{2,3}');
+
+  bool isEmailInvalid = false;
+  bool isPasswordMissing = false;
+
   bool passwordVisibility = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,7 +48,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: [
                   const Padding(
                     padding: EdgeInsets.fromLTRB(8, 50, 0, 40),
-                    child: FlutterLogo(size: 50,),
+                    child: FlutterLogo(
+                      size: 50,
+                    ),
                   ),
                   Text(
                     "Welcome!",
@@ -61,7 +75,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   Padding(
                     padding: const EdgeInsets.fromLTRB(0, 28, 0, 4),
                     child: TextFormField(
-                      // controller: emailAddressController,
+                      controller: emailAddressController,
                       obscureText: false,
                       decoration: InputDecoration(
                         labelText: 'Email Address',
@@ -96,8 +110,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         filled: true,
                         fillColor: Colors.white,
-                        contentPadding:
-                            const EdgeInsetsDirectional.fromSTEB(16, 20, 0, 24),
+                        contentPadding: const EdgeInsetsDirectional.fromSTEB(16, 20, 0, 24),
                       ),
                       style: GoogleFonts.lexendDeca(
                         textStyle: const TextStyle(
@@ -108,13 +121,22 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                   ),
+                  Visibility(
+                    visible: isEmailInvalid,
+                    child: const Text(
+                      'Enter a valid Email Id',
+                      style: TextStyle(
+                        color: Colors.red,
+                      ),
+                    ),
+                  ),
                   const SizedBox(
                     height: 10,
                   ),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(0, 4, 0, 8),
                     child: TextFormField(
-                      // controller: passwordController,
+                      controller: passwordController,
                       obscureText: !passwordVisibility,
                       decoration: InputDecoration(
                         labelText: 'Password',
@@ -149,16 +171,13 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         filled: true,
                         fillColor: Colors.white,
-                        contentPadding: const EdgeInsetsDirectional.fromSTEB(
-                            16, 20, 24, 24),
+                        contentPadding: const EdgeInsetsDirectional.fromSTEB(16, 20, 24, 24),
                         suffixIcon: InkWell(
                           onTap: () => setState(
                             () => passwordVisibility = !passwordVisibility,
                           ),
                           child: Icon(
-                            passwordVisibility
-                                ? Icons.visibility_outlined
-                                : Icons.visibility_off_outlined,
+                            passwordVisibility ? Icons.visibility_outlined : Icons.visibility_off_outlined,
                             color: const Color(0xFF95A1AC),
                             size: 22,
                           ),
@@ -172,39 +191,73 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                   ),
+                  Visibility(
+                    visible: isPasswordMissing,
+                    child: const Text(
+                      'Enter Password',
+                      style: TextStyle(
+                        color: Colors.red,
+                      ),
+                    ),
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       GestureDetector(
-                        onTap: (){
+                        onTap: () {
                           Navigator.pushNamed(context, RegisterScreen.id);
                         },
                         child: Text(
                           "Don't have an account?",
                           style: GoogleFonts.lexendDeca(
-                            textStyle: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400),
+                            textStyle: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w400),
                           ),
                         ),
                       ),
                       RoundedButton(
-                          title: "Login",
-                          color: kPrimaryColor,
-                          onPressed: () {})
+                        title: "Login",
+                        color: kPrimaryColor,
+                        onPressed: () {
+                          String email = emailAddressController.text.trim();
+                          String password = passwordController.text.trim();
+
+                          try {
+                            if (emailRegex.hasMatch(email)) {
+                              setState(() {
+                                isEmailInvalid = false;
+                              });
+                              if (password != '') {
+                                setState(() {
+                                  isPasswordMissing = false;
+                                });
+                                FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
+                              } else {
+                                setState(() {
+                                  isPasswordMissing = true;
+                                });
+                              }
+                            } else {
+                              setState(() {
+                                isEmailInvalid = true;
+                              });
+                            }
+                          } catch (e) {
+                            print(e);
+                          }
+                        },
+                      ),
                     ],
                   ),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(8,28,8,18),
-                    child: Center(
-                      child: Text(
-                        "forgot Password?",
-                        style: GoogleFonts.lexendDeca(
-                          textStyle: const TextStyle(
-                              color: Color(0xf0ffffff),
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500),
+                    padding: const EdgeInsets.fromLTRB(8, 28, 8, 18),
+                    child: InkWell(
+                      onTap: () => Navigator.popAndPushNamed(context, ForgotPassword.id),
+                      child: Center(
+                        child: Text(
+                          "forgot Password?",
+                          style: GoogleFonts.lexendDeca(
+                            textStyle: const TextStyle(color: Color(0xf0ffffff), fontSize: 14, fontWeight: FontWeight.w500),
+                          ),
                         ),
                       ),
                     ),
@@ -215,10 +268,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: Text(
                         "Use a Social Platform to Login",
                         style: GoogleFonts.lexendDeca(
-                          textStyle: const TextStyle(
-                              color: Color(0xb2ffffff),
-                              fontSize: 12,
-                              fontWeight: FontWeight.w700),
+                          textStyle: const TextStyle(color: Color(0xb2ffffff), fontSize: 12, fontWeight: FontWeight.w700),
                         ),
                       ),
                     ),
@@ -228,9 +278,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     children: [
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: CircleAvatar(radius: 25,
-                          child: Image.network(
-                              "https://cdn.freebiesupply.com/logos/large/2x/google-g-2015-logo-png-transparent.png"),
+                        child: CircleAvatar(
+                          radius: 25,
+                          child: Image.network("https://cdn.freebiesupply.com/logos/large/2x/google-g-2015-logo-png-transparent.png"),
                         ),
                       ),
                       Padding(
@@ -244,7 +294,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       const Padding(
                         padding: EdgeInsets.all(8.0),
                         child: CircleAvatar(
-                          radius: 25,
+                            radius: 25,
                             backgroundColor: Colors.white,
                             child: Icon(
                               Icons.phone,

@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "284400717631",
+    "project_id": "foka-app-v1",
+    "storage_bucket": "foka-app-v1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:284400717631:android:4caba43804b24e91868d8a",
+        "android_client_info": {
+          "package_name": "com.example.foka_app_v1"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "284400717631-gjao68q9ni6h61h0o765u4mmnf0aq4ld.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.foka_app_v1",
+            "certificate_hash": "2ecc006054c5bf763ebbd83ca7d120942e256b6b"
+          }
+        },
+        {
+          "client_id": "284400717631-0ap19dtbhtg0i676iud8t5vo91s6pl89.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyABZ3djpY_FcUCrd5kzaBWGvIT_x0TUgkw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "284400717631-0ap19dtbhtg0i676iud8t5vo91s6pl89.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
