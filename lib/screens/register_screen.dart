@@ -282,6 +282,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       RoundedButton(
                         title: "Register",
                         color: kPrimaryColor,
+                        width: 130.0,
                         onPressed: () {
                           String email = emailAddressController.text.trim();
                           String password1 = passwordController1.text.trim();
@@ -299,7 +300,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 setState(() {
                                   isPasswordNotMatching = false;
                                 });
-                                // FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password1);
+                                FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password1);
                                 Navigator.popAndPushNamed(context, LoginScreen.id);
                               } else {
                                 setState(() {

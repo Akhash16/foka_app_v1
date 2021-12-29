@@ -217,6 +217,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       RoundedButton(
                         title: "Login",
                         color: kPrimaryColor,
+                        width: 130.0,
                         onPressed: () {
                           String email = emailAddressController.text.trim();
                           String password = passwordController.text.trim();

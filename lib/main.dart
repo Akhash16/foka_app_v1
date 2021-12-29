@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:foka_app_v1/screens/boat_add_data.dart';
 import 'package:foka_app_v1/screens/boats_page.dart';
 import 'package:foka_app_v1/screens/forgot_password.dart';
 import 'package:foka_app_v1/screens/home_screen.dart';
@@ -19,8 +20,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(
+        bottomSheetTheme: BottomSheetThemeData(
+          backgroundColor: Colors.black54.withOpacity(0),
+        ),
+      ),
       title: "Foka Tech",
-      initialRoute: LoginScreen.id,
+      initialRoute: BoatsPage.id,
       routes: {
         LoginScreen.id: (context) => const LoginScreen(),
         RegisterScreen.id: (context) => const RegisterScreen(),
@@ -28,6 +34,7 @@ class MyApp extends StatelessWidget {
         Onboarding.id: (context) => const Onboarding(),
         ForgotPassword.id: (context) => const ForgotPassword(),
         BoatsPage.id: (context) => const BoatsPage(),
+        BoatAddData.id: (context) => const BoatAddData(),
       },
     );
   }

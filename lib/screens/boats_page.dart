@@ -1,6 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:foka_app_v1/screens/home_screen.dart';
+import 'package:foka_app_v1/screens/add_boat_screen.dart';
 
 class BoatsPage extends StatefulWidget {
   const BoatsPage({Key? key}) : super(key: key);
@@ -15,7 +16,7 @@ class _BoatsPageState extends State<BoatsPage> {
   final CarouselController _carouselController = CarouselController();
   int _current = 0;
 
-  final List<dynamic> _movies = [
+  List<dynamic> movies = [
     {'title': 'Black Widow', 'image': 'https://www.moviepostersgallery.com/wp-content/uploads/2020/08/Blackwidow2.jpg', 'description': 'Black Widow'},
     {'title': 'The Suicide Squad', 'image': 'https://static.wikia.nocookie.net/headhuntersholosuite/images/7/77/Suicide_Squad%2C_The.jpg/revision/latest?cb=20210807172814', 'description': 'The Suicide Squad'},
     {'title': 'Godzilla Vs Kong', 'image': 'https://pbs.twimg.com/media/EwTsO9CVcAUxoMM?format=jpg&name=large', 'description': 'Godzilla Vs Kong'}
@@ -29,11 +30,25 @@ class _BoatsPageState extends State<BoatsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.black,
+        child: const Icon(
+          Icons.add,
+          size: 30.0,
+        ),
+        onPressed: () {
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            builder: (context) => const AddBoatScreen(),
+          );
+        },
+      ),
       body: Container(
         height: MediaQuery.of(context).size.height,
         child: Stack(
           children: [
-            Image.network(_movies[_current]['image'], fit: BoxFit.cover),
+            Image.network(movies[_current]['image'], fit: BoxFit.cover),
             Positioned(
               top: 0,
               left: 0,
@@ -81,7 +96,7 @@ class _BoatsPageState extends State<BoatsPage> {
                     },
                   ),
                   carouselController: _carouselController,
-                  items: _movies.map((movie) {
+                  items: movies.map((movie) {
                     return Builder(
                       builder: (BuildContext context) {
                         return Container(
@@ -120,7 +135,7 @@ class _BoatsPageState extends State<BoatsPage> {
                                   const SizedBox(height: 20),
                                   AnimatedOpacity(
                                     duration: const Duration(milliseconds: 500),
-                                    opacity: _current == _movies.indexOf(movie) ? 1.0 : 0.0,
+                                    opacity: _current == movies.indexOf(movie) ? 1.0 : 0.0,
                                     child: Container(
                                       padding: const EdgeInsets.symmetric(horizontal: 20.0),
                                       child: Row(
