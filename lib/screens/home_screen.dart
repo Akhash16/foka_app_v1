@@ -16,8 +16,8 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   List<Widget> items = [
     const DeviceCard(
-      color: Color(0xff4b39ef),
-      title: "Location tracker",
+      color: Color(0xff8b0f32),
+      title: "Location Tracker",
       description: "Tap here to locate your boat",
       icon: Icon(
         Icons.location_on,
@@ -25,28 +25,28 @@ class _HomeScreenState extends State<HomeScreen> {
         size: 44,
       ),
     ),
-    const DeviceCard(
-      color: Color(0xff39d2c0),
+    DeviceCard(
+      color: Colors.orange.shade600,
       title: "Security Monitor",
       description: "Tap here to monitor your boat",
-      icon: Icon(
+      icon: const Icon(
         Icons.security,
         color: Color(0xffffffff),
         size: 44,
       ),
     ),
-    const DeviceCard(
-      color: Color(0xff4b39ef),
+    DeviceCard(
+      color: Colors.pink.shade600,
       title: "THS Monitor",
       description: "Tap here to more info",
-      icon: Icon(
+      icon: const Icon(
         Icons.thermostat,
         color: Color(0xffffffff),
         size: 44,
       ),
     ),
     const DeviceCard(
-      color: Color(0xff39d2c0),
+      color: Color(0xff4b39ef),
       title: "Fluid Monitor",
       description: "Tap here to monitor fluid levels",
       icon: Icon(
@@ -93,9 +93,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(8, 18, 8, 14),
                   child: Progresso(
-                    progressColor: const Color(0xFF39d2c0),
-                    backgroundStrokeWidth: 16,
-                    progressStrokeWidth: 13,
+                      progressColor: const Color(0xFF39d2c0),
+                      backgroundStrokeWidth: 16,
+                      progressStrokeWidth: 13,
                       progress: 0.7,
                       progressStrokeCap: StrokeCap.round,
                       backgroundStrokeCap: StrokeCap.round),
@@ -138,7 +138,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       Column(
                         children: [
                           Text(
-                            "charge",
+                            "Charge",
                             style: GoogleFonts.lexendDeca(
                                 color: const Color(0xff95a1ac),
                                 fontSize: 14,
@@ -175,35 +175,27 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 const SizedBox(
-                  height: 10,
+                  height: 18,
                 ),
                 Center(
                   child: RoundedButton(
-                      title: "check",
-                      color: const Color(0xff4b39ef),
+                      title: "Check",
+                      color: const Color(0xFF107896),
                       onPressed: () {}),
                 ),
                 const SizedBox(
-                  height: 20,
+                  height: 40,
                 ),
                 CarouselSlider(
-                    items: items,
-                    options: CarouselOptions(
-                      height: 150,
-                      aspectRatio: 16 / 9,
-                      viewportFraction: 0.6,
-                      initialPage: 0,
-                      enableInfiniteScroll: true,
-                      reverse: false,
-                      autoPlay: true,
-                      autoPlayInterval: const Duration(seconds: 3),
-                      autoPlayAnimationDuration:
-                          const Duration(milliseconds: 800),
-                      autoPlayCurve: Curves.fastOutSlowIn,
-                      enlargeCenterPage: true,
-                      // onPageChanged: callbackFunction,
-                      scrollDirection: Axis.horizontal,
-                    ))
+                  items: items,
+                  options: CarouselOptions(
+                    height: MediaQuery.of(context).size.height * 0.23,
+                    viewportFraction: 0.63,
+                    enlargeCenterPage: true,
+                    // onPageChanged: callbackFunction,
+                    scrollDirection: Axis.horizontal,
+                  ),
+                )
               ],
             ),
           ),
@@ -241,13 +233,14 @@ class DeviceCard extends StatelessWidget {
         ],
         borderRadius: BorderRadius.circular(8),
       ),
-      width: 180,
-      height: 180,
+      width: 220,
+      height: 220,
       child: Column(
         mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
+            padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
             child: icon,
           ),
           Padding(
@@ -256,21 +249,19 @@ class DeviceCard extends StatelessWidget {
               title,
               textAlign: TextAlign.center,
               style: GoogleFonts.lexendDeca(
-                color: const Color(0xffffffff),
-              ),
+                  color: const Color(0xffffffff),
+                  textStyle: TextStyle(fontSize: 18)),
             ),
           ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(8, 4, 8, 0),
-              child: Text(
-                description,
-                textAlign: TextAlign.center,
-                style: GoogleFonts.getFont(
-                  'Lexend Deca',
-                  color: const Color(0xB3FFFFFF),
-                  fontSize: 12,
-                ),
+          Padding(
+            padding: const EdgeInsetsDirectional.fromSTEB(8, 4, 8, 0),
+            child: Text(
+              description,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.getFont(
+                'Lexend Deca',
+                color: const Color(0xB3FFFFFF),
+                fontSize: 13,
               ),
             ),
           ),
