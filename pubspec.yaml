@@ -41,6 +41,7 @@ dependencies:
   carousel_slider: ^4.0.0
   firebase_auth: ^3.3.4 
   firebase_core: ^1.10.6
+  progresso: ^0.3.0
 
 dev_dependencies:
   flutter_test:

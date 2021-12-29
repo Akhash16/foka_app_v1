@@ -3,6 +3,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:foka_app_v1/components/rounded_button.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:progresso/progresso.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -63,139 +64,148 @@ class _HomeScreenState extends State<HomeScreen> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 18),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Your Boat",
-                style: GoogleFonts.lexendDeca(
-                    color: const Color(0xff95a1ac),
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400),
-              ),
-              Text(
-                "Boat Name",
-                style: GoogleFonts.lexendDeca(
-                    color: const Color(0xffffffff),
-                    fontSize: 28,
-                    fontWeight: FontWeight.w700),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
-                child: Image.network(
-                    "https://cdn.discordapp.com/attachments/867367813047779338/921427885888249876/117-1176532_yacht-png-transparent-yacht-side-view-png-png-removebg-preview.png"),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0, 18, 0, 8),
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Stack(
-                      children: [
-                        Container(
-                          width: MediaQuery.of(context).size.width * 0.9,
-                          height: 17,
-                          decoration: BoxDecoration(
-                            color: const Color(0xffdbe2e7),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        Padding(
-                          padding:
-                              const EdgeInsetsDirectional.fromSTEB(2, 2, 2, 2),
-                          child: Container(
-                            width: MediaQuery.of(context).size.width * 0.4,
-                            height: 13,
-                            decoration: BoxDecoration(
-                              color: const Color(0xff39d2c0),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Your Boat",
+                  style: GoogleFonts.lexendDeca(
+                      color: const Color(0xff95a1ac),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Column(
-                      children: [
-                        Text(
-                          "charge",
-                          style: GoogleFonts.lexendDeca(
-                              color: const Color(0xff95a1ac),
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400),
-                        ),
-                        Text(
-                          "70%",
-                          style: GoogleFonts.lexendDeca(
-                              color: const Color(0xffffffff),
-                              fontSize: 28,
-                              fontWeight: FontWeight.w700),
-                        ),
-                      ],
-                    ),
-                    Column(
-                      children: [
-                        Text(
-                          "Status",
-                          style: GoogleFonts.lexendDeca(
-                              color: const Color(0xff95a1ac),
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400),
-                        ),
-                        Text(
-                          "Good",
-                          style: GoogleFonts.lexendDeca(
-                              color: const Color(0xFF39d2c0),
-                              fontSize: 28,
-                              fontWeight: FontWeight.w700),
-                        ),
-                      ],
-                    ),
-                  ],
+                Text(
+                  "Boat Name",
+                  style: GoogleFonts.lexendDeca(
+                      color: const Color(0xffffffff),
+                      fontSize: 28,
+                      fontWeight: FontWeight.w700),
                 ),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Center(
-                child: RoundedButton(
-                    title: "check",
-                    color: const Color(0xff4b39ef),
-                    onPressed: () {}),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              CarouselSlider(
-                  items: items,
-                  options: CarouselOptions(
-                    height: 150,
-                    aspectRatio: 16 / 9,
-                    viewportFraction: 0.8,
-                    initialPage: 0,
-                    enableInfiniteScroll: true,
-                    reverse: false,
-                    autoPlay: true,
-                    autoPlayInterval: const Duration(seconds: 3),
-                    autoPlayAnimationDuration:
-                        const Duration(milliseconds: 800),
-                    autoPlayCurve: Curves.fastOutSlowIn,
-                    enlargeCenterPage: true,
-                    // onPageChanged: callbackFunction,
-                    scrollDirection: Axis.horizontal,
-                  ))
-            ],
+                const SizedBox(
+                  height: 10,
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
+                  child: Image.network(
+                      "https://cdn.discordapp.com/attachments/867367813047779338/921427885888249876/117-1176532_yacht-png-transparent-yacht-side-view-png-png-removebg-preview.png"),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(8, 18, 8, 14),
+                  child: Progresso(
+                    progressColor: const Color(0xFF39d2c0),
+                    backgroundStrokeWidth: 16,
+                    progressStrokeWidth: 13,
+                      progress: 0.7,
+                      progressStrokeCap: StrokeCap.round,
+                      backgroundStrokeCap: StrokeCap.round),
+                  // child: Row(
+                  //   mainAxisSize: MainAxisSize.max,
+                  //   mainAxisAlignment: MainAxisAlignment.center,
+                  //   children: [
+                  //     Stack(
+                  //       children: [
+                  //         Container(
+                  //           width: MediaQuery.of(context).size.width * 0.9,
+                  //           height: 17,
+                  //           decoration: BoxDecoration(
+                  //             color: const Color(0xffdbe2e7),
+                  //             borderRadius: BorderRadius.circular(8),
+                  //           ),
+                  //         ),
+                  //         Padding(
+                  //           padding:
+                  //               const EdgeInsetsDirectional.fromSTEB(2, 2, 2, 2),
+                  //           child: Container(
+                  //             width: MediaQuery.of(context).size.width * 0.4,
+                  //             height: 13,
+                  //             decoration: BoxDecoration(
+                  //               color: const Color(0xff39d2c0),
+                  //               borderRadius: BorderRadius.circular(8),
+                  //             ),
+                  //           ),
+                  //         ),
+                  //       ],
+                  //     ),
+                  //   ],
+                  // ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Column(
+                        children: [
+                          Text(
+                            "charge",
+                            style: GoogleFonts.lexendDeca(
+                                color: const Color(0xff95a1ac),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400),
+                          ),
+                          Text(
+                            "70%",
+                            style: GoogleFonts.lexendDeca(
+                                color: const Color(0xffffffff),
+                                fontSize: 28,
+                                fontWeight: FontWeight.w700),
+                          ),
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          Text(
+                            "Status",
+                            style: GoogleFonts.lexendDeca(
+                                color: const Color(0xff95a1ac),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400),
+                          ),
+                          Text(
+                            "Good",
+                            style: GoogleFonts.lexendDeca(
+                                color: const Color(0xFF39d2c0),
+                                fontSize: 28,
+                                fontWeight: FontWeight.w700),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Center(
+                  child: RoundedButton(
+                      title: "check",
+                      color: const Color(0xff4b39ef),
+                      onPressed: () {}),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                CarouselSlider(
+                    items: items,
+                    options: CarouselOptions(
+                      height: 150,
+                      aspectRatio: 16 / 9,
+                      viewportFraction: 0.6,
+                      initialPage: 0,
+                      enableInfiniteScroll: true,
+                      reverse: false,
+                      autoPlay: true,
+                      autoPlayInterval: const Duration(seconds: 3),
+                      autoPlayAnimationDuration:
+                          const Duration(milliseconds: 800),
+                      autoPlayCurve: Curves.fastOutSlowIn,
+                      enlargeCenterPage: true,
+                      // onPageChanged: callbackFunction,
+                      scrollDirection: Axis.horizontal,
+                    ))
+              ],
+            ),
           ),
         ),
       ),
@@ -236,7 +246,7 @@ class DeviceCard extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.max,
         children: [
-           Padding(
+          Padding(
             padding: const EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
             child: icon,
           ),
