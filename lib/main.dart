@@ -7,6 +7,7 @@ import 'package:foka_app_v1/screens/login_screen.dart';
 import 'package:foka_app_v1/screens/onboarding.dart';
 import 'package:foka_app_v1/screens/register_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:foka_app_v1/screens/ths_monitor.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,7 +27,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       title: "Foka Tech",
-      initialRoute: HomeScreen.id,
+      initialRoute: ThsScreen.id,
       routes: {
         LoginScreen.id: (context) => const LoginScreen(),
         RegisterScreen.id: (context) => const RegisterScreen(),
@@ -35,6 +36,7 @@ class MyApp extends StatelessWidget {
         ForgotPassword.id: (context) => const ForgotPassword(),
         BoatsPage.id: (context) => const BoatsPage(),
         BoatAddData.id: (context) => const BoatAddData(),
+        ThsScreen.id: (context) => const ThsScreen(),
       },
     );
   }

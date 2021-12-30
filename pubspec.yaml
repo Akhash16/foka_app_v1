@@ -43,6 +43,7 @@ dependencies:
   firebase_core: ^1.10.6
   slide_to_confirm: ^1.1.0
   progresso: ^0.3.0
+  toggle_switch: ^1.3.0
 
 dev_dependencies:
   flutter_test:
