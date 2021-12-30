@@ -25,13 +25,18 @@ class RoundedButton extends StatelessWidget {
           height: 50.0,
           child: Text(
             title,
-            style: GoogleFonts.lexendDeca(
-              textStyle: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-                color: Colors.white,
-              ),
+            style: const TextStyle(
+              fontSize: 18.0,
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
             ),
+            // style: GoogleFonts.lexendDeca(
+            //   textStyle: const TextStyle(
+            //     fontSize: 18,
+            //     fontWeight: FontWeight.w700,
+            //     color: Colors.white,
+            //   ),
+            // ),
           ),
         ),
       ),

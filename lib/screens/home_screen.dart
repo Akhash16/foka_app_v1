@@ -2,6 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:foka_app_v1/components/rounded_button.dart';
+import 'package:foka_app_v1/fluid_monitor.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:progresso/progresso.dart';
 
@@ -14,51 +15,63 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  List<Widget> items = [
-    const DeviceCard(
-      color: Color(0xff8b0f32),
-      title: "Location Tracker",
-      description: "Tap here to locate your boat",
-      icon: Icon(
-        Icons.location_on,
-        color: Color(0xffffffff),
-        size: 44,
-      ),
-    ),
-    DeviceCard(
-      color: Colors.orange.shade600,
-      title: "Security Monitor",
-      description: "Tap here to monitor your boat",
-      icon: const Icon(
-        Icons.security,
-        color: Color(0xffffffff),
-        size: 44,
-      ),
-    ),
-    DeviceCard(
-      color: Colors.pink.shade600,
-      title: "THS Monitor",
-      description: "Tap here to more info",
-      icon: const Icon(
-        Icons.thermostat,
-        color: Color(0xffffffff),
-        size: 44,
-      ),
-    ),
-    const DeviceCard(
-      color: Color(0xff4b39ef),
-      title: "Fluid Monitor",
-      description: "Tap here to monitor fluid levels",
-      icon: Icon(
-        Icons.water,
-        color: Color(0xffffffff),
-        size: 44,
-      ),
-    ),
-  ];
-
   @override
   Widget build(BuildContext context) {
+    List<Widget> items = [
+      InkWell(
+        onTap: () => print('location tracker'),
+        child: const DeviceCard(
+          color: Color(0xff8b0f32),
+          title: "Location Tracker",
+          description: "Tap here to locate your boat",
+          icon: Icon(
+            Icons.location_on,
+            color: Color(0xffffffff),
+            size: 44,
+          ),
+        ),
+      ),
+      InkWell(
+        onTap: () => print('security monitor'),
+        child: DeviceCard(
+          color: Colors.orange.shade600,
+          title: "Security Monitor",
+          description: "Tap here to monitor your boat",
+          icon: const Icon(
+            Icons.security,
+            color: Color(0xffffffff),
+            size: 44,
+          ),
+        ),
+      ),
+      InkWell(
+        onTap: () => print('ths monitor'),
+        child: DeviceCard(
+          color: Colors.pink.shade600,
+          title: "THS Monitor",
+          description: "Tap here to more info",
+          icon: const Icon(
+            Icons.thermostat,
+            color: Color(0xffffffff),
+            size: 44,
+          ),
+        ),
+      ),
+      InkWell(
+        onTap: () => Navigator.pushNamed(context, FluidMonitor.id),
+        child: const DeviceCard(
+          color: Color(0xff4b39ef),
+          title: "Fluid Monitor",
+          description: "Tap here to monitor fluid levels",
+          icon: Icon(
+            Icons.water,
+            color: Color(0xffffffff),
+            size: 44,
+          ),
+        ),
+      ),
+    ];
+
     return Scaffold(
       backgroundColor: const Color(0xff090f13),
       body: SafeArea(
@@ -70,17 +83,11 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 Text(
                   "Your Boat",
-                  style: GoogleFonts.lexendDeca(
-                      color: const Color(0xff95a1ac),
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400),
+                  style: GoogleFonts.lexendDeca(color: const Color(0xff95a1ac), fontSize: 14, fontWeight: FontWeight.w400),
                 ),
                 Text(
                   "Boat Name",
-                  style: GoogleFonts.lexendDeca(
-                      color: const Color(0xffffffff),
-                      fontSize: 28,
-                      fontWeight: FontWeight.w700),
+                  style: GoogleFonts.lexendDeca(color: const Color(0xffffffff), fontSize: 28, fontWeight: FontWeight.w700),
                 ),
                 const SizedBox(
                   height: 10,
@@ -88,17 +95,19 @@ class _HomeScreenState extends State<HomeScreen> {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
                   child: Image.network(
-                      "https://cdn.discordapp.com/attachments/867367813047779338/921427885888249876/117-1176532_yacht-png-transparent-yacht-side-view-png-png-removebg-preview.png"),
+                    "https://cdn.discordapp.com/attachments/867367813047779338/921427885888249876/117-1176532_yacht-png-transparent-yacht-side-view-png-png-removebg-preview.png",
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(8, 18, 8, 14),
                   child: Progresso(
-                      progressColor: const Color(0xFF39d2c0),
-                      backgroundStrokeWidth: 16,
-                      progressStrokeWidth: 13,
-                      progress: 0.7,
-                      progressStrokeCap: StrokeCap.round,
-                      backgroundStrokeCap: StrokeCap.round),
+                    progressColor: const Color(0xFF39d2c0),
+                    backgroundStrokeWidth: 16,
+                    progressStrokeWidth: 13,
+                    progress: 0.7,
+                    progressStrokeCap: StrokeCap.round,
+                    backgroundStrokeCap: StrokeCap.round,
+                  ),
                   // child: Row(
                   //   mainAxisSize: MainAxisSize.max,
                   //   mainAxisAlignment: MainAxisAlignment.center,
@@ -139,17 +148,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: [
                           Text(
                             "Charge",
-                            style: GoogleFonts.lexendDeca(
-                                color: const Color(0xff95a1ac),
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400),
+                            style: GoogleFonts.lexendDeca(color: const Color(0xff95a1ac), fontSize: 14, fontWeight: FontWeight.w400),
                           ),
                           Text(
                             "70%",
-                            style: GoogleFonts.lexendDeca(
-                                color: const Color(0xffffffff),
-                                fontSize: 28,
-                                fontWeight: FontWeight.w700),
+                            style: GoogleFonts.lexendDeca(color: const Color(0xffffffff), fontSize: 28, fontWeight: FontWeight.w700),
                           ),
                         ],
                       ),
@@ -157,17 +160,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: [
                           Text(
                             "Status",
-                            style: GoogleFonts.lexendDeca(
-                                color: const Color(0xff95a1ac),
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400),
+                            style: GoogleFonts.lexendDeca(color: const Color(0xff95a1ac), fontSize: 14, fontWeight: FontWeight.w400),
                           ),
                           Text(
                             "Good",
-                            style: GoogleFonts.lexendDeca(
-                                color: const Color(0xFF39d2c0),
-                                fontSize: 28,
-                                fontWeight: FontWeight.w700),
+                            style: GoogleFonts.lexendDeca(color: const Color(0xFF39d2c0), fontSize: 28, fontWeight: FontWeight.w700),
                           ),
                         ],
                       ),
@@ -179,9 +176,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 Center(
                   child: RoundedButton(
-                      title: "Check",
-                      color: const Color(0xFF107896),
-                      onPressed: () {}),
+                    title: "Start Diagnostic",
+                    color: const Color(0xFF107896),
+                    onPressed: () {},
+                    width: MediaQuery.of(context).size.width * 0.9,
+                  ),
                 ),
                 const SizedBox(
                   height: 40,
@@ -206,13 +205,7 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 class DeviceCard extends StatelessWidget {
-  const DeviceCard(
-      {Key? key,
-      required this.color,
-      required this.title,
-      required this.description,
-      required this.icon})
-      : super(key: key);
+  const DeviceCard({Key? key, required this.color, required this.title, required this.description, required this.icon}) : super(key: key);
   final Icon icon;
   final String title;
   final String description;
@@ -248,9 +241,7 @@ class DeviceCard extends StatelessWidget {
             child: AutoSizeText(
               title,
               textAlign: TextAlign.center,
-              style: GoogleFonts.lexendDeca(
-                  color: const Color(0xffffffff),
-                  textStyle: TextStyle(fontSize: 18)),
+              style: GoogleFonts.lexendDeca(color: const Color(0xffffffff), textStyle: TextStyle(fontSize: 18)),
             ),
           ),
           Padding(

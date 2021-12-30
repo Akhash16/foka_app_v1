@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:foka_app_v1/fluid_monitor.dart';
+import 'package:foka_app_v1/screens/add_boat_screen.dart';
 import 'package:foka_app_v1/screens/boat_add_data.dart';
 import 'package:foka_app_v1/screens/boats_page.dart';
 import 'package:foka_app_v1/screens/forgot_password.dart';
@@ -7,6 +9,7 @@ import 'package:foka_app_v1/screens/login_screen.dart';
 import 'package:foka_app_v1/screens/onboarding.dart';
 import 'package:foka_app_v1/screens/register_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:foka_app_v1/smart_connect.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,7 +29,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       title: "Foka Tech",
-      initialRoute: HomeScreen.id,
+      initialRoute: SmartConnet.id,
       routes: {
         LoginScreen.id: (context) => const LoginScreen(),
         RegisterScreen.id: (context) => const RegisterScreen(),
@@ -35,6 +38,9 @@ class MyApp extends StatelessWidget {
         ForgotPassword.id: (context) => const ForgotPassword(),
         BoatsPage.id: (context) => const BoatsPage(),
         BoatAddData.id: (context) => const BoatAddData(),
+        AddBoatScreen.id: (context) => const AddBoatScreen(),
+        FluidMonitor.id: (context) => const FluidMonitor(),
+        SmartConnet.id: (context) => const SmartConnet(),
       },
     );
   }

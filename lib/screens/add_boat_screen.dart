@@ -8,6 +8,8 @@ import 'package:slide_to_confirm/slide_to_confirm.dart';
 class AddBoatScreen extends StatelessWidget {
   const AddBoatScreen({Key? key}) : super(key: key);
 
+  static const String id = 'add_boat_screen';
+
   @override
   Widget build(BuildContext context) {
     // TextEditingController textController = TextEditingController();
