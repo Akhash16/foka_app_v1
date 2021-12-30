@@ -5,7 +5,7 @@ import 'package:foka_app_v1/components/rounded_button.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:progresso/progresso.dart';
 
-import '../fluid_monitor.dart';
+import 'fluid_monitor.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
