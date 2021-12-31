@@ -4,9 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:foka_app_v1/components/rounded_button.dart';
 import 'package:foka_app_v1/main.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
+import 'package:slide_to_confirm/slide_to_confirm.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
+import 'package:flutter_glow/flutter_glow.dart';
 
 class FluidMonitor extends StatefulWidget {
   const FluidMonitor({Key? key}) : super(key: key);
@@ -120,7 +123,7 @@ class _FluidMonitorState extends State<FluidMonitor> {
 
   void change() {
     setState(() {
-      toPrint = (capacity - value) / capacity * 100;
+      toPrint = (capacity - value) / capacity; // * 100
       floatValue = floatValue;
     });
   }
@@ -142,91 +145,200 @@ class _FluidMonitorState extends State<FluidMonitor> {
         title: const Center(child: Text("Fluid Monitor")),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              showModalBottomSheet(
+                  context: context,
+                  builder: (context) {
+                    return Container(
+                      height: MediaQuery.of(context).size.height * 0.25,
+                      decoration: const BoxDecoration(
+                        color: Colors.white12,
+                        borderRadius: BorderRadius.only(topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
+                      ),
+                      child: Center(
+                          child: RoundedButton(
+                        title: 'Tap to Caliberate',
+                        color: Colors.lightBlueAccent,
+                        onPressed: () {
+                          setState(() {
+                            capacity = value;
+                          });
+                        },
+                        width: MediaQuery.of(context).size.width * 0.7,
+                      )),
+                    );
+                  });
+            },
             icon: const Icon(Icons.settings),
           ),
         ],
       ),
       backgroundColor: const Color(0xff090f13),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // SfRadialGauge(
-          //   title: const GaugeTitle(text: "Fluid Monitor"),
-          // ),
+      body: Center(
+        child: Container(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              // Column(
+              //   mainAxisAlignment: MainAxisAlignment.center,
+              //   children: [
+              //     // Text(
+              //     //   (toPrint * 100).toStringAsFixed(0) + ' %',
+              //     //   style: const TextStyle(
+              //     //     color: Colors.white,
+              //     //     fontSize: 30.0,
+              //     //   ),
+              //     // ),
+              //     // const SizedBox(height: 20.0),
+              //     RoundedButton(
+              //       title: "Calibrate",
+              //       color: Colors.lightBlueAccent,
+              //       onPressed: () {
+              //         setState(() {
+              //           capacity = value;
+              //         });
+              //       },
+              //       width: 180,
+              //     ),
+              //     const SizedBox(height: 20.0),
+              //     Text(
+              //       floatValue == 0 ? 'Tank Empty' : 'Tank Full',
+              //       style: GoogleFonts.montserrat(
+              //         color: Colors.white,
+              //         fontSize: 25,
+              //         fontWeight: FontWeight.w400,
+              //       ),
+              //     ),
+              //   ],
+              // ),
 
-          SfRadialGauge(
-            axes: [
-              RadialAxis(
-                  startAngle: 130,
-                  endAngle: 50,
-                  minimum: 0,
-                  maximum: 100,
-                  interval: 10,
-                  minorTicksPerInterval: 9,
-                  showAxisLine: false,
-                  radiusFactor: 0.8,
-                  labelOffset: 8,
-                  ranges: [
-                    GaugeRange(startValue: -50, endValue: 0, startWidth: 0.265, sizeUnit: GaugeSizeUnit.factor, endWidth: 0.265, color: Colors.blue),
-                    GaugeRange(startValue: 0, endValue: 25, startWidth: 0.265, sizeUnit: GaugeSizeUnit.factor, endWidth: 0.265, color: Colors.red),
-                    GaugeRange(startValue: 25, endValue: 45, startWidth: 0.265, sizeUnit: GaugeSizeUnit.factor, endWidth: 0.265, color: Colors.yellow),
-                    GaugeRange(startValue: 45, endValue: 100, startWidth: 0.265, sizeUnit: GaugeSizeUnit.factor, endWidth: 0.265, color: Colors.green),
-                    // GaugeRange(startValue: 40, endValue: 150, startWidth: 0.265, sizeUnit: GaugeSizeUnit.factor, endWidth: 0.265, color: Colors.red),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.5,
+                width: MediaQuery.of(context).size.width * 0.45,
+                child: LiquidLinearProgressIndicator(
+                  center: GlowText(
+                    (toPrint * 100).toStringAsFixed(0) + ' %',
+                    // glowColor: Colors.blue,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 35.0,
+                    ),
+                  ),
+                  value: toPrint,
+                  borderRadius: 10.0,
+                  borderWidth: 1.0,
+                  borderColor: Colors.blue,
+                  direction: Axis.vertical,
+                ),
+              ),
+              Container(
+                height: MediaQuery.of(context).size.height * 0.15,
+                width: MediaQuery.of(context).size.width * 0.7,
+                decoration: BoxDecoration(
+                  color: Colors.white12,
+                  borderRadius: BorderRadius.circular(10.0),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.white10,
+                      offset: Offset(3.0, 3.0),
+                      blurRadius: 5.0,
+                      spreadRadius: 2.0,
+                    ),
                   ],
-                  annotations: [
-                    GaugeAnnotation(angle: 90, positionFactor: 0.35, widget: Text('Fluid', style: GoogleFonts.montserrat(color: const Color(0xFFF8B195), fontSize: 20))),
-                    GaugeAnnotation(
-                      angle: 90,
-                      positionFactor: 0.8,
-                      widget: Text(
-                        toPrint.toStringAsFixed(0),
-                        style: GoogleFonts.montserrat(fontWeight: FontWeight.bold, fontSize: 30, color: Colors.white),
-                      ),
-                    )
-                  ],
-                  pointers: [
-                    NeedlePointer(
-                      value: toPrint,
-                      needleLength: 0.55,
-                      lengthUnit: GaugeSizeUnit.factor,
-                      needleStartWidth: 0,
-                      needleEndWidth: 5,
-                      // animationType: AnimationType.easeOutBack,
-                      // enableAnimation: true,
-                      // animationDuration: 1200,
-                      knobStyle: const KnobStyle(knobRadius: 0.06, sizeUnit: GaugeSizeUnit.factor, borderColor: Color(0xFFF8B195), color: Colors.white, borderWidth: 0.035),
-                      tailStyle: const TailStyle(color: Color(0xFFF8B195), width: 4, lengthUnit: GaugeSizeUnit.factor, length: 0.15),
-                      needleColor: const Color(0xFFF8B195),
-                    )
-                  ],
-                  axisLabelStyle: const GaugeTextStyle(fontSize: 13, color: Colors.white, fontWeight: FontWeight.w400),
-                  majorTickStyle: const MajorTickStyle(length: 0.25, lengthUnit: GaugeSizeUnit.factor, thickness: 1.5),
-                  minorTickStyle: const MinorTickStyle(length: 0.13, lengthUnit: GaugeSizeUnit.factor, thickness: 1))
+                ),
+                child: Center(
+                  child: GlowText(
+                    floatValue == 0 ? 'Tank Empty' : 'Tank Full',
+                    style: GoogleFonts.montserrat(color: Colors.white, fontSize: 25, fontWeight: FontWeight.w400),
+                  ),
+                ),
+              ),
             ],
           ),
-          RoundedButton(
-            title: "Calibrate",
-            color: const Color(0xFF39d2c0),
-            onPressed: () {
-              setState(() {
-                capacity = value;
-              });
-            },
-            width: 250,
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(8, 18, 8, 8),
-            child: Text(
-              floatValue == 0 ? 'Tank Empty' : 'Tank Full',
-              style: GoogleFonts.montserrat(color: Colors.white, fontSize: 25, fontWeight: FontWeight.w400),
-            ),
-          )
-        ],
+        ),
       ),
     );
   }
 }
+//       body: Column(
+//         mainAxisAlignment: MainAxisAlignment.center,
+//         children: [
+//           // SfRadialGauge(
+//           //   title: const GaugeTitle(text: "Fluid Monitor"),
+//           // ),
+
+//           SfRadialGauge(
+//             axes: [
+//               RadialAxis(
+//                   startAngle: 130,
+//                   endAngle: 50,
+//                   minimum: 0,
+//                   maximum: 100,
+//                   interval: 10,
+//                   minorTicksPerInterval: 9,
+//                   showAxisLine: false,
+//                   radiusFactor: 0.8,
+//                   labelOffset: 8,
+//                   ranges: [
+//                     GaugeRange(startValue: -50, endValue: 0, startWidth: 0.265, sizeUnit: GaugeSizeUnit.factor, endWidth: 0.265, color: Colors.blue),
+//                     GaugeRange(startValue: 0, endValue: 25, startWidth: 0.265, sizeUnit: GaugeSizeUnit.factor, endWidth: 0.265, color: Colors.red),
+//                     GaugeRange(startValue: 25, endValue: 45, startWidth: 0.265, sizeUnit: GaugeSizeUnit.factor, endWidth: 0.265, color: Colors.yellow),
+//                     GaugeRange(startValue: 45, endValue: 100, startWidth: 0.265, sizeUnit: GaugeSizeUnit.factor, endWidth: 0.265, color: Colors.green),
+//                     // GaugeRange(startValue: 40, endValue: 150, startWidth: 0.265, sizeUnit: GaugeSizeUnit.factor, endWidth: 0.265, color: Colors.red),
+//                   ],
+//                   annotations: [
+//                     GaugeAnnotation(angle: 90, positionFactor: 0.35, widget: Text('Fluid', style: GoogleFonts.montserrat(color: const Color(0xFFF8B195), fontSize: 20))),
+//                     GaugeAnnotation(
+//                       angle: 90,
+//                       positionFactor: 0.8,
+//                       widget: Text(
+//                         toPrint.toStringAsFixed(0),
+//                         style: GoogleFonts.montserrat(fontWeight: FontWeight.bold, fontSize: 30, color: Colors.white),
+//                       ),
+//                     )
+//                   ],
+//                   pointers: [
+//                     NeedlePointer(
+//                       value: toPrint,
+//                       needleLength: 0.55,
+//                       lengthUnit: GaugeSizeUnit.factor,
+//                       needleStartWidth: 0,
+//                       needleEndWidth: 5,
+//                       // animationType: AnimationType.easeOutBack,
+//                       // enableAnimation: true,
+//                       // animationDuration: 1200,
+//                       knobStyle: const KnobStyle(knobRadius: 0.06, sizeUnit: GaugeSizeUnit.factor, borderColor: Color(0xFFF8B195), color: Colors.white, borderWidth: 0.035),
+//                       tailStyle: const TailStyle(color: Color(0xFFF8B195), width: 4, lengthUnit: GaugeSizeUnit.factor, length: 0.15),
+//                       needleColor: const Color(0xFFF8B195),
+//                     )
+//                   ],
+//                   axisLabelStyle: const GaugeTextStyle(fontSize: 13, color: Colors.white, fontWeight: FontWeight.w400),
+//                   majorTickStyle: const MajorTickStyle(length: 0.25, lengthUnit: GaugeSizeUnit.factor, thickness: 1.5),
+//                   minorTickStyle: const MinorTickStyle(length: 0.13, lengthUnit: GaugeSizeUnit.factor, thickness: 1))
+//             ],
+//           ),
+//           RoundedButton(
+//             title: "Calibrate",
+//             color: const Color(0xFF39d2c0),
+//             onPressed: () {
+//               setState(() {
+//                 capacity = value;
+//               });
+//             },
+//             width: 250,
+//           ),
+//           Padding(
+//             padding: const EdgeInsets.fromLTRB(8, 18, 8, 8),
+//             child: Text(
+//               floatValue == 0 ? 'Tank Empty' : 'Tank Full',
+//               style: GoogleFonts.montserrat(color: Colors.white, fontSize: 25, fontWeight: FontWeight.w400),
+//             ),
+//           )
+//         ],
+//       ),
+//     );
+//   }
+// }
 
 
 // import 'dart:async';

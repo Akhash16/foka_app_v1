@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:foka_app_v1/components/rounded_button.dart';
 import 'package:foka_app_v1/screens/boats_page.dart';
-import 'package:foka_app_v1/screens/home_screen.dart';
 import 'package:liquid_swipe/liquid_swipe.dart';
 
 class Onboarding extends StatefulWidget {
@@ -49,24 +48,24 @@ class _OnboardingState extends State<Onboarding> {
               fit: BoxFit.fill,
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 3.0),
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: Column(
                 // mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: const [
+                  // Text(
+                  //   "Lorem",
+                  //   style: greyStyle,
+                  // ),
                   Text(
-                    "Lorem",
-                    style: greyStyle,
-                  ),
-                  Text(
-                    "Ipsum",
+                    "Welcome",
                     style: boldStyle,
                   ),
                   SizedBox(
                     height: 20.0,
                   ),
                   Text(
-                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero.  ",
+                    "Thank you for choosing fokaboat! We are glad to have you on board.",
                     style: descriptionGreyStyle,
                   ),
                 ],
@@ -91,18 +90,18 @@ class _OnboardingState extends State<Onboarding> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: const [
                   Text(
-                    "hello",
+                    "Instant",
                     style: whiteStyle,
                   ),
                   Text(
-                    "world",
+                    "Updates",
                     style: boldStyle,
                   ),
                   SizedBox(
                     height: 20.0,
                   ),
                   Text(
-                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero.   ",
+                    "Know where your fleet is and how it's doing. Anytime. All-time.",
                     style: descriptionWhiteStyle,
                   ),
                 ],
@@ -127,23 +126,21 @@ class _OnboardingState extends State<Onboarding> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    "huhuh",
+                    "Experience",
                     style: whiteStyle,
                   ),
                   const Text(
-                    "loremm",
+                    "Technology",
                     style: boldStyle,
                   ),
                   const SizedBox(
                     height: 20.0,
                   ),
                   const Text(
-                    "Temporibus autem aut\n"
-                    "officiis debitis aut rerum\n"
-                    "necessitatibus",
+                    "With one click, you'll be ready to enter into the world of Fokaboat.\n\nClick on continue to experience the latest fleet management technology.",
                     style: descriptionWhiteStyle,
                   ),
-                  RoundedButton(title: 'Continue', color: Colors.tealAccent, onPressed: () => Navigator.pushNamed(context, HomeScreen.id)),
+                  Center(child: RoundedButton(title: 'Continue', color: Colors.deepPurple, onPressed: () => Navigator.pushNamed(context, BoatsPage.id))),
                 ],
               ),
             )

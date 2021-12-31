@@ -17,7 +17,27 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
+  late AnimationController controller;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 5),
+    )..addListener(() {
+        setState(() {});
+      });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     List<Widget> items = [
@@ -195,13 +215,107 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: RoundedButton(
                     title: "Start Diagnostic",
                     color: const Color(0xFF107896),
-                    onPressed: () {},
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              backgroundColor: Colors.white,
+                              content: SingleChildScrollView(
+                                child: ListBody(
+                                  children: <Widget>[
+                                    ListTile(
+                                      title: Text(
+                                        'Fluid Monitor',
+                                        style: GoogleFonts.getFont(
+                                          'Lexend Deca',
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                      trailing: const Icon(
+                                        Icons.check_circle,
+                                        color: Colors.green,
+                                      ),
+                                    ),
+                                    ListTile(
+                                      title: Text(
+                                        'THS Monitor',
+                                        style: GoogleFonts.getFont(
+                                          'Lexend Deca',
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                      trailing: const Icon(
+                                        Icons.check_circle,
+                                        color: Colors.green,
+                                      ),
+                                    ),
+                                    ListTile(
+                                      title: Text(
+                                        'Security Monitor',
+                                        style: GoogleFonts.getFont(
+                                          'Lexend Deca',
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                      trailing: const Icon(
+                                        Icons.check_circle,
+                                        color: Colors.green,
+                                      ),
+                                    ),
+                                    ListTile(
+                                      title: Text(
+                                        'Smart Connect',
+                                        style: GoogleFonts.getFont(
+                                          'Lexend Deca',
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                      trailing: const Icon(
+                                        Icons.check_circle,
+                                        color: Colors.green,
+                                      ),
+                                    ),
+                                    ListTile(
+                                      title: Text(
+                                        'Location Tracker',
+                                        style: GoogleFonts.getFont(
+                                          'Lexend Deca',
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                      trailing: const Icon(
+                                        Icons.check_circle,
+                                        color: Colors.green,
+                                      ),
+                                    ),
+                                    // CircularProgressIndicator(
+                                    //   value: controller.value,
+                                    //   semanticsLabel: 'Linear progress indicator',
+                                    // ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          });
+                    },
                     width: MediaQuery.of(context).size.width * 0.9,
                   ),
                 ),
                 const SizedBox(
                   height: 40,
                 ),
+                // Center(
+                //   child: CircularProgressIndicator(
+                //     backgroundColor: Colors.white,
+                //     // color: Colors.white,
+                //     value: controller.value,
+                //     semanticsLabel: 'Linear progress indicator',
+                //   ),
+                // ),
+                // SizedBox(
+                //   height: 20.0,
+                // ),
                 CarouselSlider(
                   items: items,
                   options: CarouselOptions(

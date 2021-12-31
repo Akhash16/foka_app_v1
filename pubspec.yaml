@@ -50,6 +50,7 @@ dependencies:
   mqtt_client: ^9.6.3
   syncfusion_flutter_gauges: ^19.4.40
   syncfusion_flutter_core: ^19.4.40
+  flutter_glow: ^0.2.0
 
 dev_dependencies:
   flutter_test:

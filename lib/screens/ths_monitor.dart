@@ -142,7 +142,7 @@ class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMix
             // _animationController.stop();
             _animationController.dispose();
             super.dispose();
-            Navigator.popAndPushNamed(context, HomeScreen.id);
+            Navigator.pop(context, HomeScreen.id);
           },
         ),
         title: const Center(child: Text("THS")),
