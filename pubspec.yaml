@@ -48,6 +48,8 @@ dependencies:
   dotted_border: ^2.0.0+2
   toggle_switch: ^1.3.0
   mqtt_client: ^9.6.3
+  syncfusion_flutter_gauges: ^19.4.40
+  syncfusion_flutter_core: ^19.4.40
 
 dev_dependencies:
   flutter_test:
