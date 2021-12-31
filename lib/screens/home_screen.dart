@@ -2,6 +2,8 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:foka_app_v1/components/rounded_button.dart';
+import 'package:foka_app_v1/screens/smart_connect.dart';
+import 'package:foka_app_v1/screens/ths_monitor.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:progresso/progresso.dart';
 
@@ -46,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       InkWell(
-        onTap: () => print('ths monitor'),
+        onTap: () => Navigator.pushNamed(context, THSScreen.id),
         child: DeviceCard(
           color: Colors.pink.shade600,
           title: "THS Monitor",
@@ -64,6 +66,20 @@ class _HomeScreenState extends State<HomeScreen> {
           color: Color(0xff4b39ef),
           title: "Fluid Monitor",
           description: "Tap here to monitor fluid levels",
+          icon: Icon(
+            Icons.water,
+            color: Color(0xffffffff),
+            size: 44,
+          ),
+        ),
+      ),
+      InkWell(
+        onTap: () => Navigator.pushNamed(context, SmartConnet.id),
+        child: const DeviceCard(
+          // color: Color(0xff4b39ef),
+          color: Colors.pink,
+          title: "Smart Connect",
+          description: "Tap here to more details",
           icon: Icon(
             Icons.water,
             color: Color(0xffffffff),

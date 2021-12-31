@@ -4,6 +4,7 @@ import 'package:foka_app_v1/components/constants.dart';
 import 'package:foka_app_v1/components/error_alert.dart';
 import 'package:foka_app_v1/components/rounded_button.dart';
 import 'package:foka_app_v1/screens/forgot_password.dart';
+import 'package:foka_app_v1/screens/onboarding.dart';
 import 'package:foka_app_v1/screens/register_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -232,6 +233,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   isPasswordMissing = false;
                                 });
                                 FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
+                                Navigator.popAndPushNamed(context, Onboarding.id);
                               } else {
                                 setState(() {
                                   isPasswordMissing = true;

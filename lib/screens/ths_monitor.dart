@@ -135,7 +135,15 @@ class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMix
       backgroundColor: const Color(0xff090f13),
       appBar: AppBar(
         backgroundColor: const Color(0xff090f13),
-        leading: const Icon(Icons.arrow_back_ios_new),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new),
+          onPressed: () {
+            _animationController.stop();
+            _animationController.dispose();
+            super.dispose();
+            Navigator.pop(context);
+          },
+        ),
         title: const Center(child: Text("THS")),
         actions: [
           IconButton(
@@ -148,7 +156,7 @@ class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMix
         width: double.infinity,
         height: double.infinity,
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(8, 28, 8, 8),
+          padding: const EdgeInsets.fromLTRB(8, 15, 8, 8),
           child: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center, children: [
             // Here, default theme colors are used for activeBgColor, activeFgColor, inactiveBgColor and inactiveFgColor
             ToggleSwitch(
@@ -195,7 +203,11 @@ class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMix
                         children: [
                           Text(
                             temperature.toStringAsFixed(1),
-                            style: GoogleFonts.montserrat(color: Colors.white, fontSize: 50, fontWeight: FontWeight.w400),
+                            style: GoogleFonts.montserrat(
+                              color: Colors.white,
+                              fontSize: 45,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                           // const SizedBox(
                           //   width: 20.0,
@@ -206,7 +218,11 @@ class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMix
                           // ),
                           Text(
                             "°C",
-                            style: GoogleFonts.montserrat(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w500),
+                            style: GoogleFonts.montserrat(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w400,
+                            ),
                           ),
                         ],
                       ),
@@ -238,13 +254,26 @@ class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMix
                     width: 200,
                     height: 200,
                     child: Center(
-                      child: Text(
-                        gas.toStringAsFixed(0),
-                        style: GoogleFonts.montserrat(
-                          color: Colors.white,
-                          fontSize: 30,
-                          fontWeight: FontWeight.w500,
-                        ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            gas.toStringAsFixed(0),
+                            style: GoogleFonts.montserrat(
+                              color: Colors.white,
+                              fontSize: 45,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          Text(
+                            'ppm',
+                            style: GoogleFonts.montserrat(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     decoration: BoxDecoration(
