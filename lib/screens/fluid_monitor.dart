@@ -1,6 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:foka_app_v1/components/rounded_button.dart';
+import 'package:foka_app_v1/main.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mqtt_client/mqtt_client.dart';
+import 'package:mqtt_client/mqtt_server_client.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 
 class FluidMonitor extends StatefulWidget {
@@ -12,7 +17,114 @@ class FluidMonitor extends StatefulWidget {
 }
 
 class _FluidMonitorState extends State<FluidMonitor> {
-  double fluidLevel = 80;
+  int capacity = 100;
+  int value = 0;
+  int floatValue = 0;
+  double toPrint = 0;
+
+  @override
+  void initState() {
+    print('running init');
+    // TODO: implement initState
+    super.initState();
+    Timer timer = Timer.periodic(Duration(seconds: 1), (Timer t) => change());
+    Future<MqttServerClient> connectClient() async {
+      print('connect started');
+      MqttServerClient client = MqttServerClient.withPort('164.52.212.96', MyApp.clientId, 1883);
+      client.logging(on: true);
+      client.onConnected = onConnected;
+      client.onDisconnected = onDisconnected;
+      client.onUnsubscribed = onUnsubscribed;
+      client.onSubscribed = onSubscribed;
+      client.onSubscribeFail = onSubscribeFail;
+      client.pongCallback = pong;
+      client.keepAlivePeriod = 20;
+
+      print('final con');
+      final connMessage = MqttConnectMessage()
+          .authenticateAs('admin', 'smartboat@rec&adr')
+          // ignore: deprecated_member_use
+          .withClientIdentifier(MyApp.clientId)
+          .keepAliveFor(6000)
+          .startClean()
+          .withWillQos(MqttQos.atLeastOnce);
+      client.connectionMessage = connMessage;
+      print('try');
+      try {
+        await client.connect();
+      } catch (e) {
+        print('catch');
+        print('Exception: $e');
+        client.disconnect();
+      }
+
+      print('try done');
+      client.updates!.listen((List<MqttReceivedMessage<MqttMessage>> c) {
+        MqttPublishMessage message = c[0].payload as MqttPublishMessage;
+        final payload = MqttPublishPayload.bytesToStringAsString(message.payload.message);
+
+        print('Received message:$payload from topic: ${c[0].topic}>');
+
+        var parts = payload.split(',');
+        value = int.parse(parts[0]);
+        floatValue = int.parse(parts[1]);
+
+        // c[0].topic == '/DEMOHUB001/FKB001US' ? value = int.parse(payload) : floatValue = int.parse(payload);
+        // print("message_received : $value");
+      });
+
+      print('something $value');
+
+      client.subscribe("/DEMOHUB001/FKB001US", MqttQos.atLeastOnce);
+      // client.subscribe("/esp32-float", MqttQos.atLeastOnce);
+
+      return client;
+    }
+
+    void start() async {
+      await connectClient();
+    }
+
+    start();
+  }
+
+  // connection succeeded
+  void onConnected() {
+    print('Connected');
+  }
+
+// unconnected
+  void onDisconnected() {
+    print('Disconnected');
+  }
+
+// subscribe to topic succeeded
+  void onSubscribed(String topic) {
+    print('Subscribed topic: $topic');
+  }
+
+// subscribe to topic failed
+  void onSubscribeFail(String topic) {
+    print('Failed to subscribe $topic');
+  }
+
+// unsubscribe succeeded
+  void onUnsubscribed(String? topic) {
+    print('Unsubscribed topic: $topic');
+  }
+
+// PING response received
+  void pong() {
+    print('Ping response client callback invoked');
+  }
+
+  void change() {
+    setState(() {
+      toPrint = (capacity - value) / capacity * 100;
+      floatValue = floatValue;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,7 +135,9 @@ class _FluidMonitorState extends State<FluidMonitor> {
             Icons.arrow_back_ios_new,
             color: Colors.white,
           ),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
         title: const Center(child: Text("Fluid Monitor")),
         actions: [
@@ -54,62 +168,26 @@ class _FluidMonitorState extends State<FluidMonitor> {
                   radiusFactor: 0.8,
                   labelOffset: 8,
                   ranges: [
-                    GaugeRange(
-                        startValue: -50,
-                        endValue: 0,
-                        startWidth: 0.265,
-                        sizeUnit: GaugeSizeUnit.factor,
-                        endWidth: 0.265,
-                        color: Colors.blue),
-                    GaugeRange(
-                        startValue: 0,
-                        endValue: 10,
-                        startWidth: 0.265,
-                        sizeUnit: GaugeSizeUnit.factor,
-                        endWidth: 0.265,
-                        color: Colors.teal),
-                    GaugeRange(
-                        startValue: 10,
-                        endValue: 30,
-                        startWidth: 0.265,
-                        sizeUnit: GaugeSizeUnit.factor,
-                        endWidth: 0.265,
-                        color: Colors.green),
-                    GaugeRange(
-                        startValue: 30,
-                        endValue: 40,
-                        startWidth: 0.265,
-                        sizeUnit: GaugeSizeUnit.factor,
-                        endWidth: 0.265,
-                        color: Colors.yellow),
-                    GaugeRange(
-                        startValue: 40,
-                        endValue: 150,
-                        startWidth: 0.265,
-                        sizeUnit: GaugeSizeUnit.factor,
-                        endWidth: 0.265,
-                        color: Colors.red,),
+                    GaugeRange(startValue: -50, endValue: 0, startWidth: 0.265, sizeUnit: GaugeSizeUnit.factor, endWidth: 0.265, color: Colors.blue),
+                    GaugeRange(startValue: 0, endValue: 25, startWidth: 0.265, sizeUnit: GaugeSizeUnit.factor, endWidth: 0.265, color: Colors.red),
+                    GaugeRange(startValue: 25, endValue: 45, startWidth: 0.265, sizeUnit: GaugeSizeUnit.factor, endWidth: 0.265, color: Colors.yellow),
+                    GaugeRange(startValue: 45, endValue: 100, startWidth: 0.265, sizeUnit: GaugeSizeUnit.factor, endWidth: 0.265, color: Colors.green),
+                    // GaugeRange(startValue: 40, endValue: 150, startWidth: 0.265, sizeUnit: GaugeSizeUnit.factor, endWidth: 0.265, color: Colors.red),
                   ],
                   annotations: [
-                    GaugeAnnotation(
-                        angle: 90,
-                        positionFactor: 0.35,
-                        widget: Text('Fluid',
-                            style: GoogleFonts.montserrat(
-                                color: const Color(0xFFF8B195), fontSize: 20))),
+                    GaugeAnnotation(angle: 90, positionFactor: 0.35, widget: Text('Fluid', style: GoogleFonts.montserrat(color: const Color(0xFFF8B195), fontSize: 20))),
                     GaugeAnnotation(
                       angle: 90,
                       positionFactor: 0.8,
                       widget: Text(
-                        '  22.5  ',
-                        style: GoogleFonts.montserrat(
-                            fontWeight: FontWeight.bold, fontSize: 30,color: Colors.white),
+                        toPrint.toStringAsFixed(0),
+                        style: GoogleFonts.montserrat(fontWeight: FontWeight.bold, fontSize: 30, color: Colors.white),
                       ),
                     )
                   ],
-                  pointers:  [
+                  pointers: [
                     NeedlePointer(
-                      value: fluidLevel,
+                      value: toPrint,
                       needleLength: 0.55,
                       lengthUnit: GaugeSizeUnit.factor,
                       needleStartWidth: 0,
@@ -117,35 +195,32 @@ class _FluidMonitorState extends State<FluidMonitor> {
                       // animationType: AnimationType.easeOutBack,
                       // enableAnimation: true,
                       // animationDuration: 1200,
-                      knobStyle:const KnobStyle(
-                          knobRadius: 0.06,
-                          sizeUnit: GaugeSizeUnit.factor,
-                          borderColor: Color(0xFFF8B195),
-                          color: Colors.white,
-                          borderWidth: 0.035),
-                      tailStyle: const TailStyle(
-                          color: Color(0xFFF8B195),
-                          width: 4,
-                          lengthUnit: GaugeSizeUnit.factor,
-                          length: 0.15),
-                      needleColor:const  Color(0xFFF8B195),
+                      knobStyle: const KnobStyle(knobRadius: 0.06, sizeUnit: GaugeSizeUnit.factor, borderColor: Color(0xFFF8B195), color: Colors.white, borderWidth: 0.035),
+                      tailStyle: const TailStyle(color: Color(0xFFF8B195), width: 4, lengthUnit: GaugeSizeUnit.factor, length: 0.15),
+                      needleColor: const Color(0xFFF8B195),
                     )
                   ],
-                  axisLabelStyle: const GaugeTextStyle(fontSize: 13,color: Colors.white,fontWeight: FontWeight.w400),
-                  majorTickStyle: const MajorTickStyle(
-                      length: 0.25,
-                      lengthUnit: GaugeSizeUnit.factor,
-                      thickness: 1.5),
-                  minorTickStyle: const MinorTickStyle(
-                      length: 0.13,
-                      lengthUnit: GaugeSizeUnit.factor,
-                      thickness: 1))
+                  axisLabelStyle: const GaugeTextStyle(fontSize: 13, color: Colors.white, fontWeight: FontWeight.w400),
+                  majorTickStyle: const MajorTickStyle(length: 0.25, lengthUnit: GaugeSizeUnit.factor, thickness: 1.5),
+                  minorTickStyle: const MinorTickStyle(length: 0.13, lengthUnit: GaugeSizeUnit.factor, thickness: 1))
             ],
           ),
-          RoundedButton(title: "Calibrate", color: const Color(0xFF39d2c0), onPressed: (){},width: 150,),
+          RoundedButton(
+            title: "Calibrate",
+            color: const Color(0xFF39d2c0),
+            onPressed: () {
+              setState(() {
+                capacity = value;
+              });
+            },
+            width: 250,
+          ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(8,18,8,8),
-            child: Text("Tank is Empty",style: GoogleFonts.montserrat(color: Colors.white,fontSize: 25,fontWeight: FontWeight.w400),),
+            padding: const EdgeInsets.fromLTRB(8, 18, 8, 8),
+            child: Text(
+              floatValue == 0 ? 'Tank Empty' : 'Tank Full',
+              style: GoogleFonts.montserrat(color: Colors.white, fontSize: 25, fontWeight: FontWeight.w400),
+            ),
           )
         ],
       ),

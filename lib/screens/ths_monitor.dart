@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:foka_app_v1/main.dart';
+import 'package:foka_app_v1/screens/home_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import 'package:mqtt_client/mqtt_client.dart';
@@ -138,10 +139,10 @@ class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMix
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new),
           onPressed: () {
-            _animationController.stop();
+            // _animationController.stop();
             _animationController.dispose();
             super.dispose();
-            Navigator.pop(context);
+            Navigator.popAndPushNamed(context, HomeScreen.id);
           },
         ),
         title: const Center(child: Text("THS")),
