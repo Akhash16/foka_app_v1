@@ -9,7 +9,6 @@ import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 import 'package:slide_to_confirm/slide_to_confirm.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
-import 'package:flutter_glow/flutter_glow.dart';
 
 class FluidMonitor extends StatefulWidget {
   const FluidMonitor({Key? key}) : super(key: key);
@@ -19,18 +18,27 @@ class FluidMonitor extends StatefulWidget {
   _FluidMonitorState createState() => _FluidMonitorState();
 }
 
-class _FluidMonitorState extends State<FluidMonitor> {
+class _FluidMonitorState extends State<FluidMonitor> with TickerProviderStateMixin {
   int capacity = 100;
   int value = 0;
   int floatValue = 0;
   double toPrint = 0;
 
+  late AnimationController _animationController;
+  late Animation _animation;
+
   @override
   void initState() {
+    _animationController = AnimationController(vsync: this, duration: const Duration(seconds: 2, milliseconds: 500));
+    _animationController.repeat(reverse: true);
+    _animation = Tween(begin: 2.0, end: 15.0).animate(_animationController)
+      ..addListener(() {
+        setState(() {});
+      });
     print('running init');
     // TODO: implement initState
     super.initState();
-    Timer timer = Timer.periodic(Duration(seconds: 1), (Timer t) => change());
+    Timer timer = Timer.periodic(const Duration(seconds: 1), (Timer t) => change());
     Future<MqttServerClient> connectClient() async {
       print('connect started');
       MqttServerClient client = MqttServerClient.withPort('164.52.212.96', MyApp.clientId, 1883);
@@ -89,6 +97,13 @@ class _FluidMonitorState extends State<FluidMonitor> {
     }
 
     start();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _animationController.dispose();
+    super.dispose();
   }
 
   // connection succeeded
@@ -150,21 +165,40 @@ class _FluidMonitorState extends State<FluidMonitor> {
                   context: context,
                   builder: (context) {
                     return Container(
-                      height: MediaQuery.of(context).size.height * 0.25,
+                      height: MediaQuery.of(context).size.height * 0.3,
                       decoration: const BoxDecoration(
-                        color: Colors.white12,
+                        color: Color(0xfff8f8f8),
                         borderRadius: BorderRadius.only(topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
                       ),
                       child: Center(
-                          child: RoundedButton(
-                        title: 'Tap to Caliberate',
-                        color: Colors.lightBlueAccent,
-                        onPressed: () {
-                          setState(() {
-                            capacity = value;
-                          });
-                        },
-                        width: MediaQuery.of(context).size.width * 0.7,
+                          child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 18.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Tank Settings',
+                              style: GoogleFonts.montserrat(
+                                color: Colors.black,
+                                fontSize: 30,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 10.0,
+                            ),
+                            RoundedButton(
+                              title: 'Tap to Calibrate',
+                              color: Colors.indigo.shade900,
+                              onPressed: () {
+                                setState(() {
+                                  capacity = value;
+                                });
+                              },
+                              width: MediaQuery.of(context).size.width * 0.7,
+                            ),
+                          ],
+                        ),
                       )),
                     );
                   });
@@ -212,27 +246,51 @@ class _FluidMonitorState extends State<FluidMonitor> {
               //   ],
               // ),
 
-              SizedBox(
+              Container(
                 height: MediaQuery.of(context).size.height * 0.5,
                 width: MediaQuery.of(context).size.width * 0.45,
-                child: LiquidLinearProgressIndicator(
-                  center: GlowText(
-                    (toPrint * 100).toStringAsFixed(0) + ' %',
-                    // glowColor: Colors.blue,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 35.0,
+                decoration: BoxDecoration(
+                  shape: BoxShape.rectangle,
+                  borderRadius: BorderRadius.circular(10.0),
+                  color: const Color.fromARGB(255, 27, 28, 30),
+                  boxShadow: [
+                    BoxShadow(
+                      // color: Color.fromARGB(130, 237, 125, 58),
+                      color: toPrint >= 0.25 ? Colors.blue : Colors.red,
+                      blurRadius: _animation.value,
+                      spreadRadius: _animation.value * 0.1,
                     ),
+                  ],
+                ),
+                child: LiquidLinearProgressIndicator(
+                  center: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.baseline,
+                    textBaseline: TextBaseline.alphabetic,
+                    children: [
+                      Text(
+                        (toPrint * 100).toStringAsFixed(0),
+                        // glowColor: Colors.blue,
+                        style: GoogleFonts.montserrat(color: Colors.white, fontSize: 40, fontWeight: FontWeight.w500),
+                      ),
+                      Text(
+                        '%',
+                        style: GoogleFonts.montserrat(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w500),
+                      ),
+                    ],
                   ),
+                  backgroundColor: Colors.black12,
+                  valueColor: toPrint >= 0.25 ? const AlwaysStoppedAnimation(Colors.blue) : const AlwaysStoppedAnimation(Colors.red),
                   value: toPrint,
                   borderRadius: 10.0,
                   borderWidth: 1.0,
-                  borderColor: Colors.blue,
+                  borderColor: Colors.black12,
+                  // borderColor: toPrint >= 25 ? Colors.blue : Colors.red,
                   direction: Axis.vertical,
                 ),
               ),
               Container(
-                height: MediaQuery.of(context).size.height * 0.15,
+                height: MediaQuery.of(context).size.height * 0.2,
                 width: MediaQuery.of(context).size.width * 0.7,
                 decoration: BoxDecoration(
                   color: Colors.white12,
@@ -247,9 +305,23 @@ class _FluidMonitorState extends State<FluidMonitor> {
                   ],
                 ),
                 child: Center(
-                  child: GlowText(
-                    floatValue == 0 ? 'Tank Empty' : 'Tank Full',
-                    style: GoogleFonts.montserrat(color: Colors.white, fontSize: 25, fontWeight: FontWeight.w400),
+                  child: Padding(
+                    padding: const EdgeInsets.all(18.0),
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Text(
+                            'Bilge Status',
+                            style: GoogleFonts.montserrat(color: Colors.white, fontSize: 30, fontWeight: FontWeight.w700),
+                          ),
+                        ),
+                        Text(
+                          floatValue == 0 ? 'Normal' : 'Check Bilge',
+                          style: GoogleFonts.montserrat(color: floatValue == 0 ? Colors.green : Colors.red, fontSize: 25, fontWeight: FontWeight.w500),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),

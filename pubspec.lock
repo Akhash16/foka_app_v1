@@ -160,13 +160,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_glow:
-    dependency: "direct main"
-    description:
-      name: flutter_glow
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.2.0"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -261,6 +254,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.7.0"
+  modal_progress_hud_nsn:
+    dependency: "direct main"
+    description:
+      name: modal_progress_hud_nsn
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.0-nullsafety-1"
   mqtt_client:
     dependency: "direct main"
     description:

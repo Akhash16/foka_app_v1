@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       title: "Foka Tech",
-      initialRoute: HomeScreen.id,
+      initialRoute: LoginScreen.id,
       routes: {
         LoginScreen.id: (context) => const LoginScreen(),
         RegisterScreen.id: (context) => const RegisterScreen(),

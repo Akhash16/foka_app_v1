@@ -42,32 +42,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     List<Widget> items = [
       InkWell(
-        onTap: () => print('location tracker'),
-        child: const DeviceCard(
-          color: Color(0xff8b0f32),
-          title: "Location Tracker",
-          description: "Tap here to locate your boat",
-          icon: Icon(
-            Icons.location_on,
-            color: Color(0xffffffff),
-            size: 44,
-          ),
-        ),
-      ),
-      InkWell(
-        onTap: () => print('security monitor'),
-        child: DeviceCard(
-          color: Colors.orange.shade600,
-          title: "Security Monitor",
-          description: "Tap here to monitor your boat",
-          icon: const Icon(
-            Icons.security,
-            color: Color(0xffffffff),
-            size: 44,
-          ),
-        ),
-      ),
-      InkWell(
         onTap: () => Navigator.pushNamed(context, THSScreen.id),
         child: DeviceCard(
           color: Colors.pink.shade600,
@@ -107,13 +81,39 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           ),
         ),
       ),
+      InkWell(
+        onTap: () => print('location tracker'),
+        child: const DeviceCard(
+          color: Color(0xff8b0f32),
+          title: "Location Tracker",
+          description: "Tap here to locate your boat",
+          icon: Icon(
+            Icons.location_on,
+            color: Color(0xffffffff),
+            size: 44,
+          ),
+        ),
+      ),
+      InkWell(
+        onTap: () => print('security monitor'),
+        child: DeviceCard(
+          color: Colors.orange.shade600,
+          title: "Security Monitor",
+          description: "Tap here to monitor your boat",
+          icon: const Icon(
+            Icons.security,
+            color: Color(0xffffffff),
+            size: 44,
+          ),
+        ),
+      ),
     ];
 
     return Scaffold(
       backgroundColor: const Color(0xff090f13),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 18),
+          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 18),
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -136,7 +136,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(8, 18, 8, 14),
+                  padding: const EdgeInsets.fromLTRB(8, 13, 8, 12),
                   child: Progresso(
                     progressColor: const Color(0xFF39d2c0),
                     backgroundStrokeWidth: 16,
@@ -209,7 +209,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   ),
                 ),
                 const SizedBox(
-                  height: 18,
+                  height: 13,
                 ),
                 Center(
                   child: RoundedButton(
@@ -302,8 +302,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     width: MediaQuery.of(context).size.width * 0.9,
                   ),
                 ),
-                const SizedBox(
-                  height: 40,
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.03,
                 ),
                 // Center(
                 //   child: CircularProgressIndicator(

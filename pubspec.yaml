@@ -50,7 +50,7 @@ dependencies:
   mqtt_client: ^9.6.3
   syncfusion_flutter_gauges: ^19.4.40
   syncfusion_flutter_core: ^19.4.40
-  flutter_glow: ^0.2.0
+  modal_progress_hud_nsn: ^0.1.0-nullsafety-1
 
 dev_dependencies:
   flutter_test:

@@ -92,6 +92,12 @@ class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMix
     start();
   }
 
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
   // connection succeeded
   void onConnected() {
     print('Connected');
@@ -139,9 +145,6 @@ class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMix
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new),
           onPressed: () {
-            // _animationController.stop();
-            _animationController.dispose();
-            super.dispose();
             Navigator.pop(context, HomeScreen.id);
           },
         ),
@@ -157,8 +160,8 @@ class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMix
         width: double.infinity,
         height: double.infinity,
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(8, 15, 8, 8),
-          child: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center, children: [
+          padding: const EdgeInsets.fromLTRB(8, 18, 8, 8),
+          child: Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, crossAxisAlignment: CrossAxisAlignment.center, children: [
             // Here, default theme colors are used for activeBgColor, activeFgColor, inactiveBgColor and inactiveFgColor
             ToggleSwitch(
               cornerRadius: 20,

@@ -153,6 +153,7 @@ class _OnboardingState extends State<Onboarding> {
       body: Builder(
         builder: (context) {
           return LiquidSwipe(
+            enableLoop: false,
             pages: pages,
             fullTransitionValue: 880,
             waveType: WaveType.liquidReveal,
