@@ -5,6 +5,7 @@ import 'package:foka_app_v1/screens/fluid_monitor.dart';
 import 'package:foka_app_v1/screens/add_boat_screen.dart';
 import 'package:foka_app_v1/screens/boat_add_data.dart';
 import 'package:foka_app_v1/screens/boats_page.dart';
+import 'package:foka_app_v1/screens/fluid_settings_page.dart';
 import 'package:foka_app_v1/screens/forgot_password.dart';
 import 'package:foka_app_v1/screens/home_screen.dart';
 import 'package:foka_app_v1/screens/login_screen.dart';
@@ -13,6 +14,7 @@ import 'package:foka_app_v1/screens/register_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:foka_app_v1/screens/smart_connect.dart';
 import 'package:foka_app_v1/screens/ths_monitor.dart';
+import 'package:foka_app_v1/screens/ths_settings_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -47,6 +49,8 @@ class MyApp extends StatelessWidget {
         FluidMonitor.id: (context) => const FluidMonitor(),
         SmartConnet.id: (context) => const SmartConnet(),
         THSScreen.id: (context) => const THSScreen(),
+        THSSettingsPage.id: (context) => const THSSettingsPage(),
+        FluidSettingsPage.id: (context) => const FluidSettingsPage(),
       },
     );
   }

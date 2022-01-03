@@ -47,10 +47,21 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.fromLTRB(8, 50, 0, 40),
-                    child: FlutterLogo(
-                      size: 50,
+                  // const Padding(
+                  //   padding: EdgeInsets.fromLTRB(8, 50, 0, 40),
+                  //   child: FlutterLogo(
+                  //     size: 50,
+                  //   ),
+                  // ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Center(
+                      child: Image.network(
+                        'https://cdn.discordapp.com/attachments/841898285118652461/926791595108466748/foka_logo-removebg-preview_1.png',
+                        color: Colors.white,
+                        height: 100,
+                        width: 200,
+                      ),
                     ),
                   ),
                   Text(

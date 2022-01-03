@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:foka_app_v1/components/rounded_button.dart';
 import 'package:foka_app_v1/main.dart';
+import 'package:foka_app_v1/screens/fluid_settings_page.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
 import 'package:mqtt_client/mqtt_client.dart';
@@ -76,18 +77,18 @@ class _FluidMonitorState extends State<FluidMonitor> with TickerProviderStateMix
 
         print('Received message:$payload from topic: ${c[0].topic}>');
 
-        var parts = payload.split(',');
-        value = int.parse(parts[0]);
-        floatValue = int.parse(parts[1]);
+        // var parts = payload.split(',');
+        // value = int.parse(parts[0]);
+        // floatValue = int.parse(parts[1]);
 
-        // c[0].topic == '/DEMOHUB001/FKB001US' ? value = int.parse(payload) : floatValue = int.parse(payload);
-        // print("message_received : $value");
+        c[0].topic == '/DEMOHUB001/FKB001US' ? value = int.parse(payload) : floatValue = int.parse(payload);
+        print("message_received : $value");
       });
 
       print('something $value');
 
       client.subscribe("/DEMOHUB001/FKB001US", MqttQos.atLeastOnce);
-      // client.subscribe("/esp32-float", MqttQos.atLeastOnce);
+      client.subscribe("/DEMOHUB001/FKB001FLOAT", MqttQos.atLeastOnce);
 
       return client;
     }
@@ -157,9 +158,11 @@ class _FluidMonitorState extends State<FluidMonitor> with TickerProviderStateMix
             Navigator.pop(context);
           },
         ),
-        title: const Center(child: Text("Fluid Monitor")),
+        title: const Text("Fluid Monitor"),
+        centerTitle: true,
         actions: [
           IconButton(
+            icon: const Icon(Icons.adjust),
             onPressed: () {
               showModalBottomSheet(
                   context: context,
@@ -203,8 +206,8 @@ class _FluidMonitorState extends State<FluidMonitor> with TickerProviderStateMix
                     );
                   });
             },
-            icon: const Icon(Icons.settings),
           ),
+          IconButton(onPressed: () => Navigator.pushNamed(context, FluidSettingsPage.id), icon: const Icon(Icons.settings))
         ],
       ),
       backgroundColor: const Color(0xff090f13),

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:foka_app_v1/main.dart';
 import 'package:foka_app_v1/screens/home_screen.dart';
+import 'package:foka_app_v1/screens/ths_settings_page.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import 'package:mqtt_client/mqtt_client.dart';
@@ -148,10 +149,13 @@ class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMix
             Navigator.pop(context, HomeScreen.id);
           },
         ),
-        title: const Center(child: Text("THS")),
+        title: const Text("THS"),
+        centerTitle: true,
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pushNamed(context, THSSettingsPage.id);
+            },
             icon: const Icon(Icons.settings),
           ),
         ],

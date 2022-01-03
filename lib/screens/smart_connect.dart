@@ -137,7 +137,8 @@ class _SmartConnetState extends State<SmartConnet> {
             Navigator.pop(context);
           },
         ),
-        title: const Center(child: Text("Smart Connect")),
+        title: const Text("Smart Connect"),
+        centerTitle: true,
         actions: [
           IconButton(
             onPressed: () {},
