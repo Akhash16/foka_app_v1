@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cool_dropdown/cool_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:foka_app_v1/main.dart';
 import 'package:foka_app_v1/screens/home_screen.dart';
@@ -18,6 +19,17 @@ class THSScreen extends StatefulWidget {
 }
 
 class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMixin {
+  
+    List dropdownItemList = [
+    {'label': 'THS Monitor 1', 'value': '1'},
+    {'label': 'THS Monitor 2', 'value': '2'},
+    {'label': 'THS Monitor 3', 'value': '3'},
+    {'label': 'THS Monitor 4', 'value': '4'}, // label is required and unique
+    {'label': 'THS Monitor 5', 'value': '5'},
+    {'label': 'THS Monitor 6', 'value': '6'},
+    {'label': 'THS Monitor 7', 'value': '7'},
+  ];
+
   late AnimationController _animationController;
   late Animation _animation;
   late MqttServerClient client;
@@ -29,6 +41,7 @@ class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMix
   double tempMin = 28.0;
   double tempMax = 30.0;
   List<String> parts = ['6000', '21.0', '34.0'];
+  var deviceNum;
 
   @override
   void initState() {
@@ -149,7 +162,50 @@ class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMix
             Navigator.pop(context, HomeScreen.id);
           },
         ),
-        title: const Text("THS"),
+        title: CoolDropdown(
+          resultWidth: 180,
+          dropdownItemAlign: Alignment.center,
+          resultAlign: Alignment.center,
+          dropdownBD: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: Colors.black,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.3),
+                spreadRadius: 1,
+                blurRadius: 5,
+                offset: const Offset(0, 1),
+              ),
+            ],
+          ),
+          selectedItemBD: BoxDecoration(
+            color: const Color(0xff090f13),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          selectedItemTS:
+              const TextStyle(color: const Color(0xFF6FCC76), fontSize: 20),
+          unselectedItemTS: const TextStyle(
+            fontSize: 20,
+            color: Colors.white,
+          ),
+          resultBD: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: const Color(0xff090f13),
+          ),
+          resultTS: const TextStyle(
+            fontSize: 20,
+            color: Colors.white,
+          ),
+
+          isTriangle: false,
+          dropdownList: dropdownItemList,
+          onChange: (_) {
+            deviceNum = _;
+            print("The device number is " + deviceNum['value']);
+          },
+          defaultValue: dropdownItemList[0],
+          // placeholder: 'insert...',
+        ),
         centerTitle: true,
         actions: [
           IconButton(

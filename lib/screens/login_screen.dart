@@ -42,7 +42,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(28.0),
+            padding:   EdgeInsets.fromLTRB(28.0,MediaQuery.of(context).size.height * 0.1,28.0,28.0),
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
