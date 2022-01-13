@@ -19,8 +19,7 @@ class THSScreen extends StatefulWidget {
 }
 
 class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMixin {
-  
-    List dropdownItemList = [
+  List dropdownItemList = [
     {'label': 'THS Monitor 1', 'value': '1'},
     {'label': 'THS Monitor 2', 'value': '2'},
     {'label': 'THS Monitor 3', 'value': '3'},
@@ -41,7 +40,7 @@ class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMix
   double tempMin = 28.0;
   double tempMax = 30.0;
   List<String> parts = ['6000', '21.0', '34.0'];
-  var deviceNum;
+  String deviceNum = '1';
 
   @override
   void initState() {
@@ -53,57 +52,59 @@ class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMix
       });
     super.initState();
     Timer timer = Timer.periodic(const Duration(seconds: 1), (Timer t) => change());
-    Future<MqttServerClient> connectClient() async {
-      print('connect started');
-      client = MqttServerClient.withPort('164.52.212.96', MyApp.clientId, 1883);
-      client.logging(on: true);
-      client.onConnected = onConnected;
-      client.onDisconnected = onDisconnected;
-      client.onUnsubscribed = onUnsubscribed;
-      client.onSubscribed = onSubscribed;
-      client.onSubscribeFail = onSubscribeFail;
-      client.pongCallback = pong;
-      client.keepAlivePeriod = 20;
-
-      print('final con');
-      final connMessage = MqttConnectMessage()
-          .authenticateAs('admin', 'smartboat@rec&adr')
-          // ignore: deprecated_member_use
-          .withClientIdentifier(MyApp.clientId)
-          .keepAliveFor(6000)
-          .startClean()
-          .withWillQos(MqttQos.atLeastOnce);
-      client.connectionMessage = connMessage;
-      print('try');
-      try {
-        await client.connect();
-      } catch (e) {
-        print('catch');
-        print('Exception: $e');
-        client.disconnect();
-      }
-
-      print('try done');
-      client.updates!.listen((List<MqttReceivedMessage<MqttMessage>> c) {
-        MqttPublishMessage message = c[0].payload as MqttPublishMessage;
-        final payload = MqttPublishPayload.bytesToStringAsString(message.payload.message);
-
-        print('Received message:$payload from topic: ${c[0].topic}>');
-
-        parts = payload.split(',');
-        print("message_received : $parts");
-      });
-
-      client.subscribe("/DEMOHUB001/FKB001THS", MqttQos.atLeastOnce);
-
-      return client;
-    }
 
     void start() async {
       await connectClient();
+      client.subscribe("/DEMOHUB001/FKB001THS", MqttQos.atLeastOnce);
     }
 
     start();
+  }
+
+  Future<MqttServerClient> connectClient() async {
+    print('connect started');
+    client = MqttServerClient.withPort('164.52.212.96', MyApp.clientId, 1883);
+    client.logging(on: true);
+    client.onConnected = onConnected;
+    client.onDisconnected = onDisconnected;
+    client.onUnsubscribed = onUnsubscribed;
+    client.onSubscribed = onSubscribed;
+    client.onSubscribeFail = onSubscribeFail;
+    client.pongCallback = pong;
+    client.keepAlivePeriod = 20;
+
+    print('final con');
+    final connMessage = MqttConnectMessage()
+        .authenticateAs('admin', 'smartboat@rec&adr')
+        // ignore: deprecated_member_use
+        .withClientIdentifier(MyApp.clientId)
+        .keepAliveFor(6000)
+        .startClean()
+        .withWillQos(MqttQos.atLeastOnce);
+    client.connectionMessage = connMessage;
+    print('try');
+    try {
+      await client.connect();
+    } catch (e) {
+      print('catch');
+      print('Exception: $e');
+      client.disconnect();
+    }
+
+    print('try done');
+    client.updates!.listen((List<MqttReceivedMessage<MqttMessage>> c) {
+      MqttPublishMessage message = c[0].payload as MqttPublishMessage;
+      final payload = MqttPublishPayload.bytesToStringAsString(message.payload.message);
+
+      print('Received message:$payload from topic: ${c[0].topic}>');
+
+      parts = payload.split(',');
+      print("message_received : $parts");
+    });
+
+    // client.subscribe("/DEMOHUB001/FKB001THS", MqttQos.atLeastOnce);
+
+    return client;
   }
 
   @override
@@ -182,8 +183,7 @@ class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMix
             color: const Color(0xff090f13),
             borderRadius: BorderRadius.circular(10),
           ),
-          selectedItemTS:
-              const TextStyle(color: const Color(0xFF6FCC76), fontSize: 20),
+          selectedItemTS: const TextStyle(color: const Color(0xFF6FCC76), fontSize: 20),
           unselectedItemTS: const TextStyle(
             fontSize: 20,
             color: Colors.white,
@@ -199,9 +199,18 @@ class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMix
 
           isTriangle: false,
           dropdownList: dropdownItemList,
-          onChange: (_) {
-            deviceNum = _;
-            print("The device number is " + deviceNum['value']);
+          onChange: (_) async {
+            await connectClient();
+            // prevDeviceNum = deviceNum;
+            client.subscribe("/DEMOHUB001/FKB00" + _['value'] + "THS", MqttQos.atLeastOnce);
+            // try {
+            //   client.unsubscribe("/DEMOHUB001/FKB00" + deviceNum + "THS");
+            // } catch (e) {
+            //   print(e);
+            // }
+            // deviceNum = _['value'];
+            // client.subscribe("/DEMOHUB001/FKB00" + deviceNum + "THS", MqttQos.atLeastOnce);
+            print("The device number is " + _['value']);
           },
           defaultValue: dropdownItemList[0],
           // placeholder: 'insert...',

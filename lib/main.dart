@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:foka_app_v1/screens/add_boat_verification.dart';
 import 'package:foka_app_v1/screens/fluid_monitor.dart';
 import 'package:foka_app_v1/screens/add_boat_screen.dart';
 import 'package:foka_app_v1/screens/boat_add_data.dart';
@@ -36,7 +37,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       title: "Foka Tech",
-      initialRoute: HomeScreen.id,
+      initialRoute: BoatsPage.id,
       routes: {
         LoginScreen.id: (context) => const LoginScreen(),
         RegisterScreen.id: (context) => const RegisterScreen(),
@@ -51,6 +52,7 @@ class MyApp extends StatelessWidget {
         THSScreen.id: (context) => const THSScreen(),
         THSSettingsPage.id: (context) => const THSSettingsPage(),
         FluidSettingsPage.id: (context) => const FluidSettingsPage(),
+        AddBoatVerification.id: (context) => const AddBoatVerification(),
       },
     );
   }

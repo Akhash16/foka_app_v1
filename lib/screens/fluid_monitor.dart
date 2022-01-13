@@ -1,6 +1,4 @@
 import 'dart:async';
-
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cool_dropdown/cool_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:foka_app_v1/components/rounded_button.dart';
@@ -10,8 +8,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
-import 'package:slide_to_confirm/slide_to_confirm.dart';
-import 'package:syncfusion_flutter_gauges/gauges.dart';
 
 class FluidMonitor extends StatefulWidget {
   const FluidMonitor({Key? key}) : super(key: key);
@@ -21,8 +17,7 @@ class FluidMonitor extends StatefulWidget {
   _FluidMonitorState createState() => _FluidMonitorState();
 }
 
-class _FluidMonitorState extends State<FluidMonitor>
-    with TickerProviderStateMixin {
+class _FluidMonitorState extends State<FluidMonitor> with TickerProviderStateMixin {
   List dropdownItemList = [
     {'label': 'Fluid Monitor 1', 'value': '1'},
     {'label': 'Fluid Monitor 2', 'value': '2'},
@@ -42,10 +37,13 @@ class _FluidMonitorState extends State<FluidMonitor>
   late AnimationController _animationController;
   late Animation _animation;
 
+  bool isFluidScreen = true;
+
+  late MqttServerClient client;
+
   @override
   void initState() {
-    _animationController = AnimationController(
-        vsync: this, duration: const Duration(seconds: 2, milliseconds: 500));
+    _animationController = AnimationController(vsync: this, duration: const Duration(seconds: 2, milliseconds: 500));
     _animationController.repeat(reverse: true);
     _animation = Tween(begin: 2.0, end: 15.0).animate(_animationController)
       ..addListener(() {
@@ -54,70 +52,63 @@ class _FluidMonitorState extends State<FluidMonitor>
     print('running init');
     // TODO: implement initState
     super.initState();
-    Timer timer =
-        Timer.periodic(const Duration(seconds: 1), (Timer t) => change());
-    Future<MqttServerClient> connectClient() async {
-      print('connect started');
-      MqttServerClient client =
-          MqttServerClient.withPort('164.52.212.96', MyApp.clientId, 1883);
-      client.logging(on: true);
-      client.onConnected = onConnected;
-      client.onDisconnected = onDisconnected;
-      client.onUnsubscribed = onUnsubscribed;
-      client.onSubscribed = onSubscribed;
-      client.onSubscribeFail = onSubscribeFail;
-      client.pongCallback = pong;
-      client.keepAlivePeriod = 20;
-
-      print('final con');
-      final connMessage = MqttConnectMessage()
-          .authenticateAs('admin', 'smartboat@rec&adr')
-          // ignore: deprecated_member_use
-          .withClientIdentifier(MyApp.clientId)
-          .keepAliveFor(6000)
-          .startClean()
-          .withWillQos(MqttQos.atLeastOnce);
-      client.connectionMessage = connMessage;
-      print('try');
-      try {
-        await client.connect();
-      } catch (e) {
-        print('catch');
-        print('Exception: $e');
-        client.disconnect();
-      }
-
-      print('try done');
-      client.updates!.listen((List<MqttReceivedMessage<MqttMessage>> c) {
-        MqttPublishMessage message = c[0].payload as MqttPublishMessage;
-        final payload =
-            MqttPublishPayload.bytesToStringAsString(message.payload.message);
-
-        print('Received message:$payload from topic: ${c[0].topic}>');
-
-        // var parts = payload.split(',');
-        // value = int.parse(parts[0]);
-        // floatValue = int.parse(parts[1]);
-
-        c[0].topic == '/DEMOHUB001/FKB001US'
-            ? value = int.parse(payload)
-            : floatValue = int.parse(payload);
-        print("message_received : $value");
-      });
-
-      print('something $value');
-
-      client.subscribe("/DEMOHUB001/FKB001US", MqttQos.atLeastOnce);
-      client.subscribe("/DEMOHUB001/FKB001FLOAT", MqttQos.atLeastOnce);
-
-      return client;
-    }
+    Timer timer = Timer.periodic(const Duration(seconds: 1), (Timer t) => change());
 
     void start() async {
       await connectClient();
+      client.subscribe("/DEMOHUB001/FKB001US", MqttQos.atLeastOnce);
+      client.subscribe("/DEMOHUB001/FKB001FLOAT", MqttQos.atLeastOnce);
     }
 
     start();
+  }
+
+  Future<MqttServerClient> connectClient() async {
+    print('connect started');
+    client = MqttServerClient.withPort('164.52.212.96', MyApp.clientId, 1883);
+    client.logging(on: true);
+    client.onConnected = onConnected;
+    client.onDisconnected = onDisconnected;
+    client.onUnsubscribed = onUnsubscribed;
+    client.onSubscribed = onSubscribed;
+    client.onSubscribeFail = onSubscribeFail;
+    client.pongCallback = pong;
+    client.keepAlivePeriod = 20;
+
+    print('final con');
+    final connMessage = MqttConnectMessage()
+        .authenticateAs('admin', 'smartboat@rec&adr')
+        // ignore: deprecated_member_use
+        .withClientIdentifier(MyApp.clientId)
+        .keepAliveFor(6000)
+        .startClean()
+        .withWillQos(MqttQos.atLeastOnce);
+    client.connectionMessage = connMessage;
+    print('try');
+    try {
+      await client.connect();
+    } catch (e) {
+      print('catch');
+      print('Exception: $e');
+      client.disconnect();
+    }
+
+    print('try done');
+    client.updates!.listen((List<MqttReceivedMessage<MqttMessage>> c) {
+      MqttPublishMessage message = c[0].payload as MqttPublishMessage;
+      final payload = MqttPublishPayload.bytesToStringAsString(message.payload.message);
+
+      print('Received message:$payload from topic: ${c[0].topic}>');
+
+      // var parts = payload.split(',');
+      // value = int.parse(parts[0]);
+      // floatValue = int.parse(parts[1]);
+
+      c[0].topic.contains('US') ? value = int.parse(payload) : floatValue = int.parse(payload);
+      print("message_received : $value");
+    });
+
+    return client;
   }
 
   @override
@@ -198,8 +189,7 @@ class _FluidMonitorState extends State<FluidMonitor>
             color: const Color(0xff090f13),
             borderRadius: BorderRadius.circular(10),
           ),
-          selectedItemTS:
-              const TextStyle(color: const Color(0xFF6FCC76), fontSize: 20),
+          selectedItemTS: const TextStyle(color: const Color(0xFF6FCC76), fontSize: 20),
           unselectedItemTS: const TextStyle(
             fontSize: 20,
             color: Colors.white,
@@ -215,7 +205,10 @@ class _FluidMonitorState extends State<FluidMonitor>
 
           isTriangle: false,
           dropdownList: dropdownItemList,
-          onChange: (_) {
+          onChange: (_) async {
+            await connectClient();
+            client.subscribe("/DEMOHUB001/FKB00" + _['value'] + "US", MqttQos.atLeastOnce);
+            client.subscribe("/DEMOHUB001/FKB00" + _['value'] + "FLOAT", MqttQos.atLeastOnce);
             deviceNum = _;
             print("The device number is " + deviceNum['value']);
           },
@@ -234,9 +227,7 @@ class _FluidMonitorState extends State<FluidMonitor>
                       height: MediaQuery.of(context).size.height * 0.3,
                       decoration: const BoxDecoration(
                         color: Color(0xfff8f8f8),
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(10.0),
-                            topRight: Radius.circular(10.0)),
+                        borderRadius: BorderRadius.only(topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
                       ),
                       child: Center(
                           child: Padding(
@@ -272,119 +263,72 @@ class _FluidMonitorState extends State<FluidMonitor>
                   });
             },
           ),
-          IconButton(
-              onPressed: () =>
-                  Navigator.pushNamed(context, FluidSettingsPage.id),
-              icon: const Icon(Icons.settings))
+          IconButton(onPressed: () => Navigator.pushNamed(context, FluidSettingsPage.id), icon: const Icon(Icons.settings))
         ],
       ),
       backgroundColor: const Color(0xff090f13),
       body: Center(
         child: Container(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              // Column(
-              //   mainAxisAlignment: MainAxisAlignment.center,
-              //   children: [
-              //     // Text(
-              //     //   (toPrint * 100).toStringAsFixed(0) + ' %',
-              //     //   style: const TextStyle(
-              //     //     color: Colors.white,
-              //     //     fontSize: 30.0,
-              //     //   ),
-              //     // ),
-              //     // const SizedBox(height: 20.0),
-              //     RoundedButton(
-              //       title: "Calibrate",
-              //       color: Colors.lightBlueAccent,
-              //       onPressed: () {
-              //         setState(() {
-              //           capacity = value;
-              //         });
-              //       },
-              //       width: 180,
-              //     ),
-              //     const SizedBox(height: 20.0),
-              //     Text(
-              //       floatValue == 0 ? 'Tank Empty' : 'Tank Full',
-              //       style: GoogleFonts.montserrat(
-              //         color: Colors.white,
-              //         fontSize: 25,
-              //         fontWeight: FontWeight.w400,
-              //       ),
-              //     ),
-              //   ],
-              // ),
-
-              Container(
-                height: MediaQuery.of(context).size.height * 0.5,
-                width: MediaQuery.of(context).size.width * 0.45,
-                decoration: BoxDecoration(
-                  shape: BoxShape.rectangle,
-                  borderRadius: BorderRadius.circular(10.0),
-                  color: const Color.fromARGB(255, 27, 28, 30),
-                  boxShadow: [
-                    BoxShadow(
-                      // color: Color.fromARGB(130, 237, 125, 58),
-                      color: toPrint >= 0.25 ? Colors.blue : Colors.red,
-                      blurRadius: _animation.value,
-                      spreadRadius: _animation.value * 0.1,
+          child: GestureDetector(
+            onPanUpdate: (details) {
+              if (details.delta.dx.abs() > 0) {
+                isFluidScreen = !isFluidScreen;
+              }
+            },
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                AnimatedOpacity(
+                  opacity: isFluidScreen ? 1.0 : 0.0,
+                  duration: const Duration(seconds: 1),
+                  child: Container(
+                    height: MediaQuery.of(context).size.height * 0.5,
+                    width: MediaQuery.of(context).size.width * 0.45,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.rectangle,
+                      borderRadius: BorderRadius.circular(10.0),
+                      color: const Color.fromARGB(255, 27, 28, 30),
+                      boxShadow: [
+                        BoxShadow(
+                          // color: Color.fromARGB(130, 237, 125, 58),
+                          color: toPrint >= 0.25 ? Colors.blue : Colors.red,
+                          blurRadius: _animation.value,
+                          spreadRadius: _animation.value * 0.1,
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                child: LiquidLinearProgressIndicator(
-                  center: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.baseline,
-                    textBaseline: TextBaseline.alphabetic,
-                    children: [
-                      Text(
-                        (toPrint * 100).toStringAsFixed(0),
-                        // glowColor: Colors.blue,
-                        style: GoogleFonts.montserrat(
-                            color: Colors.white,
-                            fontSize: 40,
-                            fontWeight: FontWeight.w500),
+                    child: LiquidLinearProgressIndicator(
+                      center: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.baseline,
+                        textBaseline: TextBaseline.alphabetic,
+                        children: [
+                          Text(
+                            (toPrint * 100).toStringAsFixed(0),
+                            // glowColor: Colors.blue,
+                            style: GoogleFonts.montserrat(color: Colors.white, fontSize: 40, fontWeight: FontWeight.w500),
+                          ),
+                          Text(
+                            '%',
+                            style: GoogleFonts.montserrat(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w500),
+                          ),
+                        ],
                       ),
-                      Text(
-                        '%',
-                        style: GoogleFonts.montserrat(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w500),
-                      ),
-                    ],
-                  ),
-                  backgroundColor: Colors.black12,
-                  valueColor: toPrint >= 0.25
-                      ? const AlwaysStoppedAnimation(Colors.blue)
-                      : const AlwaysStoppedAnimation(Colors.red),
-                  value: toPrint,
-                  borderRadius: 10.0,
-                  borderWidth: 1.0,
-                  borderColor: Colors.black12,
-                  // borderColor: toPrint >= 25 ? Colors.blue : Colors.red,
-                  direction: Axis.vertical,
-                ),
-              ),
-              CarouselSlider(
-                items: [
-                  Container(
-                    height: MediaQuery.of(context).size.height * 0.2,
-                    width: MediaQuery.of(context).size.width * 0.7,
-                    color: const Color(0xff090f13),
-                    child: Center(
-                      child: Text(
-                        "Slide to view the results",
-                        style: GoogleFonts.montserrat(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w500),
-                      ),
+                      backgroundColor: Colors.black12,
+                      valueColor: toPrint >= 0.25 ? const AlwaysStoppedAnimation(Colors.blue) : const AlwaysStoppedAnimation(Colors.red),
+                      value: toPrint,
+                      borderRadius: 10.0,
+                      borderWidth: 1.0,
+                      borderColor: Colors.black12,
+                      // borderColor: toPrint >= 25 ? Colors.blue : Colors.red,
+                      direction: Axis.vertical,
                     ),
                   ),
-                  Container(
+                ),
+                AnimatedOpacity(
+                  opacity: isFluidScreen ? 0.0 : 1.0,
+                  duration: const Duration(seconds: 1),
+                  child: Container(
                     height: MediaQuery.of(context).size.height * 0.2,
                     width: MediaQuery.of(context).size.width * 0.7,
                     decoration: BoxDecoration(
@@ -408,37 +352,21 @@ class _FluidMonitorState extends State<FluidMonitor>
                               padding: const EdgeInsets.all(10.0),
                               child: Text(
                                 'Bilge Status',
-                                style: GoogleFonts.montserrat(
-                                    color: Colors.white,
-                                    fontSize: 30,
-                                    fontWeight: FontWeight.w700),
+                                style: GoogleFonts.montserrat(color: Colors.white, fontSize: 30, fontWeight: FontWeight.w700),
                               ),
                             ),
                             Text(
                               floatValue == 0 ? 'Normal' : 'Check Bilge',
-                              style: GoogleFonts.montserrat(
-                                  color: floatValue == 0
-                                      ? Colors.green
-                                      : Colors.red,
-                                  fontSize: 25,
-                                  fontWeight: FontWeight.w500),
+                              style: GoogleFonts.montserrat(color: floatValue == 0 ? Colors.green : Colors.red, fontSize: 25, fontWeight: FontWeight.w500),
                             ),
                           ],
                         ),
                       ),
                     ),
                   ),
-                ],
-                options: CarouselOptions(
-                  height: MediaQuery.of(context).size.height * 0.23,
-                  viewportFraction: 0.83,
-                  enlargeCenterPage: true,
-
-                  // onPageChanged: callbackFunction,
-                  scrollDirection: Axis.horizontal,
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

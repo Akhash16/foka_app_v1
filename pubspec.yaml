@@ -48,11 +48,11 @@ dependencies:
   dotted_border: ^2.0.0+2
   toggle_switch: ^1.3.0
   mqtt_client: ^9.6.3
-  syncfusion_flutter_gauges: ^19.4.40
-  syncfusion_flutter_core: ^19.4.40
   modal_progress_hud_nsn: ^0.1.0-nullsafety-1
   numberpicker: ^2.1.1
   cool_dropdown:
+  flutter_verification_code: ^1.1.1
+  animate_do: ^2.1.0
   
 dev_dependencies:
   flutter_test:
