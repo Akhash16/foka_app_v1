@@ -17,7 +17,8 @@ class FluidMonitor extends StatefulWidget {
   _FluidMonitorState createState() => _FluidMonitorState();
 }
 
-class _FluidMonitorState extends State<FluidMonitor> with TickerProviderStateMixin {
+class _FluidMonitorState extends State<FluidMonitor>
+    with TickerProviderStateMixin {
   List dropdownItemList = [
     {'label': 'Fluid Monitor 1', 'value': '1'},
     {'label': 'Fluid Monitor 2', 'value': '2'},
@@ -43,7 +44,8 @@ class _FluidMonitorState extends State<FluidMonitor> with TickerProviderStateMix
 
   @override
   void initState() {
-    _animationController = AnimationController(vsync: this, duration: const Duration(seconds: 2, milliseconds: 500));
+    _animationController = AnimationController(
+        vsync: this, duration: const Duration(seconds: 2, milliseconds: 500));
     _animationController.repeat(reverse: true);
     _animation = Tween(begin: 2.0, end: 15.0).animate(_animationController)
       ..addListener(() {
@@ -52,7 +54,8 @@ class _FluidMonitorState extends State<FluidMonitor> with TickerProviderStateMix
     print('running init');
     // TODO: implement initState
     super.initState();
-    Timer timer = Timer.periodic(const Duration(seconds: 1), (Timer t) => change());
+    Timer timer =
+        Timer.periodic(const Duration(seconds: 1), (Timer t) => change());
 
     void start() async {
       await connectClient();
@@ -96,7 +99,8 @@ class _FluidMonitorState extends State<FluidMonitor> with TickerProviderStateMix
     print('try done');
     client.updates!.listen((List<MqttReceivedMessage<MqttMessage>> c) {
       MqttPublishMessage message = c[0].payload as MqttPublishMessage;
-      final payload = MqttPublishPayload.bytesToStringAsString(message.payload.message);
+      final payload =
+          MqttPublishPayload.bytesToStringAsString(message.payload.message);
 
       print('Received message:$payload from topic: ${c[0].topic}>');
 
@@ -104,7 +108,9 @@ class _FluidMonitorState extends State<FluidMonitor> with TickerProviderStateMix
       // value = int.parse(parts[0]);
       // floatValue = int.parse(parts[1]);
 
-      c[0].topic.contains('US') ? value = int.parse(payload) : floatValue = int.parse(payload);
+      c[0].topic.contains('US')
+          ? value = int.parse(payload)
+          : floatValue = int.parse(payload);
       print("message_received : $value");
     });
 
@@ -189,7 +195,8 @@ class _FluidMonitorState extends State<FluidMonitor> with TickerProviderStateMix
             color: const Color(0xff090f13),
             borderRadius: BorderRadius.circular(10),
           ),
-          selectedItemTS: const TextStyle(color: const Color(0xFF6FCC76), fontSize: 20),
+          selectedItemTS:
+              const TextStyle(color: const Color(0xFF6FCC76), fontSize: 20),
           unselectedItemTS: const TextStyle(
             fontSize: 20,
             color: Colors.white,
@@ -207,8 +214,10 @@ class _FluidMonitorState extends State<FluidMonitor> with TickerProviderStateMix
           dropdownList: dropdownItemList,
           onChange: (_) async {
             await connectClient();
-            client.subscribe("/DEMOHUB001/FKB00" + _['value'] + "US", MqttQos.atLeastOnce);
-            client.subscribe("/DEMOHUB001/FKB00" + _['value'] + "FLOAT", MqttQos.atLeastOnce);
+            client.subscribe(
+                "/DEMOHUB001/FKB00" + _['value'] + "US", MqttQos.atLeastOnce);
+            client.subscribe("/DEMOHUB001/FKB00" + _['value'] + "FLOAT",
+                MqttQos.atLeastOnce);
             deviceNum = _;
             print("The device number is " + deviceNum['value']);
           },
@@ -227,7 +236,9 @@ class _FluidMonitorState extends State<FluidMonitor> with TickerProviderStateMix
                       height: MediaQuery.of(context).size.height * 0.3,
                       decoration: const BoxDecoration(
                         color: Color(0xfff8f8f8),
-                        borderRadius: BorderRadius.only(topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(10.0),
+                            topRight: Radius.circular(10.0)),
                       ),
                       child: Center(
                           child: Padding(
@@ -263,7 +274,10 @@ class _FluidMonitorState extends State<FluidMonitor> with TickerProviderStateMix
                   });
             },
           ),
-          IconButton(onPressed: () => Navigator.pushNamed(context, FluidSettingsPage.id), icon: const Icon(Icons.settings))
+          IconButton(
+              onPressed: () =>
+                  Navigator.pushNamed(context, FluidSettingsPage.id),
+              icon: const Icon(Icons.settings))
         ],
       ),
       backgroundColor: const Color(0xff090f13),
@@ -275,95 +289,127 @@ class _FluidMonitorState extends State<FluidMonitor> with TickerProviderStateMix
                 isFluidScreen = !isFluidScreen;
               }
             },
-            child: Stack(
-              alignment: Alignment.center,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                AnimatedOpacity(
-                  opacity: isFluidScreen ? 1.0 : 0.0,
-                  duration: const Duration(seconds: 1),
-                  child: Container(
-                    height: MediaQuery.of(context).size.height * 0.5,
-                    width: MediaQuery.of(context).size.width * 0.45,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.rectangle,
-                      borderRadius: BorderRadius.circular(10.0),
-                      color: const Color.fromARGB(255, 27, 28, 30),
-                      boxShadow: [
-                        BoxShadow(
-                          // color: Color.fromARGB(130, 237, 125, 58),
-                          color: toPrint >= 0.25 ? Colors.blue : Colors.red,
-                          blurRadius: _animation.value,
-                          spreadRadius: _animation.value * 0.1,
-                        ),
-                      ],
-                    ),
-                    child: LiquidLinearProgressIndicator(
-                      center: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.baseline,
-                        textBaseline: TextBaseline.alphabetic,
-                        children: [
-                          Text(
-                            (toPrint * 100).toStringAsFixed(0),
-                            // glowColor: Colors.blue,
-                            style: GoogleFonts.montserrat(color: Colors.white, fontSize: 40, fontWeight: FontWeight.w500),
-                          ),
-                          Text(
-                            '%',
-                            style: GoogleFonts.montserrat(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w500),
-                          ),
-                        ],
-                      ),
-                      backgroundColor: Colors.black12,
-                      valueColor: toPrint >= 0.25 ? const AlwaysStoppedAnimation(Colors.blue) : const AlwaysStoppedAnimation(Colors.red),
-                      value: toPrint,
-                      borderRadius: 10.0,
-                      borderWidth: 1.0,
-                      borderColor: Colors.black12,
-                      // borderColor: toPrint >= 25 ? Colors.blue : Colors.red,
-                      direction: Axis.vertical,
-                    ),
-                  ),
-                ),
-                AnimatedOpacity(
-                  opacity: isFluidScreen ? 0.0 : 1.0,
-                  duration: const Duration(seconds: 1),
-                  child: Container(
-                    height: MediaQuery.of(context).size.height * 0.2,
-                    width: MediaQuery.of(context).size.width * 0.7,
-                    decoration: BoxDecoration(
-                      color: Colors.white12,
-                      borderRadius: BorderRadius.circular(10.0),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.white10,
-                          offset: Offset(3.0, 3.0),
-                          blurRadius: 5.0,
-                          spreadRadius: 2.0,
-                        ),
-                      ],
-                    ),
-                    child: Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(18.0),
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: Text(
-                                'Bilge Status',
-                                style: GoogleFonts.montserrat(color: Colors.white, fontSize: 30, fontWeight: FontWeight.w700),
-                              ),
-                            ),
-                            Text(
-                              floatValue == 0 ? 'Normal' : 'Check Bilge',
-                              style: GoogleFonts.montserrat(color: floatValue == 0 ? Colors.green : Colors.red, fontSize: 25, fontWeight: FontWeight.w500),
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    AnimatedOpacity(
+                      opacity: isFluidScreen ? 1.0 : 0.0,
+                      duration: const Duration(milliseconds: 500),
+                      child: Container(
+                        height: MediaQuery.of(context).size.height * 0.5,
+                        width: MediaQuery.of(context).size.width * 0.45,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.circular(10.0),
+                          color: const Color.fromARGB(255, 27, 28, 30),
+                          boxShadow: [
+                            BoxShadow(
+                              // color: Color.fromARGB(130, 237, 125, 58),
+                              color: toPrint >= 0.25 ? Colors.blue : Colors.red,
+                              blurRadius: _animation.value,
+                              spreadRadius: _animation.value * 0.1,
                             ),
                           ],
                         ),
+                        child: LiquidLinearProgressIndicator(
+                          center: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.baseline,
+                            textBaseline: TextBaseline.alphabetic,
+                            children: [
+                              Text(
+                                (toPrint * 100).toStringAsFixed(0),
+                                // glowColor: Colors.blue,
+                                style: GoogleFonts.montserrat(
+                                    color: Colors.white,
+                                    fontSize: 40,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                              Text(
+                                '%',
+                                style: GoogleFonts.montserrat(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                            ],
+                          ),
+                          backgroundColor: Colors.black12,
+                          valueColor: toPrint >= 0.25
+                              ? const AlwaysStoppedAnimation(Colors.blue)
+                              : const AlwaysStoppedAnimation(Colors.red),
+                          value: toPrint,
+                          borderRadius: 10.0,
+                          borderWidth: 1.0,
+                          borderColor: Colors.black12,
+                          // borderColor: toPrint >= 25 ? Colors.blue : Colors.red,
+                          direction: Axis.vertical,
+                        ),
                       ),
                     ),
-                  ),
+                    AnimatedOpacity(
+                      opacity: isFluidScreen ? 0.0 : 1.0,
+                      duration: const Duration(milliseconds: 500),
+                      child: Container(
+                        height: MediaQuery.of(context).size.height * 0.2,
+                        width: MediaQuery.of(context).size.width * 0.7,
+                        decoration: BoxDecoration(
+                          color: Colors.white12,
+                          borderRadius: BorderRadius.circular(10.0),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.white10,
+                              offset: Offset(3.0, 3.0),
+                              blurRadius: 5.0,
+                              spreadRadius: 2.0,
+                            ),
+                          ],
+                        ),
+                        child: Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(18.0),
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Text(
+                                    'Bilge Status',
+                                    style: GoogleFonts.montserrat(
+                                        color: Colors.white,
+                                        fontSize: 30,
+                                        fontWeight: FontWeight.w700),
+                                  ),
+                                ),
+                                Text(
+                                  floatValue == 0 ? 'Normal' : 'Check Bilge',
+                                  style: GoogleFonts.montserrat(
+                                      color: floatValue == 0
+                                          ? Colors.green
+                                          : Colors.red,
+                                      fontSize: 25,
+                                      fontWeight: FontWeight.w500),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 30,
+                ),
+                Text(
+                  "Swipe to see " +
+                      (isFluidScreen ? "Bilge Status" : "Fluid Monitor"),
+                  style: GoogleFonts.montserrat(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w400),
                 ),
               ],
             ),

@@ -3,6 +3,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:foka_app_v1/components/rounded_button.dart';
 import 'package:foka_app_v1/main.dart';
+import 'package:foka_app_v1/screens/location_tracker.dart';
 import 'package:foka_app_v1/screens/smart_connect.dart';
 import 'package:foka_app_v1/screens/ths_monitor.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -83,7 +84,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         ),
       ),
       InkWell(
-        onTap: () => print('location tracker'),
+        onTap: () => Navigator.pushNamed(context, LocationScreen.id),
         child: const DeviceCard(
           color: Color(0xff8b0f32),
           title: "Location Tracker",

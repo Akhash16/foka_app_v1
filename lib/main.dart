@@ -9,6 +9,7 @@ import 'package:foka_app_v1/screens/boats_page.dart';
 import 'package:foka_app_v1/screens/fluid_settings_page.dart';
 import 'package:foka_app_v1/screens/forgot_password.dart';
 import 'package:foka_app_v1/screens/home_screen.dart';
+import 'package:foka_app_v1/screens/location_tracker.dart';
 import 'package:foka_app_v1/screens/login_screen.dart';
 import 'package:foka_app_v1/screens/onboarding.dart';
 import 'package:foka_app_v1/screens/register_screen.dart';
@@ -53,6 +54,7 @@ class MyApp extends StatelessWidget {
         THSSettingsPage.id: (context) => const THSSettingsPage(),
         FluidSettingsPage.id: (context) => const FluidSettingsPage(),
         AddBoatVerification.id: (context) => const AddBoatVerification(),
+        LocationScreen.id : (context) => const LocationScreen(),
       },
     );
   }
