@@ -36,10 +36,10 @@ class _LocationScreenState extends State<LocationScreen> {
   ];
 
   // double lat = 13.0201638, long = 80.2217002, zoom = 20.83;
-  double lat = 0;
-  double long = 0;
-  double zoom = 19.83;
-  List<String> parts = ['0.0', '0.0'];
+  //59.9139, 10.7522
+  double lat = 59.9139;
+  double long = 10.7522;
+  List<String> parts = ['59.9139', '10.7522'];
 
   late MqttServerClient client;
 
@@ -50,7 +50,7 @@ class _LocationScreenState extends State<LocationScreen> {
     super.initState();
     setCustomMarker();
     Timer timer =
-        Timer.periodic(const Duration(seconds: 10), (Timer t) => change());
+        Timer.periodic(const Duration(seconds: 1), (Timer t) => change());
 
     void start() async {
       await connectClient();
@@ -142,7 +142,21 @@ class _LocationScreenState extends State<LocationScreen> {
       lat = double.parse(parts[0]);
       long = double.parse(parts[1]);
     });
+    _markers.clear();
+    _markers.add(
+              Marker(
+                icon: mapMarker,
+                visible: true,
+                markerId: const MarkerId('id-1'),
+                position: LatLng(lat, long),
+                infoWindow: InfoWindow(
+                  title: "Co-ordinates",
+                  snippet: "$lat,$long",
+                ),
+              ),
+            );
     _goToTheBoat();
+    setCustomMarker();
   }
 
   Future<void> _goToTheBoat() async {
@@ -150,10 +164,10 @@ class _LocationScreenState extends State<LocationScreen> {
     controller.animateCamera(
       CameraUpdate.newCameraPosition(
         CameraPosition(
-          bearing: 192.8334901395799,
+          // bearing: 192.8334901395799,
           target: LatLng(lat, long),
-          tilt: 59.440717697143555,
-          zoom: 19.151926040649414,
+          // tilt: 59.440717697143555,
+          zoom: 14,
         ),
       ),
     );
@@ -170,47 +184,10 @@ class _LocationScreenState extends State<LocationScreen> {
             Navigator.pop(context, HomeScreen.id);
           },
         ),
-        title: CoolDropdown(
-          resultWidth: 220,
-          dropdownItemAlign: Alignment.center,
-          resultAlign: Alignment.center,
-          dropdownBD: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: Colors.black,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.3),
-                spreadRadius: 1,
-                blurRadius: 5,
-                offset: const Offset(0, 1),
-              ),
-            ],
-          ),
-          selectedItemBD: BoxDecoration(
-            color: const Color(0xff090f13),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          selectedItemTS:
-              const TextStyle(color: Color(0xFF6FCC76), fontSize: 20),
-          unselectedItemTS: const TextStyle(
+        title:const Text('Location Tracker',style: TextStyle(
             fontSize: 20,
             color: Colors.white,
-          ),
-          resultBD: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: const Color(0xff090f13),
-          ),
-          resultTS: const TextStyle(
-            fontSize: 20,
-            color: Colors.white,
-          ),
-
-          isTriangle: false,
-          dropdownList: dropdownItemList,
-          onChange: (_) {},
-          defaultValue: dropdownItemList[0],
-          // placeholder: 'insert...',
-        ),
+          ),),
         centerTitle: true,
         actions: [
           IconButton(
@@ -222,21 +199,22 @@ class _LocationScreenState extends State<LocationScreen> {
         ],
       ),
       body: GoogleMap(
-        
+     
         mapType: MapType.normal,
         markers: _markers,
         initialCameraPosition: CameraPosition(
           target: LatLng(lat, long),
-          zoom: 14,
+          // zoom: 14,
         ),
         onMapCreated: (GoogleMapController controller) {
           _controller.complete(controller);
           setState(() {
+            
             _markers.add(
               Marker(
                 icon: mapMarker,
                 visible: true,
-                markerId: const MarkerId('coordinates'),
+                markerId: const MarkerId('id-1'),
                 position: LatLng(lat, long),
                 infoWindow: InfoWindow(
                   title: "Co-ordinates",
@@ -244,6 +222,7 @@ class _LocationScreenState extends State<LocationScreen> {
                 ),
               ),
             );
+            
           });
         },
       ),
