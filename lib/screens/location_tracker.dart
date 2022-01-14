@@ -20,16 +20,14 @@ class _LocationScreenState extends State<LocationScreen> {
   Set<Marker> _markers = {};
   late BitmapDescriptor mapMarker;
   void setCustomMarker() async {
-      mapMarker = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(size: Size(5, 5)), "assets/location.png");
+    mapMarker = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(size: Size(5, 5)), "assets/location.png");
   }
+
   List dropdownItemList = [
     {'label': 'Location Tracker 1', 'value': '1'},
     {'label': 'Location Tracker 2', 'value': '2'},
     {'label': 'Location Tracker 3', 'value': '3'},
-    {
-      'label': 'Location Tracker 4',
-      'value': '4'
-    }, // label is required and unique
+    {'label': 'Location Tracker 4', 'value': '4'}, // label is required and unique
     {'label': 'Location Tracker 5', 'value': '5'},
     {'label': 'Location Tracker 6', 'value': '6'},
     {'label': 'Location Tracker 7', 'value': '7'}
@@ -49,8 +47,7 @@ class _LocationScreenState extends State<LocationScreen> {
   void initState() {
     super.initState();
     setCustomMarker();
-    Timer timer =
-        Timer.periodic(const Duration(seconds: 1), (Timer t) => change());
+    Timer timer = Timer.periodic(const Duration(seconds: 1), (Timer t) => change());
 
     void start() async {
       await connectClient();
@@ -93,8 +90,7 @@ class _LocationScreenState extends State<LocationScreen> {
     print('try done');
     client.updates!.listen((List<MqttReceivedMessage<MqttMessage>> c) {
       MqttPublishMessage message = c[0].payload as MqttPublishMessage;
-      final payload =
-          MqttPublishPayload.bytesToStringAsString(message.payload.message);
+      final payload = MqttPublishPayload.bytesToStringAsString(message.payload.message);
 
       print('Received message:$payload from topic: ${c[0].topic}>');
 
@@ -144,17 +140,17 @@ class _LocationScreenState extends State<LocationScreen> {
     });
     _markers.clear();
     _markers.add(
-              Marker(
-                icon: mapMarker,
-                visible: true,
-                markerId: const MarkerId('id-1'),
-                position: LatLng(lat, long),
-                infoWindow: InfoWindow(
-                  title: "Co-ordinates",
-                  snippet: "$lat,$long",
-                ),
-              ),
-            );
+      Marker(
+        icon: mapMarker,
+        visible: true,
+        markerId: const MarkerId('id-1'),
+        position: LatLng(lat, long),
+        infoWindow: InfoWindow(
+          title: "Co-ordinates",
+          snippet: "$lat,$long",
+        ),
+      ),
+    );
     _goToTheBoat();
     setCustomMarker();
   }
@@ -184,10 +180,13 @@ class _LocationScreenState extends State<LocationScreen> {
             Navigator.pop(context, HomeScreen.id);
           },
         ),
-        title:const Text('Location Tracker',style: TextStyle(
+        title: const Text(
+          'Location Tracker',
+          style: TextStyle(
             fontSize: 20,
             color: Colors.white,
-          ),),
+          ),
+        ),
         centerTitle: true,
         actions: [
           IconButton(
@@ -199,7 +198,6 @@ class _LocationScreenState extends State<LocationScreen> {
         ],
       ),
       body: GoogleMap(
-     
         mapType: MapType.normal,
         markers: _markers,
         initialCameraPosition: CameraPosition(
@@ -209,7 +207,6 @@ class _LocationScreenState extends State<LocationScreen> {
         onMapCreated: (GoogleMapController controller) {
           _controller.complete(controller);
           setState(() {
-            
             _markers.add(
               Marker(
                 icon: mapMarker,
@@ -222,13 +219,11 @@ class _LocationScreenState extends State<LocationScreen> {
                 ),
               ),
             );
-            
           });
         },
       ),
       floatingActionButton: Padding(
-        padding: EdgeInsets.fromLTRB(
-            8, 8, MediaQuery.of(context).size.width * 0.3, 8),
+        padding: EdgeInsets.fromLTRB(8, 8, MediaQuery.of(context).size.width * 0.3, 8),
         child: FloatingActionButton.extended(
           elevation: 9,
           onPressed: _goToTheBoat,
