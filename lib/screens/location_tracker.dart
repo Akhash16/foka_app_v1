@@ -17,19 +17,27 @@ class LocationScreen extends StatefulWidget {
 }
 
 class _LocationScreenState extends State<LocationScreen> {
+  Set<Marker> _markers = {};
+  late BitmapDescriptor mapMarker;
+  void setCustomMarker() async {
+      mapMarker = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(size: Size(5, 5)), "assets/location.png");
+  }
   List dropdownItemList = [
     {'label': 'Location Tracker 1', 'value': '1'},
     {'label': 'Location Tracker 2', 'value': '2'},
     {'label': 'Location Tracker 3', 'value': '3'},
-    {'label': 'Location Tracker 4', 'value': '4'}, // label is required and unique
+    {
+      'label': 'Location Tracker 4',
+      'value': '4'
+    }, // label is required and unique
     {'label': 'Location Tracker 5', 'value': '5'},
     {'label': 'Location Tracker 6', 'value': '6'},
     {'label': 'Location Tracker 7', 'value': '7'}
   ];
 
   // double lat = 13.0201638, long = 80.2217002, zoom = 20.83;
-  double lat = 0.0;
-  double long = 0.0;
+  double lat = 0;
+  double long = 0;
   double zoom = 19.83;
   List<String> parts = ['0.0', '0.0'];
 
@@ -40,7 +48,9 @@ class _LocationScreenState extends State<LocationScreen> {
   @override
   void initState() {
     super.initState();
-    Timer timer = Timer.periodic(const Duration(seconds: 10), (Timer t) => change());
+    setCustomMarker();
+    Timer timer =
+        Timer.periodic(const Duration(seconds: 10), (Timer t) => change());
 
     void start() async {
       await connectClient();
@@ -83,7 +93,8 @@ class _LocationScreenState extends State<LocationScreen> {
     print('try done');
     client.updates!.listen((List<MqttReceivedMessage<MqttMessage>> c) {
       MqttPublishMessage message = c[0].payload as MqttPublishMessage;
-      final payload = MqttPublishPayload.bytesToStringAsString(message.payload.message);
+      final payload =
+          MqttPublishPayload.bytesToStringAsString(message.payload.message);
 
       print('Received message:$payload from topic: ${c[0].topic}>');
 
@@ -179,7 +190,8 @@ class _LocationScreenState extends State<LocationScreen> {
             color: const Color(0xff090f13),
             borderRadius: BorderRadius.circular(10),
           ),
-          selectedItemTS: const TextStyle(color: Color(0xFF6FCC76), fontSize: 20),
+          selectedItemTS:
+              const TextStyle(color: Color(0xFF6FCC76), fontSize: 20),
           unselectedItemTS: const TextStyle(
             fontSize: 20,
             color: Colors.white,
@@ -210,17 +222,34 @@ class _LocationScreenState extends State<LocationScreen> {
         ],
       ),
       body: GoogleMap(
+        
         mapType: MapType.normal,
+        markers: _markers,
         initialCameraPosition: CameraPosition(
           target: LatLng(lat, long),
           zoom: 14,
         ),
         onMapCreated: (GoogleMapController controller) {
           _controller.complete(controller);
+          setState(() {
+            _markers.add(
+              Marker(
+                icon: mapMarker,
+                visible: true,
+                markerId: const MarkerId('coordinates'),
+                position: LatLng(lat, long),
+                infoWindow: InfoWindow(
+                  title: "Co-ordinates",
+                  snippet: "$lat,$long",
+                ),
+              ),
+            );
+          });
         },
       ),
       floatingActionButton: Padding(
-        padding: EdgeInsets.fromLTRB(8, 8, MediaQuery.of(context).size.width * 0.3, 8),
+        padding: EdgeInsets.fromLTRB(
+            8, 8, MediaQuery.of(context).size.width * 0.3, 8),
         child: FloatingActionButton.extended(
           elevation: 9,
           onPressed: _goToTheBoat,

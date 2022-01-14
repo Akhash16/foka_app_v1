@@ -81,6 +81,8 @@ flutter:
   assets:
     - assets/apple.png
     - assets/humidity.png
+    - assets/helm.png
+    - assets/location.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see
