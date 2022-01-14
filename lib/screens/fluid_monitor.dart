@@ -271,9 +271,9 @@ class _FluidMonitorState extends State<FluidMonitor> with TickerProviderStateMix
       body: Center(
         child: Container(
             child: ConcentricPageView(
-          radius: 30,
+          radius: 0,
           verticalPosition: 0.85,
-          colors: [const Color(0xff090f13).withOpacity(0.9), Colors.white12],
+          colors: [const Color(0xff090f13).withOpacity(0.9), const Color(0xff111417)],
           itemBuilder: (index, value) {
             int pageIndex = (index % 2);
             return Container(
