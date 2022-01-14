@@ -6,6 +6,7 @@ import 'package:foka_app_v1/main.dart';
 import 'package:foka_app_v1/screens/location_tracker.dart';
 import 'package:foka_app_v1/screens/smart_connect.dart';
 import 'package:foka_app_v1/screens/ths_monitor.dart';
+import 'package:foka_app_v1/screens/wifi_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:progresso/progresso.dart';
 
@@ -112,6 +113,16 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     ];
 
     return Scaffold(
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(
+                        Icons.add,
+                        color: Colors.white,
+                      ),
+        onPressed: () {
+          Navigator.pushNamed(context, WifiScreen.id);
+        },
+      ),
       backgroundColor: const Color(0xff090f13),
       body: SafeArea(
         child: Padding(
@@ -122,11 +133,17 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               children: [
                 Text(
                   "Your Boat",
-                  style: GoogleFonts.lexendDeca(color: const Color(0xff95a1ac), fontSize: 14, fontWeight: FontWeight.w400),
+                  style: GoogleFonts.lexendDeca(
+                      color: const Color(0xff95a1ac),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400),
                 ),
                 Text(
                   "Boat Name",
-                  style: GoogleFonts.lexendDeca(color: const Color(0xffffffff), fontSize: 28, fontWeight: FontWeight.w700),
+                  style: GoogleFonts.lexendDeca(
+                      color: const Color(0xffffffff),
+                      fontSize: 28,
+                      fontWeight: FontWeight.w700),
                 ),
                 const SizedBox(
                   height: 10,
@@ -187,11 +204,17 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         children: [
                           Text(
                             "Charge",
-                            style: GoogleFonts.lexendDeca(color: const Color(0xff95a1ac), fontSize: 14, fontWeight: FontWeight.w400),
+                            style: GoogleFonts.lexendDeca(
+                                color: const Color(0xff95a1ac),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400),
                           ),
                           Text(
                             "70%",
-                            style: GoogleFonts.lexendDeca(color: const Color(0xffffffff), fontSize: 28, fontWeight: FontWeight.w700),
+                            style: GoogleFonts.lexendDeca(
+                                color: const Color(0xffffffff),
+                                fontSize: 28,
+                                fontWeight: FontWeight.w700),
                           ),
                         ],
                       ),
@@ -199,11 +222,17 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         children: [
                           Text(
                             "Status",
-                            style: GoogleFonts.lexendDeca(color: const Color(0xff95a1ac), fontSize: 14, fontWeight: FontWeight.w400),
+                            style: GoogleFonts.lexendDeca(
+                                color: const Color(0xff95a1ac),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400),
                           ),
                           Text(
                             "Good",
-                            style: GoogleFonts.lexendDeca(color: const Color(0xFF39d2c0), fontSize: 28, fontWeight: FontWeight.w700),
+                            style: GoogleFonts.lexendDeca(
+                                color: const Color(0xFF39d2c0),
+                                fontSize: 28,
+                                fontWeight: FontWeight.w700),
                           ),
                         ],
                       ),
@@ -338,7 +367,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 }
 
 class DeviceCard extends StatelessWidget {
-  const DeviceCard({Key? key, required this.color, required this.title, required this.description, required this.icon}) : super(key: key);
+  const DeviceCard(
+      {Key? key,
+      required this.color,
+      required this.title,
+      required this.description,
+      required this.icon})
+      : super(key: key);
   final Icon icon;
   final String title;
   final String description;
@@ -374,7 +409,9 @@ class DeviceCard extends StatelessWidget {
             child: AutoSizeText(
               title,
               textAlign: TextAlign.center,
-              style: GoogleFonts.lexendDeca(color: const Color(0xffffffff), textStyle: TextStyle(fontSize: 18)),
+              style: GoogleFonts.lexendDeca(
+                  color: const Color(0xffffffff),
+                  textStyle: TextStyle(fontSize: 18)),
             ),
           ),
           Padding(

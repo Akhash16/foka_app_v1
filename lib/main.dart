@@ -17,6 +17,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:foka_app_v1/screens/smart_connect.dart';
 import 'package:foka_app_v1/screens/ths_monitor.dart';
 import 'package:foka_app_v1/screens/ths_settings_page.dart';
+import 'package:foka_app_v1/screens/wifi_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,7 +39,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       title: "Foka Tech",
-      initialRoute: BoatsPage.id,
+      initialRoute: WifiScreen.id,
       routes: {
         LoginScreen.id: (context) => const LoginScreen(),
         RegisterScreen.id: (context) => const RegisterScreen(),
@@ -55,6 +56,7 @@ class MyApp extends StatelessWidget {
         FluidSettingsPage.id: (context) => const FluidSettingsPage(),
         AddBoatVerification.id: (context) => const AddBoatVerification(),
         LocationScreen.id : (context) => const LocationScreen(),
+        WifiScreen.id : (context) => const WifiScreen(),
       },
     );
   }

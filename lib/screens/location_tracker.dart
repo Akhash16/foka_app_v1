@@ -214,7 +214,7 @@ class _LocationScreenState extends State<LocationScreen> {
                 markerId: const MarkerId('id-1'),
                 position: LatLng(lat, long),
                 infoWindow: InfoWindow(
-                  title: "Co-ordinates",
+                  title: "Boat Name",
                   snippet: "$lat,$long",
                 ),
               ),
