@@ -1,11 +1,11 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:foka_app_v1/components/constants.dart';
-import 'package:foka_app_v1/components/error_alert.dart';
 import 'package:foka_app_v1/components/rounded_button.dart';
+import 'package:foka_app_v1/screens/boats_page.dart';
 import 'package:foka_app_v1/screens/forgot_password.dart';
-import 'package:foka_app_v1/screens/onboarding.dart';
 import 'package:foka_app_v1/screens/register_screen.dart';
+import 'package:foka_app_v1/utils/apiCalls.dart';
+import 'package:foka_app_v1/utils/authentication.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -27,6 +27,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
   bool passwordVisibility = false;
 
+  void getBoatDataAndPush(String email) async {
+    var boatData = await ApiCalls().getBoatsApi(email);
+    // Navigator.popAndPushNamed(context, BoatsPage.id);
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
+      return BoatsPage(boatData: boatData);
+    }));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,7 +50,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
           Padding(
-            padding:   EdgeInsets.fromLTRB(28.0,MediaQuery.of(context).size.height * 0.1,28.0,28.0),
+            padding: EdgeInsets.fromLTRB(28.0, MediaQuery.of(context).size.height * 0.1, 28.0, 28.0),
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -234,29 +242,26 @@ class _LoginScreenState extends State<LoginScreen> {
                           String email = emailAddressController.text.trim();
                           String password = passwordController.text.trim();
 
-                          try {
-                            if (emailRegex.hasMatch(email)) {
+                          if (emailRegex.hasMatch(email)) {
+                            setState(() {
+                              isEmailInvalid = false;
+                            });
+                            if (password != '') {
                               setState(() {
-                                isEmailInvalid = false;
+                                isPasswordMissing = false;
                               });
-                              if (password != '') {
-                                setState(() {
-                                  isPasswordMissing = false;
-                                });
-                                FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
-                                Navigator.popAndPushNamed(context, Onboarding.id);
-                              } else {
-                                setState(() {
-                                  isPasswordMissing = true;
-                                });
+                              if (Authentication().emailSignInAuth(email, password)) {
+                                getBoatDataAndPush(email);
                               }
                             } else {
                               setState(() {
-                                isEmailInvalid = true;
+                                isPasswordMissing = true;
                               });
                             }
-                          } catch (e) {
-                            print(e);
+                          } else {
+                            setState(() {
+                              isEmailInvalid = true;
+                            });
                           }
                         },
                       ),
@@ -308,12 +313,13 @@ class _LoginScreenState extends State<LoginScreen> {
                       const Padding(
                         padding: EdgeInsets.all(8.0),
                         child: CircleAvatar(
-                            radius: 25,
-                            backgroundColor: Colors.white,
-                            child: Icon(
-                              Icons.phone,
-                              color: Colors.deepPurple,
-                            )),
+                          radius: 25,
+                          backgroundColor: Colors.white,
+                          child: Icon(
+                            Icons.phone,
+                            color: Colors.deepPurple,
+                          ),
+                        ),
                       ),
                     ],
                   )

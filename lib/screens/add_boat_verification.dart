@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_verification_code/flutter_verification_code.dart';
 import 'package:animate_do/animate_do.dart';
-import 'package:foka_app_v1/screens/add_boat_screen.dart';
-import 'package:foka_app_v1/screens/boats_page.dart';
+import 'package:foka_app_v1/screens/login_screen.dart';
+import 'package:foka_app_v1/utils/apiCalls.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:slide_to_confirm/slide_to_confirm.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
 class AddBoatVerification extends StatefulWidget {
-  const AddBoatVerification({Key? key}) : super(key: key);
+  // const AddBoatVerification({Key? key}) : super(key: key);
+  AddBoatVerification({this.hubId, this.boatName});
+
+  final hubId;
+  final boatName;
 
   static const String id = 'add_boat_verification';
 
@@ -91,7 +95,10 @@ class _AddBoatVerificationState extends State<AddBoatVerification> {
                 duration: const Duration(milliseconds: 900),
                 child: ConfirmationSlider(
                   onConfirmation: () {
-                    _onEditing ? null : Navigator.popAndPushNamed(context, BoatsPage.id);
+                    if (!_onEditing) {
+                      ApiCalls().addBoatsApi(widget.hubId, widget.boatName, _code);
+                      Navigator.popAndPushNamed(context, LoginScreen.id);
+                    }
                   },
                   height: 60,
                   width: 260,

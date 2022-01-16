@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:foka_app_v1/components/rounded_button.dart';
 import 'package:foka_app_v1/screens/boats_page.dart';
+import 'package:foka_app_v1/screens/login_screen.dart';
 import 'package:liquid_swipe/liquid_swipe.dart';
 
 class Onboarding extends StatefulWidget {
@@ -140,7 +141,13 @@ class _OnboardingState extends State<Onboarding> {
                     "With one click, you'll be ready to enter into the world of Fokaboat.\n\nClick on continue to experience the latest fleet management technology.",
                     style: descriptionWhiteStyle,
                   ),
-                  Center(child: RoundedButton(title: 'Continue', color: Colors.deepPurple, onPressed: () => Navigator.pushNamed(context, BoatsPage.id))),
+                  Center(
+                    child: RoundedButton(
+                      title: 'Continue',
+                      color: Colors.deepPurple,
+                      onPressed: () => Navigator.pushNamed(context, LoginScreen.id),
+                    ),
+                  ),
                 ],
               ),
             )

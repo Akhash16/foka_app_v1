@@ -4,6 +4,7 @@ import 'package:foka_app_v1/components/constants.dart';
 import 'package:foka_app_v1/components/error_alert.dart';
 import 'package:foka_app_v1/components/rounded_button.dart';
 import 'package:foka_app_v1/screens/login_screen.dart';
+import 'package:foka_app_v1/utils/authentication.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class ForgotPassword extends StatefulWidget {
@@ -117,8 +118,9 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                     setState(() {
                       isVisible = false;
                     });
-                    FirebaseAuth.instance.sendPasswordResetEmail(email: email);
-                    Navigator.popAndPushNamed(context, LoginScreen.id);
+                    if (Authentication().emailForgotPassword(email)) {
+                      Navigator.popAndPushNamed(context, LoginScreen.id);
+                    }
                   } else {
                     setState(() {
                       isVisible = true;

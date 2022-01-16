@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:foka_app_v1/components/constants.dart';
 import 'package:foka_app_v1/components/rounded_button.dart';
 import 'package:foka_app_v1/screens/login_screen.dart';
+import 'package:foka_app_v1/screens/onboarding.dart';
+import 'package:foka_app_v1/utils/authentication.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -39,7 +41,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.fromLTRB(28.0,MediaQuery.of(context).size.height * 0.1,28.0,28.0),
+            padding: EdgeInsets.fromLTRB(28.0, MediaQuery.of(context).size.height * 0.1, 28.0, 28.0),
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -311,8 +313,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 setState(() {
                                   isPasswordNotMatching = false;
                                 });
-                                FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password1);
-                                Navigator.popAndPushNamed(context, LoginScreen.id);
+                                if (Authentication().emailRegisterAuth(email, password1)) {
+                                  Navigator.popAndPushNamed(context, Onboarding.id);
+                                }
                               } else {
                                 setState(() {
                                   isPasswordNotMatching = true;
