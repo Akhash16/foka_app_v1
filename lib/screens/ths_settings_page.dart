@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_picker/flutter_picker.dart';
+import 'package:foka_app_v1/components/constants.dart';
 import 'package:foka_app_v1/components/rounded_button.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:numberpicker/numberpicker.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 class THSSettingsPage extends StatefulWidget {
@@ -14,9 +17,100 @@ class THSSettingsPage extends StatefulWidget {
 }
 
 class _THSSettingsPageState extends State<THSSettingsPage> {
-  bool state = false;
-  int _currentLowerValue = 10;
-  int _currentUpperValue = 20;
+  bool tempState = false;
+  int tempCurrentLowerValue = 10;
+  int tempCurrentUpperValue = 20;
+
+  bool gasState = false;
+  int gasCurrentLowerValue = 1000;
+  int gasCurrentUpperValue = 4000;
+
+  bool humidityState = false;
+  int humidityCurrentLowerValue = 20;
+  int humidityCurrentUpperValue = 80;
+
+  showPickerNumberTemperature(BuildContext context, bool isUpperLimit) {
+    Picker(
+        adapter: NumberPickerAdapter(data: [
+          const NumberPickerColumn(begin: -50, end: 100),
+        ]),
+        hideHeader: true,
+        itemExtent: 35.0,
+        squeeze: 1,
+        title: const Text("Please Select"),
+        onConfirm: (Picker picker, List value) {
+          int selectedValue = picker.getSelectedValues()[0] as int;
+          setState(() {
+            isUpperLimit
+                ? tempCurrentLowerValue <= selectedValue
+                    ? tempCurrentUpperValue = selectedValue
+                    : null
+                : tempCurrentUpperValue >= selectedValue
+                    ? tempCurrentLowerValue = selectedValue
+                    : null;
+          });
+          // print(value[0].toString());
+        }).showDialog(context);
+  }
+
+  showPickerNumberGas(BuildContext context, bool isUpperLimit) {
+    Picker(
+        adapter: NumberPickerAdapter(data: [
+          const NumberPickerColumn(begin: 0, end: 10000, jump: 100),
+        ]),
+        hideHeader: true,
+        itemExtent: 35.0,
+        squeeze: 1,
+        title: const Text("Please Select"),
+        onConfirm: (Picker picker, List value) {
+          int selectedValue = picker.getSelectedValues()[0] as int;
+          setState(() {
+            isUpperLimit
+                ? gasCurrentLowerValue <= selectedValue
+                    ? gasCurrentUpperValue = selectedValue
+                    : null
+                : gasCurrentUpperValue >= selectedValue
+                    ? gasCurrentLowerValue = selectedValue
+                    : null;
+          });
+          // print(value[0].toString());
+        }).showDialog(context);
+  }
+
+  showPickerNumberHumidity(BuildContext context, bool isUpperLimit) {
+    Picker(
+        adapter: NumberPickerAdapter(data: [
+          const NumberPickerColumn(begin: 0, end: 100),
+        ]),
+        hideHeader: true,
+        itemExtent: 35.0,
+        squeeze: 1,
+        title: const Text("Please Select"),
+        onConfirm: (Picker picker, List value) {
+          int selectedValue = picker.getSelectedValues()[0] as int;
+          setState(() {
+            isUpperLimit
+                ? humidityCurrentLowerValue <= selectedValue
+                    ? humidityCurrentUpperValue = selectedValue
+                    : null
+                : humidityCurrentUpperValue >= selectedValue
+                    ? humidityCurrentLowerValue = selectedValue
+                    : null;
+          });
+          // print(value[0].toString());
+        }).showDialog(context);
+  }
+
+  showPickerDate(BuildContext context) {
+    Picker(
+        hideHeader: true,
+        adapter: DateTimePickerAdapter(),
+        title: const Text("Select Data"),
+        selectedTextStyle: const TextStyle(color: Colors.blue),
+        onConfirm: (Picker picker, List value) {
+          print((picker.adapter as DateTimePickerAdapter).value);
+        }).showDialog(context);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,115 +124,156 @@ class _THSSettingsPageState extends State<THSSettingsPage> {
             Navigator.pop(context);
           },
         ),
-        title: Text("THS Settings"),
+        title: const Text("THS Settings"),
         centerTitle: true,
-        // actions: [
-        //   IconButton(
-        //     onPressed: () {
-        //       Navigator.pushNamed(context, THSSettingsPage.id);
-        //     },
-        //     icon: const Icon(Icons.settings),
-        //   ),
-        // ],
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.refresh),
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(18.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ListTile(
-                    title: Text(
-                      'Enable Alerts',
-                      style: GoogleFonts.montserrat(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    trailing: Padding(
-                      padding: const EdgeInsets.only(right: 15.0),
-                      child: Switch(
-                        value: state,
-                        onChanged: (value) {
-                          setState(() {
-                            state = value;
-                          });
-                        },
-                        inactiveTrackColor: Colors.white,
-                        inactiveThumbColor: Colors.blueGrey,
-                      ),
-                    ),
-                  ),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Text('Temperature Settings', style: settingsHeadingTextStyle),
+              ListTile(
+                title: Text(
+                  'Enable Alerts',
+                  style: settingsLeadingTextStyle,
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ListTile(
-                    title: Text(
-                      'Lower Limit',
-                      style: GoogleFonts.montserrat(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    trailing: NumberPicker(
-                      minValue: -20,
-                      maxValue: 60,
-                      value: _currentLowerValue,
-                      onChanged: (value) {
-                        setState(() {
-                          _currentLowerValue = value;
-                        });
-                      },
-                      textStyle: GoogleFonts.montserrat(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
+                trailing: Switch(
+                  value: tempState,
+                  onChanged: (value) {
+                    setState(() {
+                      tempState = value;
+                    });
+                  },
+                  inactiveTrackColor: Colors.white,
+                  inactiveThumbColor: Colors.blueGrey,
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ListTile(
-                    title: Text(
-                      'Upper Limit',
-                      style: GoogleFonts.montserrat(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    trailing: NumberPicker(
-                      minValue: -20,
-                      maxValue: 60,
-                      value: _currentUpperValue,
-                      onChanged: (value) {
-                        setState(() {
-                          _currentUpperValue = value;
-                        });
-                      },
-                      textStyle: GoogleFonts.montserrat(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
+              ),
+              ListTile(
+                onTap: () => showPickerNumberTemperature(context, false),
+                leading: Text(
+                  'Lower Limit',
+                  style: settingsLeadingTextStyle,
                 ),
-              ],
-            ),
-            RoundedButton(
-              title: 'Refresh',
-              color: Colors.lightBlueAccent,
-              onPressed: () {},
-              width: MediaQuery.of(context).size.width * 0.7,
-            )
-          ],
+                title: Text(
+                  tempCurrentLowerValue.toString(),
+                  style: settingsTitleTextStyle,
+                  textAlign: TextAlign.end,
+                ),
+                trailing: settingsTrailingIcon,
+              ),
+              ListTile(
+                onTap: () => showPickerNumberTemperature(context, true),
+                leading: Text(
+                  'Upper Limit',
+                  style: settingsLeadingTextStyle,
+                ),
+                title: Text(
+                  tempCurrentUpperValue.toString(),
+                  style: settingsTitleTextStyle,
+                  textAlign: TextAlign.end,
+                ),
+                trailing: settingsTrailingIcon,
+              ),
+              settingsPageDivider,
+              Text('Gas Settings', style: settingsHeadingTextStyle),
+              ListTile(
+                title: Text(
+                  'Enable Alerts',
+                  style: settingsLeadingTextStyle,
+                ),
+                trailing: Switch(
+                  value: gasState,
+                  onChanged: (value) {
+                    setState(() {
+                      gasState = value;
+                    });
+                  },
+                  inactiveTrackColor: Colors.white,
+                  inactiveThumbColor: Colors.blueGrey,
+                ),
+              ),
+              ListTile(
+                onTap: () => showPickerNumberGas(context, false),
+                leading: Text(
+                  'Lower Limit',
+                  style: settingsLeadingTextStyle,
+                ),
+                title: Text(
+                  gasCurrentLowerValue.toString(),
+                  style: settingsTitleTextStyle,
+                  textAlign: TextAlign.end,
+                ),
+                trailing: settingsTrailingIcon,
+              ),
+              ListTile(
+                onTap: () => showPickerNumberGas(context, true),
+                leading: Text(
+                  'Upper Limit',
+                  style: settingsLeadingTextStyle,
+                ),
+                title: Text(
+                  gasCurrentUpperValue.toString(),
+                  style: settingsTitleTextStyle,
+                  textAlign: TextAlign.end,
+                ),
+                trailing: settingsTrailingIcon,
+              ),
+              settingsPageDivider,
+              Text(
+                'Humidity Settings',
+                style: settingsHeadingTextStyle,
+              ),
+              ListTile(
+                title: Text(
+                  'Enable Alerts',
+                  style: settingsLeadingTextStyle,
+                ),
+                trailing: Switch(
+                  value: humidityState,
+                  onChanged: (value) {
+                    setState(() {
+                      humidityState = value;
+                    });
+                  },
+                  inactiveTrackColor: Colors.white,
+                  inactiveThumbColor: Colors.blueGrey,
+                ),
+              ),
+              ListTile(
+                onTap: () => showPickerNumberHumidity(context, false),
+                leading: Text(
+                  'Lower Limit',
+                  style: settingsLeadingTextStyle,
+                ),
+                title: Text(
+                  humidityCurrentLowerValue.toString(),
+                  style: settingsTitleTextStyle,
+                  textAlign: TextAlign.end,
+                ),
+                trailing: settingsTrailingIcon,
+              ),
+              ListTile(
+                onTap: () => showPickerNumberHumidity(context, true),
+                leading: Text(
+                  'Upper Limit',
+                  style: settingsLeadingTextStyle,
+                ),
+                title: Text(
+                  humidityCurrentUpperValue.toString(),
+                  style: settingsTitleTextStyle,
+                  textAlign: TextAlign.end,
+                ),
+                trailing: settingsTrailingIcon,
+              ),
+            ],
+          ),
         ),
       ),
     );

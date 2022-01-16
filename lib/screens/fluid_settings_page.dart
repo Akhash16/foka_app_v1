@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:foka_app_v1/components/rounded_button.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:numberpicker/numberpicker.dart';
+import 'package:foka_app_v1/components/constants.dart';
+import 'package:flutter_picker/flutter_picker.dart';
+import 'package:flutter_picker/Picker.dart';
 
 class FluidSettingsPage extends StatefulWidget {
   const FluidSettingsPage({Key? key}) : super(key: key);
@@ -13,9 +13,31 @@ class FluidSettingsPage extends StatefulWidget {
 }
 
 class _FluidSettingsPageState extends State<FluidSettingsPage> {
-  bool state = false;
-  int _currentLowerValue = 10;
-  int _currentUpperValue = 20;
+  bool fluidState = false;
+  bool bilgeState = false;
+  int currentLowerValue = 10;
+  int currentUpperValue = 70;
+
+  showPickerNumber(BuildContext context, bool isUpperLimit) {
+    Picker(
+        adapter: NumberPickerAdapter(data: [
+          const NumberPickerColumn(begin: 0, end: 100),
+        ]),
+        hideHeader: true,
+        title: const Text("Please Select"),
+        onConfirm: (Picker picker, List value) {
+          int selectedValue = picker.getSelectedValues()[0] as int;
+          setState(() {
+            isUpperLimit
+                ? currentLowerValue <= selectedValue
+                    ? currentUpperValue = selectedValue
+                    : null
+                : currentUpperValue >= selectedValue
+                    ? currentLowerValue = selectedValue
+                    : null;
+          });
+        }).showDialog(context);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,112 +53,90 @@ class _FluidSettingsPageState extends State<FluidSettingsPage> {
         ),
         title: const Text("Fluid Monitor Settings"),
         centerTitle: true,
-        // actions: [
-        //   IconButton(
-        //     onPressed: () {
-        //       Navigator.pushNamed(context, THSSettingsPage.id);
-        //     },
-        //     icon: const Icon(Icons.settings),
-        //   ),
-        // ],
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.refresh),
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(18.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ListTile(
-                    title: Text(
-                      'Enable Alerts',
-                      style: GoogleFonts.montserrat(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    trailing: Padding(
-                      padding: const EdgeInsets.only(right: 15.0),
-                      child: Switch(
-                        value: state,
-                        onChanged: (value) {
-                          setState(() {
-                            state = value;
-                          });
-                        },
-                        inactiveTrackColor: Colors.white,
-                        inactiveThumbColor: Colors.blueGrey,
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ListTile(
-                    title: Text(
-                      'Lower Limit',
-                      style: GoogleFonts.montserrat(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    trailing: NumberPicker(
-                      minValue: -20,
-                      maxValue: 60,
-                      value: _currentLowerValue,
-                      onChanged: (value) {
-                        setState(() {
-                          _currentLowerValue = value;
-                        });
-                      },
-                      textStyle: GoogleFonts.montserrat(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ListTile(
-                    title: Text(
-                      'Upper Limit',
-                      style: GoogleFonts.montserrat(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    trailing: NumberPicker(
-                      minValue: -20,
-                      maxValue: 60,
-                      value: _currentUpperValue,
-                      onChanged: (value) {
-                        setState(() {
-                          _currentUpperValue = value;
-                        });
-                      },
-                      textStyle: GoogleFonts.montserrat(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Text(
+                'Fluid Monitor Settings',
+                style: settingsHeadingTextStyle,
+              ),
             ),
-            RoundedButton(
-              title: 'Refresh',
-              color: Colors.lightBlueAccent,
-              onPressed: () {},
-              width: MediaQuery.of(context).size.width * 0.7,
-            )
+            ListTile(
+              title: Text(
+                'Enable Alerts',
+                style: settingsLeadingTextStyle,
+              ),
+              trailing: Switch(
+                value: fluidState,
+                onChanged: (value) {
+                  setState(() {
+                    fluidState = value;
+                  });
+                },
+                inactiveTrackColor: Colors.white,
+                inactiveThumbColor: Colors.blueGrey,
+              ),
+            ),
+            ListTile(
+              onTap: () => showPickerNumber(context, false),
+              leading: Text(
+                'Lower Limit',
+                style: settingsLeadingTextStyle,
+              ),
+              title: Text(
+                currentLowerValue.toString(),
+                style: settingsTitleTextStyle,
+                textAlign: TextAlign.end,
+              ),
+              trailing: settingsTrailingIcon,
+            ),
+            ListTile(
+              onTap: () => showPickerNumber(context, true),
+              leading: Text(
+                'Upper Limit',
+                style: settingsLeadingTextStyle,
+              ),
+              title: Text(
+                currentUpperValue.toString(),
+                style: settingsTitleTextStyle,
+                textAlign: TextAlign.end,
+              ),
+              trailing: settingsTrailingIcon,
+            ),
+            settingsPageDivider,
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Text(
+                'Bilge Settings',
+                style: settingsHeadingTextStyle,
+              ),
+            ),
+            ListTile(
+              title: Text(
+                'Enable Alerts',
+                style: settingsLeadingTextStyle,
+              ),
+              trailing: Switch(
+                value: bilgeState,
+                onChanged: (value) {
+                  setState(() {
+                    bilgeState = value;
+                  });
+                },
+                inactiveTrackColor: Colors.white,
+                inactiveThumbColor: Colors.blueGrey,
+              ),
+            ),
           ],
         ),
       ),

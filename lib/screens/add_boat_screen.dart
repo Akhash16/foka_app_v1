@@ -1,9 +1,4 @@
-// ignore_for_file: unnecessary_const
-
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:foka_app_v1/screens/add_boat_verification.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:slide_to_confirm/slide_to_confirm.dart';
@@ -16,7 +11,8 @@ class AddBoatScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController textController = TextEditingController();
+    TextEditingController textController1 = TextEditingController();
+    TextEditingController textController2 = TextEditingController();
 
     return Scaffold(
       backgroundColor: const Color(0xff1A1E20).withOpacity(1),
@@ -42,7 +38,7 @@ class AddBoatScreen extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 16),
               child: TextField(
-                controller: textController,
+                controller: textController1,
                 style: GoogleFonts.montserrat(
                   color: Colors.white,
                   fontSize: 15,
@@ -67,13 +63,47 @@ class AddBoatScreen extends StatelessWidget {
               ),
             ),
           ),
+          const SizedBox(height: 10.0),
+          FadeInDown(
+            delay: const Duration(milliseconds: 600),
+            duration: const Duration(milliseconds: 700),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 16),
+              child: TextField(
+                controller: textController2,
+                style: GoogleFonts.montserrat(
+                  color: Colors.white,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w400,
+                ),
+                textAlign: TextAlign.center,
+                decoration: InputDecoration(
+                  labelStyle: const TextStyle(color: Colors.white),
+                  focusedBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.blue, width: 2.0),
+                  ),
+                  enabledBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.green, width: 2.0),
+                  ),
+                  hintText: 'Enter Boat Name',
+                  hintStyle: GoogleFonts.montserrat(
+                    color: Colors.white24,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ),
+            ),
+          ),
           const SizedBox(height: 30.0),
           FadeInDown(
             delay: const Duration(milliseconds: 700),
             duration: const Duration(milliseconds: 900),
             child: ConfirmationSlider(
               onConfirmation: () {
-                Navigator.popAndPushNamed(context, AddBoatVerification.id);
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
+                  return AddBoatVerification(hubId: textController1.text, boatName: textController2.text);
+                }));
               },
               height: 60,
               width: 260,
