@@ -7,6 +7,7 @@ import 'package:foka_app_v1/screens/register_screen.dart';
 import 'package:foka_app_v1/utils/apiCalls.dart';
 import 'package:foka_app_v1/utils/authentication.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -297,9 +298,22 @@ class _LoginScreenState extends State<LoginScreen> {
                     children: [
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: CircleAvatar(
-                          radius: 25,
-                          child: Image.network("https://cdn.freebiesupply.com/logos/large/2x/google-g-2015-logo-png-transparent.png"),
+                        child: InkWell(
+                          onTap: () {
+                            // if (await Authentication().signInWithGoogle() == true) {
+                            //   print(Authentication().getCurrentUser());
+                            // } else {
+                            //   print('wrong');
+                            //
+                            // }
+                            // print(Authentication().signInWithGoogle());
+                            // GoogleSignIn().signIn();
+                            Authentication().handleSignIn();
+                          },
+                          child: CircleAvatar(
+                            radius: 25,
+                            child: Image.network("https://cdn.freebiesupply.com/logos/large/2x/google-g-2015-logo-png-transparent.png"),
+                          ),
                         ),
                       ),
                       Padding(

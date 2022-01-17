@@ -15,6 +15,7 @@ import 'package:foka_app_v1/screens/onboarding.dart';
 import 'package:foka_app_v1/screens/register_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:foka_app_v1/screens/smart_connect.dart';
+import 'package:foka_app_v1/screens/splash_screen.dart';
 import 'package:foka_app_v1/screens/ths_monitor.dart';
 import 'package:foka_app_v1/screens/ths_settings_page.dart';
 import 'package:foka_app_v1/screens/wifi_screen.dart';
@@ -39,7 +40,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       title: "Foka Tech",
-      initialRoute: LoginScreen.id,
+      initialRoute: SplashScreen.id,
       routes: {
         LoginScreen.id: (context) => const LoginScreen(),
         RegisterScreen.id: (context) => const RegisterScreen(),
@@ -57,6 +58,7 @@ class MyApp extends StatelessWidget {
         AddBoatVerification.id: (context) => AddBoatVerification(),
         LocationScreen.id: (context) => const LocationScreen(),
         WifiScreen.id: (context) => const WifiScreen(),
+        SplashScreen.id: (context) => const SplashScreen(),
       },
     );
   }

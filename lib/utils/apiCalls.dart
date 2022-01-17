@@ -35,7 +35,7 @@ class ApiCalls {
   }
 
   void addBoatsApi(String hubId, String boatName, String otp) async {
-    String email = Authentication().getCurrentUser();
+    String email = Authentication().getCurrentUserEmail() as String;
     Uri url = Uri.parse(_apiUrl + email);
     http.Response response = await http.post(url, body: {
       "hubid": hubId,

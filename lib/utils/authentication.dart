@@ -1,9 +1,20 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class Authentication {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  // GoogleSignIn _googleSignIn = GoogleSignIn();
+  GoogleSignIn _googleSignIn = GoogleSignIn(
+    scopes: [
+      'email',
+      // 'https://www.googleapis.com/auth/contacts.readonly',
+    ],
+  );
+
   bool emailRegisterAuth(String email, String password) {
     try {
-      FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
+      _auth.createUserWithEmailAndPassword(email: email, password: password);
       return true;
     } on FirebaseAuthException catch (e) {
       print('Failed with error code: ${e.code}');
@@ -14,7 +25,7 @@ class Authentication {
 
   bool emailSignInAuth(String email, String password) {
     try {
-      FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
+      _auth.signInWithEmailAndPassword(email: email, password: password);
       return true;
     } on FirebaseAuthException catch (e) {
       print('Failed with error code: ${e.code}');
@@ -25,7 +36,7 @@ class Authentication {
 
   bool emailForgotPassword(String email) {
     try {
-      FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+      _auth.sendPasswordResetEmail(email: email);
       return true;
     } on FirebaseAuthException catch (e) {
       print('Failed with error code: ${e.code}');
@@ -36,7 +47,7 @@ class Authentication {
 
   bool signOut() {
     try {
-      FirebaseAuth.instance.signOut();
+      _auth.signOut();
       return true;
     } on FirebaseAuthException catch (e) {
       print('Failed with error code: ${e.code}');
@@ -45,7 +56,34 @@ class Authentication {
     }
   }
 
-  String getCurrentUser() {
-    return FirebaseAuth.instance.currentUser!.email as String;
+  // Future<bool> signInWithGoogle() async {
+  //   try {
+  //     await _googleSignIn.signIn();
+  //     return true;
+  //   } catch (e) {
+  //     print(e);
+  //     return false;
+  //   }
+  // }
+
+  // Future<String> signInWithGoogle() async {
+  //   await _googleSignIn.signIn();
+  //   return "success";
+  // }
+
+  Future<void> handleSignIn() async {
+    try {
+      await _googleSignIn.signIn();
+    } catch (error) {
+      print(error);
+    }
+  }
+
+  User getCurrentUser() {
+    return FirebaseAuth.instance.currentUser!;
+  }
+
+  String? getCurrentUserEmail() {
+    return _auth.currentUser?.email;
   }
 }
