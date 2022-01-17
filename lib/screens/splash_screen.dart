@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:foka_app_v1/components/rounded_button.dart';
 import 'package:foka_app_v1/screens/boats_page.dart';
 import 'package:foka_app_v1/screens/login_screen.dart';
 import 'package:foka_app_v1/utils/apiCalls.dart';
 import 'package:foka_app_v1/utils/authentication.dart';
+import 'package:lottie/lottie.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -31,9 +31,13 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     onRefresh(Authentication().getCurrentUserEmail());
+     Future.delayed(Duration(seconds: 3), () {
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => LoginScreen()));
+    });
+
   }
 
   onRefresh(userCred) {
@@ -50,10 +54,12 @@ class _SplashScreenState extends State<SplashScreen> {
 
     return Scaffold(
       body: Center(
-        child: RoundedButton(
-          title: 'Login Screen',
-          color: Colors.lightBlueAccent,
-          onPressed: () => Navigator.popAndPushNamed(context, LoginScreen.id),
+        child: Container(
+          height: MediaQuery.of(context).size.height * 0.6,
+          width: MediaQuery.of(context).size.width * 0.6,
+          child: Lottie.asset(
+            "assets/animation.json",
+          ),
         ),
       ),
     );
