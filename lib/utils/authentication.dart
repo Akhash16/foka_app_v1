@@ -40,14 +40,20 @@ class Authentication {
     }
   }
 
-  bool signOut() {
+  Future<bool> signOut() async {
     try {
+      await _googleSignIn.isSignedIn().then((value) {
+        if (value) {
+          print(value);
+          _googleSignIn.disconnect();
+        }
+      });
       _auth.signOut();
-      return true;
+      return Future<bool>.value(true);
     } on FirebaseAuthException catch (e) {
       print('Failed with error code: ${e.code}');
       print(e.message);
-      return false;
+      return Future<bool>.value(false);
     }
   }
 

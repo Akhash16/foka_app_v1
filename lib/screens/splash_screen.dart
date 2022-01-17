@@ -22,22 +22,25 @@ class _SplashScreenState extends State<SplashScreen> {
   // }
 
   void getBoatDataAndPush(String email) async {
-    var boatData = await ApiCalls().getBoatsApi(email);
+    await ApiCalls().getBoatsApi(email).then((value) {
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
+        return BoatsPage(boatData: value);
+      }));
+    });
+    // print(boatData);
     // Navigator.popAndPushNamed(context, BoatsPage.id);
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
-      return BoatsPage(boatData: boatData);
-    }));
+    // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
+    //   return BoatsPage(boatData: boatData);
+    // }));
   }
 
   @override
   void initState() {
     super.initState();
     onRefresh(Authentication().getCurrentUserEmail());
-     Future.delayed(Duration(seconds: 3), () {
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => LoginScreen()));
+    Future.delayed(Duration(seconds: 5), () {
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginScreen()));
     });
-
   }
 
   onRefresh(userCred) {

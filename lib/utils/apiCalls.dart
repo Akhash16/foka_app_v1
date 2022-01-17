@@ -4,7 +4,7 @@ import 'package:foka_app_v1/utils/authentication.dart';
 import 'package:http/http.dart' as http;
 
 class ApiCalls {
-  final String _apiUrl = 'http://e523-183-82-207-1.ngrok.io/';
+  final String _apiUrl = 'http://3c2e-183-82-207-1.ngrok.io/';
 
   List<dynamic> boats = [];
 
@@ -36,7 +36,7 @@ class ApiCalls {
 
   void addBoatsApi(String hubId, String boatName, String otp) async {
     String email = Authentication().getCurrentUserEmail() as String;
-    Uri url = Uri.parse(_apiUrl + email);
+    Uri url = Uri.parse(_apiUrl + 'boatData');
     http.Response response = await http.post(url, body: {
       "hubid": hubId,
       "boatname": boatName,

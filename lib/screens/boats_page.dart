@@ -99,9 +99,11 @@ class _BoatsPageState extends State<BoatsPage> {
           ),
           IconButton(
             onPressed: () {
-              if (Authentication().signOut()) {
-                Navigator.popAndPushNamed(context, LoginScreen.id);
-              }
+              Authentication().signOut().then((value) {
+                if (value) {
+                  Navigator.popAndPushNamed(context, LoginScreen.id);
+                }
+              });
             },
             icon: const Icon(
               Icons.logout,
