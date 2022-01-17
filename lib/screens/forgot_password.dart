@@ -30,7 +30,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
             Icons.arrow_back_ios,
             color: Colors.white,
           ),
-          onPressed: () {},
+          onPressed: () => Navigator.pop(context),
         ),
         title: const Padding(
           padding: EdgeInsets.fromLTRB(50, 0, 0, 0),

@@ -25,7 +25,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool isPasswordMissing = false;
   bool isPasswordNotMatching = false;
 
-  bool passwordVisibility = false;
+  bool passwordVisibility1 = false;
+  bool passwordVisibility2 = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,7 +43,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.fromLTRB(28.0, MediaQuery.of(context).size.height * 0.1, 28.0, 28.0),
+            padding: EdgeInsets.fromLTRB(18.0, MediaQuery.of(context).size.height * 0.07, 18.0, 18.0),
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -148,7 +150,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     padding: const EdgeInsets.fromLTRB(0, 4, 0, 8),
                     child: TextFormField(
                       controller: passwordController1,
-                      obscureText: !passwordVisibility,
+                      obscureText: !passwordVisibility1,
                       decoration: InputDecoration(
                         labelText: 'Password',
                         labelStyle: GoogleFonts.lexendDeca(
@@ -185,10 +187,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         contentPadding: const EdgeInsetsDirectional.fromSTEB(16, 20, 24, 24),
                         suffixIcon: InkWell(
                           onTap: () => setState(
-                            () => passwordVisibility = !passwordVisibility,
+                            () => passwordVisibility1 = !passwordVisibility1,
                           ),
                           child: Icon(
-                            passwordVisibility ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                            passwordVisibility1 ? Icons.visibility_outlined : Icons.visibility_off_outlined,
                             color: const Color(0xFF95A1AC),
                             size: 22,
                           ),
@@ -215,7 +217,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     padding: const EdgeInsets.fromLTRB(0, 4, 0, 8),
                     child: TextFormField(
                       controller: passwordController2,
-                      obscureText: !passwordVisibility,
+                      obscureText: !passwordVisibility2,
                       decoration: InputDecoration(
                         labelText: 'Confirm Password',
                         labelStyle: GoogleFonts.lexendDeca(
@@ -252,10 +254,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         contentPadding: const EdgeInsetsDirectional.fromSTEB(16, 20, 24, 24),
                         suffixIcon: InkWell(
                           onTap: () => setState(
-                            () => passwordVisibility = !passwordVisibility,
+                            () => passwordVisibility2 = !passwordVisibility2,
                           ),
                           child: Icon(
-                            passwordVisibility ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                            passwordVisibility2 ? Icons.visibility_outlined : Icons.visibility_off_outlined,
                             color: const Color(0xFF95A1AC),
                             size: 22,
                           ),
@@ -335,47 +337,50 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                     ],
                   ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(8, 24, 8, 8),
-                    child: Center(
-                      child: Text(
-                        "Use a Social Platform to Register",
-                        style: GoogleFonts.lexendDeca(
-                          textStyle: const TextStyle(color: Color(0xb2ffffff), fontSize: 12, fontWeight: FontWeight.w700),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: CircleAvatar(
-                          radius: 25,
-                          child: Image.network("https://cdn.freebiesupply.com/logos/large/2x/google-g-2015-logo-png-transparent.png"),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: CircleAvatar(
-                          radius: 25,
-                          backgroundColor: Colors.white,
-                          child: Image.asset("assets/apple.png", height: 30),
-                        ),
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: CircleAvatar(
-                            radius: 25,
-                            backgroundColor: Colors.white,
-                            child: Icon(
-                              Icons.phone,
-                              color: Colors.deepPurple,
-                            )),
-                      ),
-                    ],
-                  )
+                  // Padding(
+                  //   padding: const EdgeInsets.fromLTRB(8, 24, 8, 8),
+                  //   child: Center(
+                  //     child: Text(
+                  //       "Use a Social Platform to Register",
+                  //       style: GoogleFonts.lexendDeca(
+                  //         textStyle: const TextStyle(color: Color(0xb2ffffff), fontSize: 12, fontWeight: FontWeight.w700),
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
+                  // InkWell(
+                  //   onTap: () => Navigator.popAndPushNamed(context, Onboarding.id),
+                  //   child: Row(
+                  //     mainAxisAlignment: MainAxisAlignment.center,
+                  //     children: [
+                  //       Padding(
+                  //         padding: const EdgeInsets.all(8.0),
+                  //         child: CircleAvatar(
+                  //           radius: 25,
+                  //           child: Image.network("https://cdn.freebiesupply.com/logos/large/2x/google-g-2015-logo-png-transparent.png"),
+                  //         ),
+                  //       ),
+                  //       Padding(
+                  //         padding: const EdgeInsets.all(8.0),
+                  //         child: CircleAvatar(
+                  //           radius: 25,
+                  //           backgroundColor: Colors.white,
+                  //           child: Image.asset("assets/apple.png", height: 30),
+                  //         ),
+                  //       ),
+                  //       const Padding(
+                  //         padding: EdgeInsets.all(8.0),
+                  //         child: CircleAvatar(
+                  //             radius: 25,
+                  //             backgroundColor: Colors.white,
+                  //             child: Icon(
+                  //               Icons.phone,
+                  //               color: Colors.deepPurple,
+                  //             )),
+                  //       ),
+                  //     ],
+                  //   ),
+                  // )
                 ],
               ),
             ),
