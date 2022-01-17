@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_verification_code/flutter_verification_code.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:foka_app_v1/screens/login_screen.dart';
+import 'package:foka_app_v1/screens/splash_screen.dart';
 import 'package:foka_app_v1/utils/apiCalls.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:slide_to_confirm/slide_to_confirm.dart';
@@ -97,7 +98,7 @@ class _AddBoatVerificationState extends State<AddBoatVerification> {
                   onConfirmation: () {
                     if (!_onEditing) {
                       ApiCalls().addBoatsApi(widget.hubId, widget.boatName, _code);
-                      Navigator.popAndPushNamed(context, LoginScreen.id);
+                      Navigator.popAndPushNamed(context, SplashScreen.id);
                     }
                   },
                   height: 60,
