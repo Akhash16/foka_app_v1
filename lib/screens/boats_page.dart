@@ -6,6 +6,8 @@ import 'package:fab_circular_menu/fab_circular_menu.dart';
 import 'package:foka_app_v1/screens/login_screen.dart';
 import 'package:foka_app_v1/utils/apiCalls.dart';
 import 'package:foka_app_v1/utils/authentication.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 
 class BoatsPage extends StatefulWidget {
   final boatData;
@@ -72,6 +74,7 @@ class _BoatsPageState extends State<BoatsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xff1A1E20),
       floatingActionButton: FabCircularMenu(
         fabSize: 50.0,
         ringDiameter: 300,
@@ -113,15 +116,28 @@ class _BoatsPageState extends State<BoatsPage> {
         ],
       ),
       body: boats.isEmpty
-          ? const Center(
-              child: Text(
-                'No boats to display',
-                style: TextStyle(
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
+          ? Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Center(
+                  child: Container(
+                    height: MediaQuery.of(context).size.height * 0.65,
+                    width: MediaQuery.of(context).size.width * 0.95,
+                    child: Lottie.asset(
+                      "assets/oops.json",
+                    ),
+                  ),
                 ),
-              ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    "No Boats to Display",
+                    style:
+                        GoogleFonts.montserrat(fontSize: 25, color: Colors.blue,fontWeight: FontWeight.w600),
+                  ),
+                )
+              ],
             )
           : Container(
               height: MediaQuery.of(context).size.height,
@@ -136,24 +152,27 @@ class _BoatsPageState extends State<BoatsPage> {
                     child: Container(
                       height: MediaQuery.of(context).size.height * 0.3,
                       decoration: BoxDecoration(
-                          gradient: LinearGradient(begin: Alignment.bottomCenter, end: Alignment.topCenter, colors: [
-                        // Colors.grey.shade50.withOpacity(1),
-                        // Colors.grey.shade50.withOpacity(1),
-                        // Colors.grey.shade50.withOpacity(1),
-                        // Colors.grey.shade50.withOpacity(1),
-                        // Colors.grey.shade50.withOpacity(0.0),
-                        // Colors.grey.shade50.withOpacity(0.0),
-                        // Colors.grey.shade50.withOpacity(0.0),
-                        // Colors.grey.shade50.withOpacity(0.0),
-                        const Color(0xff1A1E20).withOpacity(1),
-                        const Color(0xff1A1E20).withOpacity(1),
-                        const Color(0xff1A1E20).withOpacity(1),
-                        const Color(0xff1A1E20).withOpacity(1),
-                        const Color(0xff1A1E20).withOpacity(0.0),
-                        const Color(0xff1A1E20).withOpacity(0.0),
-                        const Color(0xff1A1E20).withOpacity(0.0),
-                        const Color(0xff1A1E20).withOpacity(0.0),
-                      ])),
+                          gradient: LinearGradient(
+                              begin: Alignment.bottomCenter,
+                              end: Alignment.topCenter,
+                              colors: [
+                            // Colors.grey.shade50.withOpacity(1),
+                            // Colors.grey.shade50.withOpacity(1),
+                            // Colors.grey.shade50.withOpacity(1),
+                            // Colors.grey.shade50.withOpacity(1),
+                            // Colors.grey.shade50.withOpacity(0.0),
+                            // Colors.grey.shade50.withOpacity(0.0),
+                            // Colors.grey.shade50.withOpacity(0.0),
+                            // Colors.grey.shade50.withOpacity(0.0),
+                            const Color(0xff1A1E20).withOpacity(1),
+                            const Color(0xff1A1E20).withOpacity(1),
+                            const Color(0xff1A1E20).withOpacity(1),
+                            const Color(0xff1A1E20).withOpacity(1),
+                            const Color(0xff1A1E20).withOpacity(0.0),
+                            const Color(0xff1A1E20).withOpacity(0.0),
+                            const Color(0xff1A1E20).withOpacity(0.0),
+                            const Color(0xff1A1E20).withOpacity(0.0),
+                          ])),
                     ),
                   ),
                   Positioned(
@@ -178,10 +197,12 @@ class _BoatsPageState extends State<BoatsPage> {
                         return Builder(
                           builder: (BuildContext context) {
                             return InkWell(
-                              onTap: () => Navigator.pushNamed(context, HomeScreen.id),
+                              onTap: () =>
+                                  Navigator.pushNamed(context, HomeScreen.id),
                               child: Container(
                                 width: MediaQuery.of(context).size.width,
-                                margin: const EdgeInsets.symmetric(horizontal: 5.0),
+                                margin:
+                                    const EdgeInsets.symmetric(horizontal: 5.0),
                                 decoration: BoxDecoration(
                                   color: const Color(0xff111417),
                                   borderRadius: BorderRadius.circular(20.0),
@@ -194,21 +215,28 @@ class _BoatsPageState extends State<BoatsPage> {
                                         margin: const EdgeInsets.only(top: 30),
                                         clipBehavior: Clip.hardEdge,
                                         decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(20),
+                                          borderRadius:
+                                              BorderRadius.circular(20),
                                         ),
-                                        child: Image.network(movie['image'], fit: BoxFit.cover),
+                                        child: Image.network(movie['image'],
+                                            fit: BoxFit.cover),
                                       ),
                                       const SizedBox(height: 20),
                                       Text(
                                         movie['title'],
-                                        style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold, color: Colors.white),
+                                        style: const TextStyle(
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white),
                                       ),
                                       // rating
                                       const SizedBox(height: 20),
                                       Container(
                                         child: Text(
                                           movie['description'],
-                                          style: TextStyle(fontSize: 14.0, color: Colors.grey.shade600),
+                                          style: TextStyle(
+                                              fontSize: 14.0,
+                                              color: Colors.grey.shade600),
                                           textAlign: TextAlign.center,
                                         ),
                                       ),

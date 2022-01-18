@@ -56,6 +56,7 @@ class _SplashScreenState extends State<SplashScreen> {
     }
 
     return Scaffold(
+      backgroundColor: const Color(0xff1A1E20),
       body: Center(
         child: Container(
           height: MediaQuery.of(context).size.height * 0.6,

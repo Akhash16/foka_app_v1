@@ -67,7 +67,8 @@ dev_dependencies:
   flutter_native_splash: ^1.3.3
 
 flutter_native_splash:
-  color: "#ffffff"
+          #42a5f5
+  color: "1a1e20"
   image: assets/foka_logo.png
   android: true
   ios: true
@@ -97,6 +98,8 @@ flutter:
     - assets/helm.png
     - assets/location.png
     - assets/animation.json
+    - assets/oops.json
+    - assets/message.json
 
 
   # An image asset can refer to one or more resolution-specific "variants", see
