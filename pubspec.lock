@@ -195,6 +195,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_lints:
+    dependency: transitive
+    description:
+      name: flutter_lints
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.4"
   flutter_native_splash:
     dependency: "direct dev"
     description:
@@ -324,6 +331,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.6.3"
+  lints:
+    dependency: transitive
+    description:
+      name: lints
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.1"
   liquid_progress_indicator:
     dependency: "direct main"
     description:
@@ -513,6 +527,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.1+1"
+  simple_animations:
+    dependency: "direct main"
+    description:
+      name: simple_animations
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "4.0.1"
   sky_engine:
     dependency: transitive
     description: flutter
