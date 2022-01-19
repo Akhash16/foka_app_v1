@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:foka_app_v1/components/constants.dart';
 import 'package:flutter_picker/flutter_picker.dart';
 import 'package:flutter_picker/Picker.dart';
+import 'package:foka_app_v1/utils/apiCalls.dart';
 
 class FluidSettingsPage extends StatefulWidget {
-  const FluidSettingsPage({Key? key}) : super(key: key);
+  // const FluidSettingsPage({Key? key}) : super(key: key);
+  FluidSettingsPage({this.settings});
+
+  final dynamic settings;
 
   static const String id = 'fluid_settings_page';
 
@@ -13,10 +17,34 @@ class FluidSettingsPage extends StatefulWidget {
 }
 
 class _FluidSettingsPageState extends State<FluidSettingsPage> {
-  bool fluidState = false;
-  bool bilgeState = false;
-  int currentLowerValue = 10;
-  int currentUpperValue = 70;
+  dynamic settings = [];
+
+  late String deviceName;
+
+  late bool fluidState;
+  bool bilgeState = false; // dont put
+  late int currentLowerValue;
+  int currentUpperValue = 100; //dont put
+
+  @override
+  void initState() {
+    super.initState();
+    getSettings();
+    deviceName = settings['serial'];
+    fluidState = settings['alert_fluid'] == 1 ? true : false;
+    currentLowerValue = settings['low_tank'];
+  }
+
+  void getSettings() {
+    settings = widget.settings;
+  }
+
+  settingsUpdate() {
+    ApiCalls().updateUltrasonicSettingsApi(deviceName, {
+      "alert_fluid": fluidState ? '1' : '0',
+      "low_tank": currentLowerValue.toString(),
+    });
+  }
 
   showPickerNumber(BuildContext context, bool isUpperLimit) {
     Picker(
@@ -36,6 +64,7 @@ class _FluidSettingsPageState extends State<FluidSettingsPage> {
                     ? currentLowerValue = selectedValue
                     : null;
           });
+          settingsUpdate();
         }).showDialog(context);
   }
 
@@ -81,6 +110,7 @@ class _FluidSettingsPageState extends State<FluidSettingsPage> {
                 onChanged: (value) {
                   setState(() {
                     fluidState = value;
+                    settingsUpdate();
                   });
                 },
                 inactiveTrackColor: Colors.white,
@@ -100,19 +130,19 @@ class _FluidSettingsPageState extends State<FluidSettingsPage> {
               ),
               trailing: settingsTrailingIcon,
             ),
-            ListTile(
-              onTap: () => showPickerNumber(context, true),
-              leading: Text(
-                'Upper Limit',
-                style: settingsLeadingTextStyle,
-              ),
-              title: Text(
-                currentUpperValue.toString(),
-                style: settingsTitleTextStyle,
-                textAlign: TextAlign.end,
-              ),
-              trailing: settingsTrailingIcon,
-            ),
+            // ListTile(
+            //   onTap: () => showPickerNumber(context, true),
+            //   leading: Text(
+            //     'Upper Limit',
+            //     style: settingsLeadingTextStyle,
+            //   ),
+            //   title: Text(
+            //     currentUpperValue.toString(),
+            //     style: settingsTitleTextStyle,
+            //     textAlign: TextAlign.end,
+            //   ),
+            //   trailing: settingsTrailingIcon,
+            // ),
             settingsPageDivider,
             Padding(
               padding: const EdgeInsets.all(10.0),
@@ -131,6 +161,7 @@ class _FluidSettingsPageState extends State<FluidSettingsPage> {
                 onChanged: (value) {
                   setState(() {
                     bilgeState = value;
+                    settingsUpdate();
                   });
                 },
                 inactiveTrackColor: Colors.white,

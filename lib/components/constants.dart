@@ -33,3 +33,8 @@ Divider settingsPageDivider = Divider(
   thickness: 1.75,
   color: Colors.redAccent.shade100,
 );
+
+TextStyle homeScreenDialogTextStyle = GoogleFonts.getFont(
+  'Lexend Deca',
+  fontSize: 15,
+);

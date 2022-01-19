@@ -1,14 +1,13 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_picker/flutter_picker.dart';
 import 'package:foka_app_v1/components/constants.dart';
-import 'package:foka_app_v1/components/rounded_button.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:toggle_switch/toggle_switch.dart';
+import 'package:foka_app_v1/utils/apiCalls.dart';
 
 class THSSettingsPage extends StatefulWidget {
-  const THSSettingsPage({Key? key}) : super(key: key);
+  // const THSSettingsPage({Key? key}) : super(key: key);
+  THSSettingsPage({this.settings});
+
+  final dynamic settings;
 
   static const String id = 'ths_settings_page';
 
@@ -17,17 +16,55 @@ class THSSettingsPage extends StatefulWidget {
 }
 
 class _THSSettingsPageState extends State<THSSettingsPage> {
-  bool tempState = false;
-  int tempCurrentLowerValue = 10;
-  int tempCurrentUpperValue = 20;
+  dynamic settings = [];
 
-  bool gasState = false;
-  int gasCurrentLowerValue = 1000;
-  int gasCurrentUpperValue = 4000;
+  late String deviceName;
 
-  bool humidityState = false;
-  int humidityCurrentLowerValue = 20;
-  int humidityCurrentUpperValue = 80;
+  late bool tempState;
+  late int tempCurrentLowerValue;
+  late int tempCurrentUpperValue;
+
+  late bool gasState;
+  int gasCurrentLowerValue = 0; // removed in front end.. dont pu
+  late int gasCurrentUpperValue;
+
+  late bool humidityState;
+  late int humidityCurrentLowerValue;
+  late int humidityCurrentUpperValue;
+
+  late var previousValue;
+
+  @override
+  void initState() {
+    super.initState();
+    getSettings();
+    deviceName = settings['serial'];
+    tempState = settings['alert_temp'] == 1 ? true : false;
+    tempCurrentLowerValue = settings['low_temp'];
+    tempCurrentUpperValue = settings['high_temp'];
+    gasState = settings['alert_gas'] == 1 ? true : false;
+    gasCurrentUpperValue = settings['high_gas'];
+    humidityState = settings['alert_humidity'] == 1 ? true : false;
+    humidityCurrentLowerValue = settings['low_hum'];
+    humidityCurrentUpperValue = settings['high_hum'];
+  }
+
+  void getSettings() {
+    settings = widget.settings;
+  }
+
+  settingsUpdate() {
+    ApiCalls().updateTHSSettingsApi(deviceName, {
+      "alert_temp": tempState ? '1' : '0',
+      "low_temp": tempCurrentLowerValue.toString(),
+      "high_temp": tempCurrentUpperValue.toString(),
+      "alert_gas": gasState ? '1' : '0',
+      "high_gas": gasCurrentUpperValue.toString(),
+      "alert_hum": humidityState ? '1' : '0',
+      "low_hum": humidityCurrentLowerValue.toString(),
+      "high_hum": humidityCurrentUpperValue.toString(),
+    });
+  }
 
   showPickerNumberTemperature(BuildContext context, bool isUpperLimit) {
     Picker(
@@ -39,7 +76,8 @@ class _THSSettingsPageState extends State<THSSettingsPage> {
         squeeze: 1,
         title: const Text("Please Select"),
         onConfirm: (Picker picker, List value) {
-          int selectedValue = picker.getSelectedValues()[0] as int;
+          var selectedValue = picker.getSelectedValues()[0];
+          previousValue = settings['temp_lower'];
           setState(() {
             isUpperLimit
                 ? tempCurrentLowerValue <= selectedValue
@@ -48,8 +86,9 @@ class _THSSettingsPageState extends State<THSSettingsPage> {
                 : tempCurrentUpperValue >= selectedValue
                     ? tempCurrentLowerValue = selectedValue
                     : null;
+            // settingsUpdate() ? null : tempCurrentLowerValue = previousValue;
+            settingsUpdate();
           });
-          // print(value[0].toString());
         }).showDialog(context);
   }
 
@@ -73,7 +112,7 @@ class _THSSettingsPageState extends State<THSSettingsPage> {
                     ? gasCurrentLowerValue = selectedValue
                     : null;
           });
-          // print(value[0].toString());
+          settingsUpdate();
         }).showDialog(context);
   }
 
@@ -97,18 +136,7 @@ class _THSSettingsPageState extends State<THSSettingsPage> {
                     ? humidityCurrentLowerValue = selectedValue
                     : null;
           });
-          // print(value[0].toString());
-        }).showDialog(context);
-  }
-
-  showPickerDate(BuildContext context) {
-    Picker(
-        hideHeader: true,
-        adapter: DateTimePickerAdapter(),
-        title: const Text("Select Data"),
-        selectedTextStyle: const TextStyle(color: Colors.blue),
-        onConfirm: (Picker picker, List value) {
-          print((picker.adapter as DateTimePickerAdapter).value);
+          settingsUpdate();
         }).showDialog(context);
   }
 
@@ -149,6 +177,7 @@ class _THSSettingsPageState extends State<THSSettingsPage> {
                   onChanged: (value) {
                     setState(() {
                       tempState = value;
+                      settingsUpdate();
                     });
                   },
                   inactiveTrackColor: Colors.white,
@@ -193,25 +222,26 @@ class _THSSettingsPageState extends State<THSSettingsPage> {
                   onChanged: (value) {
                     setState(() {
                       gasState = value;
+                      settingsUpdate();
                     });
                   },
                   inactiveTrackColor: Colors.white,
                   inactiveThumbColor: Colors.blueGrey,
                 ),
               ),
-              ListTile(
-                onTap: () => showPickerNumberGas(context, false),
-                leading: Text(
-                  'Lower Limit',
-                  style: settingsLeadingTextStyle,
-                ),
-                title: Text(
-                  gasCurrentLowerValue.toString(),
-                  style: settingsTitleTextStyle,
-                  textAlign: TextAlign.end,
-                ),
-                trailing: settingsTrailingIcon,
-              ),
+              // ListTile(
+              //   onTap: () => showPickerNumberGas(context, false),
+              //   leading: Text(
+              //     'Lower Limit',
+              //     style: settingsLeadingTextStyle,
+              //   ),
+              //   title: Text(
+              //     gasCurrentLowerValue.toString(),
+              //     style: settingsTitleTextStyle,
+              //     textAlign: TextAlign.end,
+              //   ),
+              //   trailing: settingsTrailingIcon,
+              // ),
               ListTile(
                 onTap: () => showPickerNumberGas(context, true),
                 leading: Text(
@@ -240,6 +270,7 @@ class _THSSettingsPageState extends State<THSSettingsPage> {
                   onChanged: (value) {
                     setState(() {
                       humidityState = value;
+                      settingsUpdate();
                     });
                   },
                   inactiveTrackColor: Colors.white,

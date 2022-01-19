@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:foka_app_v1/components/rounded_button.dart';
 import 'package:foka_app_v1/main.dart';
 import 'package:foka_app_v1/screens/fluid_settings_page.dart';
+import 'package:foka_app_v1/utils/apiCalls.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
 import 'package:mqtt_client/mqtt_client.dart';
@@ -20,20 +21,20 @@ class FluidMonitor extends StatefulWidget {
 
 class _FluidMonitorState extends State<FluidMonitor> with TickerProviderStateMixin {
   List dropdownItemList = [
-    {'label': 'Fluid Monitor 1', 'value': '1'},
-    {'label': 'Fluid Monitor 2', 'value': '2'},
-    {'label': 'Fluid Monitor 3', 'value': '3'},
-    {'label': 'Fluid Monitor 4', 'value': '4'}, // label is required and unique
-    {'label': 'Fluid Monitor 5', 'value': '5'},
-    {'label': 'Fluid Monitor 6', 'value': '6'},
-    {'label': 'Fluid Monitor 7', 'value': '7'},
+    {'label': 'Fluid Monitor 1', 'value': 'FKB001US'},
+    {'label': 'Fluid Monitor 2', 'value': 'FKB002US'},
+    {'label': 'Fluid Monitor 3', 'value': 'FKB003US'},
+    {'label': 'Fluid Monitor 4', 'value': 'FKB004US'}, // label is required and unique
+    {'label': 'Fluid Monitor 5', 'value': 'FKB005US'},
+    {'label': 'Fluid Monitor 6', 'value': 'FKB006US'},
+    {'label': 'Fluid Monitor 7', 'value': 'FKB007US'},
   ];
 
   int capacity = 100;
   int value = 0;
   int floatValue = 0;
   double toPrint = 0;
-  var deviceNum;
+  String deviceName = 'FKB001US';
 
   late AnimationController _animationController;
   late Animation _animation;
@@ -156,6 +157,15 @@ class _FluidMonitorState extends State<FluidMonitor> with TickerProviderStateMix
     });
   }
 
+  void getUltrasonicSettingsDataAndPush(String deviceName) async {
+    await ApiCalls().getUltrasonicSettingsApi(deviceName).then((value) {
+      print(value);
+      Navigator.push(context, MaterialPageRoute(builder: (context) {
+        return FluidSettingsPage(settings: value);
+      }));
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -208,10 +218,10 @@ class _FluidMonitorState extends State<FluidMonitor> with TickerProviderStateMix
           dropdownList: dropdownItemList,
           onChange: (_) async {
             await connectClient();
-            client.subscribe("/DEMOHUB001/FKB00" + _['value'] + "US", MqttQos.atLeastOnce);
-            client.subscribe("/DEMOHUB001/FKB00" + _['value'] + "FLOAT", MqttQos.atLeastOnce);
-            deviceNum = _;
-            print("The device number is " + deviceNum['value']);
+            client.subscribe("/DEMOHUB001/" + _['value'], MqttQos.atLeastOnce);
+            client.subscribe("/DEMOHUB001/" + _['value'] + "FLOAT", MqttQos.atLeastOnce);
+            deviceName = _['value'];
+            print("The device number is " + deviceName);
           },
           defaultValue: dropdownItemList[0],
           // placeholder: 'insert...',
@@ -264,7 +274,12 @@ class _FluidMonitorState extends State<FluidMonitor> with TickerProviderStateMix
                   });
             },
           ),
-          IconButton(onPressed: () => Navigator.pushNamed(context, FluidSettingsPage.id), icon: const Icon(Icons.settings))
+          IconButton(
+            onPressed: () {
+              getUltrasonicSettingsDataAndPush(deviceName);
+            },
+            icon: const Icon(Icons.settings),
+          ),
         ],
       ),
       backgroundColor: const Color(0xff090f13),
@@ -273,7 +288,7 @@ class _FluidMonitorState extends State<FluidMonitor> with TickerProviderStateMix
             child: ConcentricPageView(
           radius: 0,
           verticalPosition: 0.85,
-          colors: const[ Color(0xff090f13),  Color(0xff090f13)],
+          colors: const [Color(0xff090f13), Color(0xff090f13)],
           itemBuilder: (index, value) {
             int pageIndex = (index % 2);
             return Container(

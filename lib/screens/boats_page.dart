@@ -174,11 +174,15 @@ class _BoatsPageState extends State<BoatsPage> {
                         },
                       ),
                       carouselController: _carouselController,
-                      items: boats.map((movie) {
+                      items: boats.map((boat) {
                         return Builder(
                           builder: (BuildContext context) {
                             return InkWell(
-                              onTap: () => Navigator.pushNamed(context, HomeScreen.id),
+                              onTap: () {
+                                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                  return HomeScreen(hubId: boat['hubid']);
+                                }));
+                              },
                               child: Container(
                                 width: MediaQuery.of(context).size.width,
                                 margin: const EdgeInsets.symmetric(horizontal: 5.0),
@@ -196,18 +200,18 @@ class _BoatsPageState extends State<BoatsPage> {
                                         decoration: BoxDecoration(
                                           borderRadius: BorderRadius.circular(20),
                                         ),
-                                        child: Image.network(movie['image'], fit: BoxFit.cover),
+                                        child: Image.network(boat['image'], fit: BoxFit.cover),
                                       ),
                                       const SizedBox(height: 20),
                                       Text(
-                                        movie['title'],
+                                        boat['title'],
                                         style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold, color: Colors.white),
                                       ),
                                       // rating
                                       const SizedBox(height: 20),
                                       Container(
                                         child: Text(
-                                          movie['description'],
+                                          boat['description'],
                                           style: TextStyle(fontSize: 14.0, color: Colors.grey.shade600),
                                           textAlign: TextAlign.center,
                                         ),
@@ -215,7 +219,7 @@ class _BoatsPageState extends State<BoatsPage> {
                                       const SizedBox(height: 20),
                                       // AnimatedOpacity(
                                       //   duration: const Duration(milliseconds: 500),
-                                      //   opacity: _current == boats.indexOf(movie) ? 1.0 : 0.0,
+                                      //   opacity: _current == boats.indexOf(boat) ? 1.0 : 0.0,
                                       //   child: Container(
                                       //     padding: const EdgeInsets.symmetric(horizontal: 20.0),
                                       //     child: Row(

@@ -1,18 +1,25 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:foka_app_v1/components/constants.dart';
 import 'package:foka_app_v1/components/rounded_button.dart';
 import 'package:foka_app_v1/screens/location_tracker.dart';
 import 'package:foka_app_v1/screens/smart_connect.dart';
 import 'package:foka_app_v1/screens/ths_monitor.dart';
 import 'package:foka_app_v1/screens/wifi_screen.dart';
+import 'package:foka_app_v1/utils/apiCalls.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:progresso/progresso.dart';
 
 import 'fluid_monitor.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  // const HomeScreen({Key? key}) : super(key: key);
+
+  HomeScreen({this.hubId = const []});
+
+  final hubId;
+
   static const String id = "home_screen";
 
   @override
@@ -21,6 +28,17 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   late AnimationController controller;
+
+  List<String> deviceNames = [
+    'THS Monitor',
+    'Fluid Monitor',
+    'Float Sensor',
+    'Smart Connect',
+    'Location Tracker',
+    'Security Monitor',
+  ];
+
+  late List<int> activeOrNot = [];
 
   @override
   void initState() {
@@ -38,6 +56,16 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   void dispose() {
     controller.dispose();
     super.dispose();
+  }
+
+  Future<List> getDiagonsticData() async {
+    activeOrNot.clear();
+    List hubDevices = await ApiCalls().getHubDevices(widget.hubId);
+    List connectedDevices = await ApiCalls().getConnectedDevices(widget.hubId);
+    for (int i = 0; i < hubDevices.length; i++) {
+      activeOrNot.add(hubDevices[i] == 0 ? -1 : hubDevices[i] - connectedDevices[i]);
+    }
+    return Future<List>.value(activeOrNot);
   }
 
   @override
@@ -227,89 +255,48 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   child: RoundedButton(
                     title: "Start Diagnostic",
                     color: const Color(0xFF107896),
-                    onPressed: () {
-                      showDialog(
+                    onPressed: () async {
+                      await getDiagonsticData().then((value) {
+                        print(value);
+                        showDialog(
                           context: context,
                           builder: (context) {
                             return AlertDialog(
                               backgroundColor: Colors.white,
-                              content: SingleChildScrollView(
-                                child: ListBody(
-                                  children: <Widget>[
-                                    ListTile(
+                              title: Center(child: Text('Diagonstic Results')),
+                              content: Container(
+                                width: double.minPositive,
+                                child: ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: deviceNames.length,
+                                  itemBuilder: (context, index) {
+                                    return ListTile(
                                       title: Text(
-                                        'Fluid Monitor',
-                                        style: GoogleFonts.getFont(
-                                          'Lexend Deca',
-                                          fontSize: 15,
-                                        ),
+                                        deviceNames[index],
+                                        style: homeScreenDialogTextStyle,
                                       ),
-                                      trailing: const Icon(
-                                        Icons.check_circle,
-                                        color: Colors.green,
-                                      ),
-                                    ),
-                                    ListTile(
-                                      title: Text(
-                                        'THS Monitor',
-                                        style: GoogleFonts.getFont(
-                                          'Lexend Deca',
-                                          fontSize: 15,
-                                        ),
-                                      ),
-                                      trailing: const Icon(
-                                        Icons.check_circle,
-                                        color: Colors.green,
-                                      ),
-                                    ),
-                                    ListTile(
-                                      title: Text(
-                                        'Security Monitor',
-                                        style: GoogleFonts.getFont(
-                                          'Lexend Deca',
-                                          fontSize: 15,
-                                        ),
-                                      ),
-                                      trailing: const Icon(
-                                        Icons.check_circle,
-                                        color: Colors.green,
-                                      ),
-                                    ),
-                                    ListTile(
-                                      title: Text(
-                                        'Smart Connect',
-                                        style: GoogleFonts.getFont(
-                                          'Lexend Deca',
-                                          fontSize: 15,
-                                        ),
-                                      ),
-                                      trailing: const Icon(
-                                        Icons.check_circle,
-                                        color: Colors.green,
-                                      ),
-                                    ),
-                                    ListTile(
-                                      title: Text(
-                                        'Location Tracker',
-                                        style: GoogleFonts.getFont(
-                                          'Lexend Deca',
-                                          fontSize: 15,
-                                        ),
-                                      ),
-                                      trailing: const Icon(
-                                        Icons.check_circle,
-                                        color: Colors.green,
-                                      ),
-                                    ),
-                                    // CircularProgressIndicator(
-                                    //   value: controller.value,
-                                    //   semanticsLabel: 'Linear progress indicator',
-                                    // ),
-                                  ],
+                                      trailing: value[index] == -1
+                                          ? const Icon(
+                                              Icons.warning,
+                                              color: Colors.red,
+                                            )
+                                          : value[index] == 0
+                                              ? const Icon(
+                                                  Icons.check_circle,
+                                                  color: Colors.green,
+                                                )
+                                              : const Icon(
+                                                  Icons.info,
+                                                  color: Colors.orange,
+                                                ),
+                                    );
+                                  },
                                 ),
                               ),
                             );
-                          });
+                          },
+                        );
+                      });
                     },
                     width: MediaQuery.of(context).size.width * 0.9,
                   ),

@@ -1,10 +1,10 @@
 import 'dart:async';
-
 import 'package:cool_dropdown/cool_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:foka_app_v1/main.dart';
 import 'package:foka_app_v1/screens/home_screen.dart';
 import 'package:foka_app_v1/screens/ths_settings_page.dart';
+import 'package:foka_app_v1/utils/apiCalls.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import 'package:mqtt_client/mqtt_client.dart';
@@ -20,13 +20,13 @@ class THSScreen extends StatefulWidget {
 
 class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMixin {
   List dropdownItemList = [
-    {'label': 'THS Monitor 1', 'value': '1'},
-    {'label': 'THS Monitor 2', 'value': '2'},
-    {'label': 'THS Monitor 3', 'value': '3'},
-    {'label': 'THS Monitor 4', 'value': '4'}, // label is required and unique
-    {'label': 'THS Monitor 5', 'value': '5'},
-    {'label': 'THS Monitor 6', 'value': '6'},
-    {'label': 'THS Monitor 7', 'value': '7'},
+    {'label': 'THS Monitor 1', 'value': 'FKB001THS'},
+    {'label': 'THS Monitor 2', 'value': 'FKB002THS'},
+    {'label': 'THS Monitor 3', 'value': 'FKB003THS'},
+    {'label': 'THS Monitor 4', 'value': 'FKB004THS'}, // label is required and unique
+    {'label': 'THS Monitor 5', 'value': 'FKB005THS'},
+    {'label': 'THS Monitor 6', 'value': 'FKB006THS'},
+    {'label': 'THS Monitor 7', 'value': 'FKB007THS'},
   ];
 
   late AnimationController _animationController;
@@ -40,7 +40,7 @@ class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMix
   double tempMin = 28.0;
   double tempMax = 30.0;
   List<String> parts = ['6000', '21.0', '34.0'];
-  String deviceNum = '1';
+  String deviceName = 'FKB001THS';
 
   @override
   void initState() {
@@ -151,6 +151,15 @@ class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMix
     });
   }
 
+  void getTHSSettingsDataAndPush(String deviceName) async {
+    await ApiCalls().getTHSSettingsApi(deviceName).then((value) {
+      print(value);
+      Navigator.push(context, MaterialPageRoute(builder: (context) {
+        return THSSettingsPage(settings: value);
+      }));
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -201,15 +210,8 @@ class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMix
           dropdownList: dropdownItemList,
           onChange: (_) async {
             await connectClient();
-            // prevDeviceNum = deviceNum;
-            client.subscribe("/DEMOHUB001/FKB00" + _['value'] + "THS", MqttQos.atLeastOnce);
-            // try {
-            //   client.unsubscribe("/DEMOHUB001/FKB00" + deviceNum + "THS");
-            // } catch (e) {
-            //   print(e);
-            // }
-            // deviceNum = _['value'];
-            // client.subscribe("/DEMOHUB001/FKB00" + deviceNum + "THS", MqttQos.atLeastOnce);
+            client.subscribe("/DEMOHUB001/" + _['value'], MqttQos.atLeastOnce);
+            deviceName = _['value'];
             print("The device number is " + _['value']);
           },
           defaultValue: dropdownItemList[0],
@@ -219,7 +221,7 @@ class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMix
         actions: [
           IconButton(
             onPressed: () {
-              Navigator.pushNamed(context, THSSettingsPage.id);
+              getTHSSettingsDataAndPush(deviceName);
             },
             icon: const Icon(Icons.settings),
           ),
