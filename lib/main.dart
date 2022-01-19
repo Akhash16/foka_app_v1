@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:foka_app_v1/screens/add_boat_verification.dart';
+import 'package:foka_app_v1/screens/chose_device.dart';
 import 'package:foka_app_v1/screens/fluid_monitor.dart';
 import 'package:foka_app_v1/screens/add_boat_screen.dart';
 import 'package:foka_app_v1/screens/boat_add_data.dart';
@@ -10,6 +11,7 @@ import 'package:foka_app_v1/screens/forgot_password.dart';
 import 'package:foka_app_v1/screens/home_screen.dart';
 import 'package:foka_app_v1/screens/location_tracker.dart';
 import 'package:foka_app_v1/screens/login_screen.dart';
+import 'package:foka_app_v1/screens/make_sure.dart';
 import 'package:foka_app_v1/screens/onboarding.dart';
 import 'package:foka_app_v1/screens/register_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -39,7 +41,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       title: "Foka Tech",
-      initialRoute: SplashScreen.id,
+      initialRoute: MakeSure.id,
       routes: {
         LoginScreen.id: (context) => const LoginScreen(),
         RegisterScreen.id: (context) => const RegisterScreen(),
@@ -58,6 +60,8 @@ class MyApp extends StatelessWidget {
         LocationScreen.id: (context) => const LocationScreen(),
         WifiScreen.id: (context) => const WifiScreen(),
         SplashScreen.id: (context) => const SplashScreen(),
+        MakeSure.id: (context) => const MakeSure(),
+        SelectService.id: (context) => const SelectService(),
       },
     );
   }

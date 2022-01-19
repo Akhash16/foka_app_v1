@@ -59,6 +59,7 @@ dependencies:
   numberpicker: ^2.1.1
   google_sign_in: ^5.2.3
   lottie: ^1.2.1
+  simple_animations: ^4.0.1
   
 dev_dependencies:
   flutter_test:
@@ -67,7 +68,8 @@ dev_dependencies:
   flutter_native_splash: ^1.3.3
 
 flutter_native_splash:
-  color: "#ffffff"
+          #42a5f5
+  color: "1a1e20"
   image: assets/foka_logo.png
   android: true
   ios: true
@@ -97,6 +99,10 @@ flutter:
     - assets/helm.png
     - assets/location.png
     - assets/animation.json
+    - assets/oops.json
+    - assets/message.json
+    - assets/alert.json
+    - assets/alert1.json
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

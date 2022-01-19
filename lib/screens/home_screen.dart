@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:foka_app_v1/components/constants.dart';
 import 'package:foka_app_v1/components/rounded_button.dart';
 import 'package:foka_app_v1/screens/location_tracker.dart';
+import 'package:foka_app_v1/screens/make_sure.dart';
 import 'package:foka_app_v1/screens/smart_connect.dart';
 import 'package:foka_app_v1/screens/ths_monitor.dart';
 import 'package:foka_app_v1/screens/wifi_screen.dart';
@@ -147,7 +148,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           color: Colors.white,
         ),
         onPressed: () {
-          Navigator.pushNamed(context, WifiScreen.id);
+          Navigator.pushNamed(context, MakeSure.id);
         },
       ),
       backgroundColor: const Color(0xff090f13),
