@@ -17,9 +17,9 @@ import 'fluid_monitor.dart';
 class HomeScreen extends StatefulWidget {
   // const HomeScreen({Key? key}) : super(key: key);
 
-  HomeScreen({this.hubId = const []});
+  HomeScreen({this.hubId = const [], this.boatName});
 
-  final hubId;
+  final hubId, boatName;
 
   static const String id = "home_screen";
 
@@ -164,7 +164,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   style: GoogleFonts.lexendDeca(color: const Color(0xff95a1ac), fontSize: 14, fontWeight: FontWeight.w400),
                 ),
                 Text(
-                  "Boat Name",
+                  widget.boatName,
                   style: GoogleFonts.lexendDeca(color: const Color(0xffffffff), fontSize: 28, fontWeight: FontWeight.w700),
                 ),
                 const SizedBox(
