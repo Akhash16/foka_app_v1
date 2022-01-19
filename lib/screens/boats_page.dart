@@ -6,6 +6,8 @@ import 'package:fab_circular_menu/fab_circular_menu.dart';
 import 'package:foka_app_v1/screens/login_screen.dart';
 import 'package:foka_app_v1/utils/apiCalls.dart';
 import 'package:foka_app_v1/utils/authentication.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 
 class BoatsPage extends StatefulWidget {
   final boatData;
@@ -72,6 +74,7 @@ class _BoatsPageState extends State<BoatsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xff1A1E20),
       floatingActionButton: FabCircularMenu(
         fabSize: 50.0,
         ringDiameter: 300,
@@ -113,15 +116,27 @@ class _BoatsPageState extends State<BoatsPage> {
         ],
       ),
       body: boats.isEmpty
-          ? const Center(
-              child: Text(
-                'No boats to display',
-                style: TextStyle(
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
+          ? Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Center(
+                  child: Container(
+                    height: MediaQuery.of(context).size.height * 0.65,
+                    width: MediaQuery.of(context).size.width * 0.95,
+                    child: Lottie.asset(
+                      "assets/oops.json",
+                    ),
+                  ),
                 ),
-              ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    "No Boats to Display",
+                    style: GoogleFonts.montserrat(fontSize: 25, color: Colors.blue, fontWeight: FontWeight.w600),
+                  ),
+                )
+              ],
             )
           : Container(
               height: MediaQuery.of(context).size.height,
@@ -217,15 +232,8 @@ class _BoatsPageState extends State<BoatsPage> {
                                         ),
                                       ),
                                       const SizedBox(height: 20),
-                                      // AnimatedOpacity(
                                       //   duration: const Duration(milliseconds: 500),
                                       //   opacity: _current == boats.indexOf(boat) ? 1.0 : 0.0,
-                                      //   child: Container(
-                                      //     padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                                      //     child: Row(
-                                      //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      //       children: [
-                                      //         Container(
                                       //           child: Row(
                                       //             children: [
                                       //               const Icon(
