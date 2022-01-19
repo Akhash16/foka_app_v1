@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       title: "Foka Tech",
-      initialRoute: MakeSure.id,
+      initialRoute: SplashScreen.id,
       routes: {
         LoginScreen.id: (context) => const LoginScreen(),
         RegisterScreen.id: (context) => const RegisterScreen(),

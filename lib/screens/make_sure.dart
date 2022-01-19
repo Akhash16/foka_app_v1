@@ -43,13 +43,9 @@ class _MakeSureState extends State<MakeSure> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                "Make sure you are physically present on boat(s)",
+                "Make sure you are physically present on your boat(s)",
                 textAlign: TextAlign.center,
-                style: GoogleFonts.montserrat(
-                    fontStyle: FontStyle.normal,
-                    fontSize: 25,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w500),
+                style: GoogleFonts.montserrat(fontStyle: FontStyle.normal, fontSize: 25, color: Colors.white, fontWeight: FontWeight.w500),
               ),
             )
           ],

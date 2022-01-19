@@ -91,9 +91,7 @@ class _BoatsPageState extends State<BoatsPage> {
             ),
           ),
           IconButton(
-            onPressed: () {
-              ApiCalls().sample();
-            },
+            onPressed: () {},
             icon: const Icon(
               Icons.settings,
               color: Colors.white,
@@ -195,7 +193,7 @@ class _BoatsPageState extends State<BoatsPage> {
                             return InkWell(
                               onTap: () {
                                 Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                  return HomeScreen(hubId: boat['hubid']);
+                                  return HomeScreen(hubId: boat['hubid'], boatName: boat['title']);
                                 }));
                               },
                               child: Container(
