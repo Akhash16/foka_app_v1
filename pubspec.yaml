@@ -60,6 +60,7 @@ dependencies:
   google_sign_in: ^5.2.3
   lottie: ^1.2.1
   simple_animations: ^4.0.1
+  qr_code_scanner: ^0.6.1
   
 dev_dependencies:
   flutter_test:
@@ -103,6 +104,7 @@ flutter:
     - assets/message.json
     - assets/alert.json
     - assets/alert1.json
+    - assets/connected.json
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:foka_app_v1/screens/add_boat_verification.dart';
 import 'package:foka_app_v1/screens/chose_device.dart';
+import 'package:foka_app_v1/screens/connect_device.dart';
 import 'package:foka_app_v1/screens/fluid_monitor.dart';
 import 'package:foka_app_v1/screens/add_boat_screen.dart';
 import 'package:foka_app_v1/screens/boat_add_data.dart';
@@ -13,6 +14,7 @@ import 'package:foka_app_v1/screens/location_tracker.dart';
 import 'package:foka_app_v1/screens/login_screen.dart';
 import 'package:foka_app_v1/screens/make_sure.dart';
 import 'package:foka_app_v1/screens/onboarding.dart';
+import 'package:foka_app_v1/screens/qr_code.dart';
 import 'package:foka_app_v1/screens/register_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:foka_app_v1/screens/smart_connect.dart';
@@ -41,7 +43,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       title: "Foka Tech",
-      initialRoute: MakeSure.id,
+      initialRoute: QrScreen.id,
       routes: {
         LoginScreen.id: (context) => const LoginScreen(),
         RegisterScreen.id: (context) => const RegisterScreen(),
@@ -62,6 +64,8 @@ class MyApp extends StatelessWidget {
         SplashScreen.id: (context) => const SplashScreen(),
         MakeSure.id: (context) => const MakeSure(),
         SelectService.id: (context) => const SelectService(),
+        ConnectDevice.id: (context) => const ConnectDevice(),
+        QrScreen.id : (context) => const QrScreen(),
       },
     );
   }

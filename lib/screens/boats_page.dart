@@ -74,7 +74,8 @@ class _BoatsPageState extends State<BoatsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xff1A1E20),
+      
+      backgroundColor: const Color(0xff090f13),
       floatingActionButton: FabCircularMenu(
         fabSize: 50.0,
         ringDiameter: 300,
