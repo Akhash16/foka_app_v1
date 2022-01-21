@@ -106,7 +106,8 @@ flutter:
     - assets/alert.json
     - assets/alert1.json
     - assets/connected.json
-
+    - assets/pin.png
+    - assets/just-arrived.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
