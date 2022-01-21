@@ -3,11 +3,10 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:foka_app_v1/components/constants.dart';
 import 'package:foka_app_v1/components/rounded_button.dart';
+import 'package:foka_app_v1/screens/chose_device.dart';
 import 'package:foka_app_v1/screens/location_tracker.dart';
-import 'package:foka_app_v1/screens/make_sure.dart';
 import 'package:foka_app_v1/screens/smart_connect.dart';
 import 'package:foka_app_v1/screens/ths_monitor.dart';
-import 'package:foka_app_v1/screens/wifi_screen.dart';
 import 'package:foka_app_v1/utils/apiCalls.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:progresso/progresso.dart';
@@ -17,7 +16,7 @@ import 'fluid_monitor.dart';
 class HomeScreen extends StatefulWidget {
   // const HomeScreen({Key? key}) : super(key: key);
 
-  HomeScreen({this.hubId = const [], this.boatName});
+  HomeScreen({this.hubId, this.boatName});
 
   final hubId, boatName;
 
@@ -40,6 +39,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   ];
 
   late List<int> activeOrNot = [];
+  late List<dynamic> devices = [];
+  late List<dynamic> connectedDevices = [];
+  late List<Widget> items = [];
 
   @override
   void initState() {
@@ -51,6 +53,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         setState(() {});
       });
     super.initState();
+    getDevices();
   }
 
   @override
@@ -59,87 +62,153 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     super.dispose();
   }
 
+  getDevices() async {
+    devices = await ApiCalls().getHubDevices(widget.hubId);
+    connectedDevices = await ApiCalls().getConnectedDevices(widget.hubId);
+    setState(() {
+      items = buildItems(devices);
+    });
+  }
+
   Future<List> getDiagonsticData() async {
     activeOrNot.clear();
-    List hubDevices = await ApiCalls().getHubDevices(widget.hubId);
-    List connectedDevices = await ApiCalls().getConnectedDevices(widget.hubId);
+    List hubDevices = await ApiCalls().getHubDevicesCount(widget.hubId);
+    List connectedDevices = await ApiCalls().getConnectedDevicesCount(widget.hubId);
     for (int i = 0; i < hubDevices.length; i++) {
       activeOrNot.add(hubDevices[i] == 0 ? -1 : hubDevices[i] - connectedDevices[i]);
     }
     return Future<List>.value(activeOrNot);
   }
 
-  @override
-  Widget build(BuildContext context) {
+  List<Widget> buildItems(dynamic devices) {
+    print(devices);
     List<Widget> items = [
       InkWell(
-        onTap: () => Navigator.pushNamed(context, THSScreen.id),
+        onTap: devices[0].length == 0
+            ? () {}
+            : () async {
+                getDevices();
+                // await ApiCalls().getTHSSettingsApi(deviceName).then((value) {
+                //   print(value);
+                //   Navigator.push(context, MaterialPageRoute(builder: (context) {
+                //     return THSSettingsPage(settings: value);
+                //   }));
+                // });
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return THSScreen(
+                    hubId: widget.hubId,
+                    devices: devices[0],
+                  );
+                }));
+              },
         child: DeviceCard(
-          color: Colors.pink.shade600,
+          color: devices[0].length == 0 ? Colors.pink.shade600.withOpacity(0.2) : Colors.pink.shade600,
           title: "THS Monitor",
           description: "Tap here to more info",
-          icon: const Icon(
+          icon: Icon(
             Icons.thermostat,
-            color: Color(0xffffffff),
+            color: devices[0].length == 0 ? Colors.white.withOpacity(0.2) : const Color(0xffffffff),
             size: 44,
           ),
+          opacity: devices[0].length == 0 ? 0.2 : 1,
         ),
       ),
       InkWell(
-        onTap: () => Navigator.pushNamed(context, FluidMonitor.id),
-        child: const DeviceCard(
-          color: Color(0xff4b39ef),
+        onTap: devices[1].length == 0 && devices[2] == 0
+            ? () {}
+            : () {
+                getDevices();
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return FluidMonitor(
+                    hubId: widget.hubId,
+                    devicesUltrasonic: devices[1],
+                    devicesFloat: devices[2],
+                  );
+                }));
+              },
+        child: DeviceCard(
+          color: devices[1].length == 0 && devices[2].length == 0 ? const Color(0xff4b39ef).withOpacity(0.2) : const Color(0xff4b39ef),
           title: "Fluid Monitor",
           description: "Tap here to monitor fluid levels",
           icon: Icon(
             Icons.water,
-            color: Color(0xffffffff),
+            color: devices[1].length == 0 && devices[2].length == 0 ? Colors.white.withOpacity(0.2) : const Color(0xffffffff),
             size: 44,
           ),
+          opacity: devices[1].length == 0 && devices[2].length == 0 ? 0.2 : 1,
         ),
       ),
       InkWell(
-        onTap: () => Navigator.pushNamed(context, SmartConnet.id),
-        child: const DeviceCard(
+        onTap: devices[3].length == 0
+            ? () {}
+            : () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return SmartConnet(
+                    hubId: widget.hubId,
+                    devices: devices[3],
+                  );
+                }));
+              },
+        child: DeviceCard(
           // color: Color(0xff4b39ef),
-          color: Colors.pink,
+          color: devices[3].length == 0 ? Colors.pink.withOpacity(0.2) : Colors.pink,
           title: "Smart Connect",
           description: "Tap here to more details",
           icon: Icon(
             Icons.water,
-            color: Color(0xffffffff),
+            color: devices[3].length == 0 ? Colors.white.withOpacity(0.2) : const Color(0xffffffff),
             size: 44,
           ),
+          opacity: devices[3].length == 0 ? 0.2 : 1,
         ),
       ),
       InkWell(
-        onTap: () => Navigator.pushNamed(context, LocationScreen.id),
-        child: const DeviceCard(
-          color: Color(0xff8b0f32),
+        onTap: devices[4].length == 0
+            ? () {}
+            : () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return LocationScreen(
+                    hubId: widget.hubId,
+                    deviceId: devices[4][0]['serial'],
+                  );
+                }));
+              },
+        child: DeviceCard(
+          color: devices[4].length == 0 ? const Color(0xff8b0f32).withOpacity(0.2) : const Color(0xff8b0f32),
           title: "Location Tracker",
           description: "Tap here to locate your boat",
           icon: Icon(
             Icons.location_on,
-            color: Color(0xffffffff),
+            color: devices[4].length == 0 ? Colors.white.withOpacity(0.2) : const Color(0xffffffff),
             size: 44,
           ),
+          opacity: devices[4].length == 0 ? 0.2 : 1,
         ),
       ),
       InkWell(
-        onTap: () => print('security monitor'),
+        onTap: devices[5].length == 0
+            ? () {
+                print('unvailable');
+              }
+            : () => print('security monitor'),
         child: DeviceCard(
-          color: Colors.orange.shade600,
+          color: devices[5].length == 0 ? Colors.orange.shade600.withOpacity(0.2) : Colors.orange.shade600,
           title: "Security Monitor",
           description: "Tap here to monitor your boat",
-          icon: const Icon(
+          icon: Icon(
             Icons.security,
-            color: Color(0xffffffff),
+            color: devices[5].length == 0 ? Colors.white.withOpacity(0.2) : const Color(0xffffffff),
             size: 44,
           ),
+          opacity: devices[5].length == 0 ? 0.2 : 1,
         ),
       ),
     ];
+    return items;
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(
@@ -148,7 +217,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           color: Colors.white,
         ),
         onPressed: () {
-          Navigator.pushNamed(context, MakeSure.id);
+          Navigator.pushNamed(context, SelectService.id);
         },
       ),
       backgroundColor: const Color(0xff090f13),
@@ -264,7 +333,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           builder: (context) {
                             return AlertDialog(
                               backgroundColor: Colors.white,
-                              title: Center(child: Text('Diagonstic Results')),
+                              title: const Center(child: const Text('Diagonstic Results')),
                               content: Container(
                                 width: double.minPositive,
                                 child: ListView.builder(
@@ -336,11 +405,20 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 }
 
 class DeviceCard extends StatelessWidget {
-  const DeviceCard({Key? key, required this.color, required this.title, required this.description, required this.icon}) : super(key: key);
+  const DeviceCard({
+    Key? key,
+    required this.color,
+    required this.title,
+    required this.description,
+    required this.icon,
+    this.opacity = 1,
+  }) : super(key: key);
+
   final Icon icon;
   final String title;
   final String description;
   final Color color;
+  final double opacity;
   // final VoidCallback onPressed;
 
   @override
@@ -372,7 +450,7 @@ class DeviceCard extends StatelessWidget {
             child: AutoSizeText(
               title,
               textAlign: TextAlign.center,
-              style: GoogleFonts.lexendDeca(color: const Color(0xffffffff), textStyle: TextStyle(fontSize: 18)),
+              style: GoogleFonts.lexendDeca(color: const Color(0xffffffff).withOpacity(opacity), textStyle: const TextStyle(fontSize: 18)),
             ),
           ),
           Padding(
@@ -382,7 +460,7 @@ class DeviceCard extends StatelessWidget {
               textAlign: TextAlign.center,
               style: GoogleFonts.getFont(
                 'Lexend Deca',
-                color: const Color(0xB3FFFFFF),
+                color: const Color(0xB3FFFFFF).withOpacity(opacity),
                 fontSize: 13,
               ),
             ),

@@ -11,15 +11,15 @@ class ConnectDevice extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-          backgroundColor: Colors.blue,
-          onPressed: () {
-            Navigator.pushNamed(context, QrScreen.id);
-          },
-          child: const Icon(
-            Icons.navigate_next,
-            size: 40,
-          ),
+        backgroundColor: Colors.blue,
+        onPressed: () {
+          Navigator.pushNamed(context, QrScreen.id);
+        },
+        child: const Icon(
+          Icons.navigate_next,
+          size: 40,
         ),
+      ),
       backgroundColor: const Color(0xff090f13),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -37,13 +37,9 @@ class ConnectDevice extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              "Connect to your device wifi now(eg. Fokatech ultrasonic fkb00x)(s) ",
+              "Connect to your device wifi now(eg. Fokatech ultrasonic fkbxxx)",
               textAlign: TextAlign.center,
-              style: GoogleFonts.montserrat(
-                  fontStyle: FontStyle.normal,
-                  fontSize: 25,
-                  color: Colors.white,
-                  fontWeight: FontWeight.w500),
+              style: GoogleFonts.montserrat(fontStyle: FontStyle.normal, fontSize: 25, color: Colors.white, fontWeight: FontWeight.w500,),
             ),
           )
         ],

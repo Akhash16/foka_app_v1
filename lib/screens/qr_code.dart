@@ -1,7 +1,13 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:foka_app_v1/screens/boats_page.dart';
+import 'package:foka_app_v1/screens/home_screen.dart';
+import 'package:foka_app_v1/screens/make_sure.dart';
+import 'package:foka_app_v1/screens/splash_screen.dart';
+import 'package:foka_app_v1/utils/apiCalls.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
@@ -18,6 +24,8 @@ class _QrScreenState extends State<QrScreen> {
   Barcode? result;
   QRViewController? controller;
 
+  bool isVisible = false;
+
   // In order to get hot reload to work we need to pause the camera if the platform
   // is android, or resume the camera if the platform is iOS.
   @override
@@ -33,7 +41,30 @@ class _QrScreenState extends State<QrScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-       backgroundColor: const Color(0xff090f13),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (context) => HomeScreen(
+                hubId: "DEMOHUB0001",
+                boatName: "My Boat 1",
+              ),
+            ),
+            ModalRoute.withName(HomeScreen.id),
+          );
+          // Navigator.of(context).pushAndRemoveUntil(
+          //   MaterialPageRoute(
+          //     builder: (context) => HomeScreen(
+          //       hubId: "DEMOHUB0001",
+          //       boatName: "My Boat 1",
+          //     ),
+          //   ),
+          //   (Route<dynamic> route) => route == ModalRoute.withName(BoatsPage.id),
+          // );
+        },
+      ),
+      backgroundColor: const Color(0xff090f13),
       body: Column(
         children: <Widget>[
           Expanded(
@@ -55,19 +86,11 @@ class _QrScreenState extends State<QrScreen> {
               child: (result != null)
                   ? Text(
                       'Barcode Type: ${describeEnum(result!.format)}   Data: ${result!.code}',
-                      style: GoogleFonts.montserrat(
-                          fontStyle: FontStyle.normal,
-                          fontSize: 18,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w400),
+                      style: GoogleFonts.montserrat(fontStyle: FontStyle.normal, fontSize: 18, color: Colors.white, fontWeight: FontWeight.w400),
                     )
                   : Text(
                       'Scan QR code',
-                      style: GoogleFonts.montserrat(
-                          fontStyle: FontStyle.normal,
-                          fontSize: 25,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w500),
+                      style: GoogleFonts.montserrat(fontStyle: FontStyle.normal, fontSize: 25, color: Colors.white, fontWeight: FontWeight.w500),
                     ),
             ),
           ),
@@ -81,6 +104,14 @@ class _QrScreenState extends State<QrScreen> {
     controller.scannedDataStream.listen((scanData) {
       setState(() {
         result = scanData;
+      });
+      dynamic data = jsonDecode(result!.code!);
+      ApiCalls().addHub(data['ssid'].toString(), data['password'].toString()).then((value) {
+        if (value) {
+          Navigator.of(context).popUntil(ModalRoute.withName(HomeScreen.id));
+        } else {
+          print("post failed");
+        }
       });
     });
   }
