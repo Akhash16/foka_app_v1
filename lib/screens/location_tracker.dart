@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:cool_dropdown/cool_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:foka_app_v1/main.dart';
+import 'package:foka_app_v1/screens/geofence.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
@@ -20,14 +21,18 @@ class _LocationScreenState extends State<LocationScreen> {
   Set<Marker> _markers = {};
   late BitmapDescriptor mapMarker;
   void setCustomMarker() async {
-    mapMarker = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(size: Size(5, 5)), "assets/location.png");
+    mapMarker = await BitmapDescriptor.fromAssetImage(
+        const ImageConfiguration(size: Size(5, 5)), "assets/location.png");
   }
 
   List dropdownItemList = [
     {'label': 'Location Tracker 1', 'value': '1'},
     {'label': 'Location Tracker 2', 'value': '2'},
     {'label': 'Location Tracker 3', 'value': '3'},
-    {'label': 'Location Tracker 4', 'value': '4'}, // label is required and unique
+    {
+      'label': 'Location Tracker 4',
+      'value': '4'
+    }, // label is required and unique
     {'label': 'Location Tracker 5', 'value': '5'},
     {'label': 'Location Tracker 6', 'value': '6'},
     {'label': 'Location Tracker 7', 'value': '7'}
@@ -47,7 +52,8 @@ class _LocationScreenState extends State<LocationScreen> {
   void initState() {
     super.initState();
     setCustomMarker();
-    Timer timer = Timer.periodic(const Duration(seconds: 1), (Timer t) => change());
+    Timer timer =
+        Timer.periodic(const Duration(seconds: 1), (Timer t) => change());
 
     void start() async {
       await connectClient();
@@ -90,7 +96,8 @@ class _LocationScreenState extends State<LocationScreen> {
     print('try done');
     client.updates!.listen((List<MqttReceivedMessage<MqttMessage>> c) {
       MqttPublishMessage message = c[0].payload as MqttPublishMessage;
-      final payload = MqttPublishPayload.bytesToStringAsString(message.payload.message);
+      final payload =
+          MqttPublishPayload.bytesToStringAsString(message.payload.message);
 
       print('Received message:$payload from topic: ${c[0].topic}>');
 
@@ -222,15 +229,29 @@ class _LocationScreenState extends State<LocationScreen> {
           });
         },
       ),
-      floatingActionButton: Padding(
-        padding: EdgeInsets.fromLTRB(8, 8, MediaQuery.of(context).size.width * 0.3, 8),
-        child: FloatingActionButton.extended(
-          elevation: 9,
-          onPressed: _goToTheBoat,
-          label: const Text('locate'),
-          icon: const Icon(Icons.location_on),
-          backgroundColor: const Color(0xff090f13).withOpacity(0.8),
-        ),
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          FloatingActionButton.extended(
+            elevation: 9,
+            onPressed: () {
+              Navigator.pushNamed(context, GeoFence.id);
+            },
+            label: const Text('Geofence'),
+            icon: const Icon(Icons.gps_fixed_outlined),
+            backgroundColor: const Color(0xff090f13).withOpacity(0.8),
+          ),
+          SizedBox(
+            width: MediaQuery.of(context).size.width * 0.05,
+          ),
+          FloatingActionButton.extended(
+            elevation: 9,
+            onPressed: _goToTheBoat,
+            label: const Text('Locate'),
+            icon: const Icon(Icons.location_on),
+            backgroundColor: const Color(0xff090f13).withOpacity(0.8),
+          ),
+        ],
       ),
     );
   }

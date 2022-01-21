@@ -62,6 +62,7 @@ dependencies:
   simple_animations: ^4.0.1
   qr_code_scanner: ^0.6.1
   
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -70,7 +71,7 @@ dev_dependencies:
 
 flutter_native_splash:
           #42a5f5
-  color: "1a1e20"
+  color: "090f13"
   image: assets/foka_logo.png
   android: true
   ios: true
