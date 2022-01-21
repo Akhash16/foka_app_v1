@@ -11,7 +11,11 @@ import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 
 class THSScreen extends StatefulWidget {
-  const THSScreen({Key? key}) : super(key: key);
+  // const THSScreen({Key? key}) : super(key: key);
+  THSScreen({this.hubId, this.devices});
+
+  final hubId, devices;
+
   static const id = "ths_monitor";
 
   @override
@@ -19,15 +23,18 @@ class THSScreen extends StatefulWidget {
 }
 
 class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMixin {
-  List dropdownItemList = [
-    {'label': 'THS Monitor 1', 'value': 'FKB001THS'},
-    {'label': 'THS Monitor 2', 'value': 'FKB002THS'},
-    {'label': 'THS Monitor 3', 'value': 'FKB003THS'},
-    {'label': 'THS Monitor 4', 'value': 'FKB004THS'}, // label is required and unique
-    {'label': 'THS Monitor 5', 'value': 'FKB005THS'},
-    {'label': 'THS Monitor 6', 'value': 'FKB006THS'},
-    {'label': 'THS Monitor 7', 'value': 'FKB007THS'},
-  ];
+  // List dropdownItemList = [
+  //   {'label': 'THS Monitor 1', 'value': 'FKB001THS'},
+  //   {'label': 'THS Monitor 2', 'value': 'FKB002THS'},
+  //   {'label': 'THS Monitor 3', 'value': 'FKB003THS'},
+  //   {'label': 'THS Monitor 4', 'value': 'FKB004THS'}, // label is required and unique
+  //   {'label': 'THS Monitor 5', 'value': 'FKB005THS'},
+  //   {'label': 'THS Monitor 6', 'value': 'FKB006THS'},
+  //   {'label': 'THS Monitor 7', 'value': 'FKB007THS'},
+  // ];
+
+  List dropdownItemList = [];
+  late String hubId;
 
   late AnimationController _animationController;
   late Animation _animation;
@@ -40,10 +47,11 @@ class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMix
   double tempMin = 28.0;
   double tempMax = 30.0;
   List<String> parts = ['6000', '21.0', '34.0'];
-  String deviceName = 'FKB001THS';
+  late String deviceId;
 
   @override
   void initState() {
+    getValues();
     _animationController = AnimationController(vsync: this, duration: const Duration(seconds: 2));
     _animationController.repeat(reverse: true);
     _animation = Tween(begin: 2.0, end: 15.0).animate(_animationController)
@@ -55,7 +63,7 @@ class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMix
 
     void start() async {
       await connectClient();
-      client.subscribe("/DEMOHUB001/FKB001THS", MqttQos.atLeastOnce);
+      client.subscribe("/$hubId/$deviceId", MqttQos.atLeastOnce);
     }
 
     start();
@@ -151,8 +159,21 @@ class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMix
     });
   }
 
-  void getTHSSettingsDataAndPush(String deviceName) async {
-    await ApiCalls().getTHSSettingsApi(deviceName).then((value) {
+  void getValues() {
+    hubId = widget.hubId;
+    List tempDevices = widget.devices;
+    for (final device in tempDevices) {
+      dropdownItemList.add({
+        'label': device['devicename'],
+        'value': device['serial'],
+      });
+    }
+
+    deviceId = dropdownItemList[0]['value'];
+  }
+
+  void getTHSSettingsDataAndPush(String deviceId) async {
+    await ApiCalls().getTHSSettingsApi(deviceId).then((value) {
       print(value);
       Navigator.push(context, MaterialPageRoute(builder: (context) {
         return THSSettingsPage(settings: value);
@@ -173,6 +194,7 @@ class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMix
           },
         ),
         title: CoolDropdown(
+          dropdownHeight: dropdownItemList.length * 70 > 300 ? 300 : dropdownItemList.length * 70,
           resultWidth: 180,
           dropdownItemAlign: Alignment.center,
           resultAlign: Alignment.center,
@@ -210,8 +232,8 @@ class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMix
           dropdownList: dropdownItemList,
           onChange: (_) async {
             await connectClient();
-            client.subscribe("/DEMOHUB001/" + _['value'], MqttQos.atLeastOnce);
-            deviceName = _['value'];
+            client.subscribe("/$hubId/" + _['value'], MqttQos.atLeastOnce);
+            deviceId = _['value'];
             print("The device number is " + _['value']);
           },
           defaultValue: dropdownItemList[0],
@@ -221,7 +243,7 @@ class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMix
         actions: [
           IconButton(
             onPressed: () {
-              getTHSSettingsDataAndPush(deviceName);
+              getTHSSettingsDataAndPush(deviceId);
             },
             icon: const Icon(Icons.settings),
           ),

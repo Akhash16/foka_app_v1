@@ -1,7 +1,7 @@
 import 'package:animate_do/animate_do.dart';
 import "package:flutter/material.dart";
 import 'package:foka_app_v1/components/service.dart';
-import 'package:foka_app_v1/screens/connect_device.dart';
+import 'package:foka_app_v1/screens/make_sure.dart';
 
 class SelectService extends StatefulWidget {
   const SelectService({Key? key}) : super(key: key);
@@ -31,7 +31,7 @@ class _SelectServiceState extends State<SelectService> {
         floatingActionButton: selectedService >= 0
             ? FloatingActionButton(
                 onPressed: () {
-                 Navigator.pushNamed(context, ConnectDevice.id);
+                  Navigator.pushNamed(context, MakeSure.id);
                 },
                 child: const Icon(
                   Icons.arrow_forward_ios,

@@ -12,7 +12,12 @@ import 'package:mqtt_client/mqtt_server_client.dart';
 import 'package:concentric_transition/concentric_transition.dart';
 
 class FluidMonitor extends StatefulWidget {
-  const FluidMonitor({Key? key}) : super(key: key);
+  // const FluidMonitor({Key? key}) : super(key: key);
+
+  FluidMonitor({this.hubId, this.devicesUltrasonic, this.devicesFloat});
+
+  final hubId, devicesUltrasonic, devicesFloat;
+
   static const String id = 'fluid_monitor';
 
   @override
@@ -20,21 +25,25 @@ class FluidMonitor extends StatefulWidget {
 }
 
 class _FluidMonitorState extends State<FluidMonitor> with TickerProviderStateMixin {
-  List dropdownItemList = [
-    {'label': 'Fluid Monitor 1', 'value': 'FKB001US'},
-    {'label': 'Fluid Monitor 2', 'value': 'FKB002US'},
-    {'label': 'Fluid Monitor 3', 'value': 'FKB003US'},
-    {'label': 'Fluid Monitor 4', 'value': 'FKB004US'}, // label is required and unique
-    {'label': 'Fluid Monitor 5', 'value': 'FKB005US'},
-    {'label': 'Fluid Monitor 6', 'value': 'FKB006US'},
-    {'label': 'Fluid Monitor 7', 'value': 'FKB007US'},
-  ];
+  // List dropdownItemListUltrasonic = [
+  //   {'label': 'Fluid Monitor 1', 'value': 'FKB001US'},
+  //   {'label': 'Fluid Monitor 2', 'value': 'FKB002US'},
+  //   {'label': 'Fluid Monitor 3', 'value': 'FKB003US'},
+  //   {'label': 'Fluid Monitor 4', 'value': 'FKB004US'}, // label is required and unique
+  //   {'label': 'Fluid Monitor 5', 'value': 'FKB005US'},
+  //   {'label': 'Fluid Monitor 6', 'value': 'FKB006US'},
+  //   {'label': 'Fluid Monitor 7', 'value': 'FKB007US'},
+  // ];
+
+  late List dropdownItemListUltrasonic = [];
+
+  late String hubId;
 
   int capacity = 100;
   int value = 0;
   int floatValue = 0;
   double toPrint = 0;
-  String deviceName = 'FKB001US';
+  late String deviceId;
 
   late AnimationController _animationController;
   late Animation _animation;
@@ -45,6 +54,8 @@ class _FluidMonitorState extends State<FluidMonitor> with TickerProviderStateMix
 
   @override
   void initState() {
+    getValues();
+
     _animationController = AnimationController(vsync: this, duration: const Duration(seconds: 2, milliseconds: 500));
     _animationController.repeat(reverse: true);
     _animation = Tween(begin: 2.0, end: 15.0).animate(_animationController)
@@ -58,7 +69,7 @@ class _FluidMonitorState extends State<FluidMonitor> with TickerProviderStateMix
 
     void start() async {
       await connectClient();
-      client.subscribe("/DEMOHUB001/FKB001US", MqttQos.atLeastOnce);
+      client.subscribe("/$hubId/$deviceId", MqttQos.atLeastOnce);
       client.subscribe("/DEMOHUB001/FKB001FLOAT", MqttQos.atLeastOnce);
     }
 
@@ -157,8 +168,22 @@ class _FluidMonitorState extends State<FluidMonitor> with TickerProviderStateMix
     });
   }
 
-  void getUltrasonicSettingsDataAndPush(String deviceName) async {
-    await ApiCalls().getUltrasonicSettingsApi(deviceName).then((value) {
+  void getValues() {
+    hubId = widget.hubId;
+
+    List tempDevicesUS = widget.devicesUltrasonic;
+    for (final device in tempDevicesUS) {
+      dropdownItemListUltrasonic.add({
+        'label': device['devicename'],
+        'value': device['serial'],
+      });
+    }
+
+    deviceId = dropdownItemListUltrasonic[0]['value'];
+  }
+
+  void getUltrasonicSettingsDataAndPush(String deviceId) async {
+    await ApiCalls().getUltrasonicSettingsApi(deviceId).then((value) {
       print(value);
       Navigator.push(context, MaterialPageRoute(builder: (context) {
         return FluidSettingsPage(settings: value);
@@ -181,7 +206,9 @@ class _FluidMonitorState extends State<FluidMonitor> with TickerProviderStateMix
           },
         ),
         title: CoolDropdown(
-          resultWidth: 190,
+          dropdownHeight: dropdownItemListUltrasonic.length * 70 > 300 ? 300 : dropdownItemListUltrasonic.length * 70,
+
+          resultWidth: 200,
           dropdownItemAlign: Alignment.center,
           resultAlign: Alignment.center,
           dropdownBD: BoxDecoration(
@@ -215,15 +242,15 @@ class _FluidMonitorState extends State<FluidMonitor> with TickerProviderStateMix
           ),
 
           isTriangle: false,
-          dropdownList: dropdownItemList,
+          dropdownList: dropdownItemListUltrasonic,
           onChange: (_) async {
             await connectClient();
             client.subscribe("/DEMOHUB001/" + _['value'], MqttQos.atLeastOnce);
             client.subscribe("/DEMOHUB001/" + _['value'] + "FLOAT", MqttQos.atLeastOnce);
-            deviceName = _['value'];
-            print("The device number is " + deviceName);
+            deviceId = _['value'];
+            print("The device number is " + deviceId);
           },
-          defaultValue: dropdownItemList[0],
+          defaultValue: dropdownItemListUltrasonic[0],
           // placeholder: 'insert...',
         ),
         centerTitle: true,
@@ -276,7 +303,7 @@ class _FluidMonitorState extends State<FluidMonitor> with TickerProviderStateMix
           ),
           IconButton(
             onPressed: () {
-              getUltrasonicSettingsDataAndPush(deviceName);
+              getUltrasonicSettingsDataAndPush(deviceId);
             },
             icon: const Icon(Icons.settings),
           ),

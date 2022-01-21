@@ -1,10 +1,10 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:foka_app_v1/screens/chose_device.dart';
 import 'package:foka_app_v1/screens/home_screen.dart';
 import 'package:foka_app_v1/screens/add_boat_screen.dart';
 import 'package:fab_circular_menu/fab_circular_menu.dart';
 import 'package:foka_app_v1/screens/login_screen.dart';
-import 'package:foka_app_v1/utils/apiCalls.dart';
 import 'package:foka_app_v1/utils/authentication.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
@@ -74,7 +74,6 @@ class _BoatsPageState extends State<BoatsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
       backgroundColor: const Color(0xff090f13),
       floatingActionButton: FabCircularMenu(
         fabSize: 50.0,
@@ -92,7 +91,9 @@ class _BoatsPageState extends State<BoatsPage> {
             ),
           ),
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pushNamed(context, SelectService.id);
+            },
             icon: const Icon(
               Icons.settings,
               color: Colors.white,

@@ -4,7 +4,8 @@ import 'package:foka_app_v1/utils/authentication.dart';
 import 'package:http/http.dart' as http;
 
 class ApiCalls {
-  final String _apiUrl = 'http://09ae-183-82-206-77.ngrok.io';
+  final String _apiUrl = 'http://4b48-183-82-179-58.ngrok.io';
+  final String _ip = 'http://192.168.4.1';
 
   List<dynamic> boats = [];
 
@@ -84,7 +85,37 @@ class ApiCalls {
     // return Future<bool>.value(false);
   }
 
+  Future<List> getHubDevices(String hubId) async {
+    Uri url = Uri.parse(_apiUrl + "/deviceSyncManager?hubid=" + hubId);
+    http.Response response = await http.get(url);
+    var jsonResponse = jsonDecode(response.body);
+    List<dynamic> hubDevices = [
+      jsonResponse['THS'],
+      jsonResponse['US'],
+      jsonResponse['FLT'],
+      jsonResponse['SC'],
+      jsonResponse['LT'],
+      jsonResponse['SE'],
+    ];
+    return Future<List>.value(hubDevices);
+  }
+
   Future<List> getConnectedDevices(String hubId) async {
+    Uri url = Uri.parse(_apiUrl + "/hubConnectionManager?hubid=" + hubId);
+    http.Response response = await http.get(url);
+    var jsonResponse = jsonDecode(response.body);
+    List<dynamic> connectedDevices = [
+      jsonResponse['THS'],
+      jsonResponse['US'],
+      jsonResponse['FLT'],
+      jsonResponse['SC'],
+      jsonResponse['LT'],
+      jsonResponse['SE'],
+    ];
+    return Future<List>.value(connectedDevices);
+  }
+
+  Future<List> getConnectedDevicesCount(String hubId) async {
     Uri url = Uri.parse(_apiUrl + "/hubConnectionManager?hubid=" + hubId);
     http.Response response = await http.get(url);
     var jsonResponse = jsonDecode(response.body);
@@ -99,7 +130,7 @@ class ApiCalls {
     return Future<List>.value(connectedDevices);
   }
 
-  Future<List> getHubDevices(String hubId) async {
+  Future<List> getHubDevicesCount(String hubId) async {
     Uri url = Uri.parse(_apiUrl + "/deviceSyncManager?hubid=" + hubId);
     http.Response response = await http.get(url);
     var jsonResponse = jsonDecode(response.body);
@@ -112,6 +143,18 @@ class ApiCalls {
       jsonResponse['SE'].length,
     ];
     return Future<List>.value(hubDevices);
+  }
+
+  Future<bool> addHub(String ssid, String password) async {
+    Uri url = Uri.parse(_ip + '/');
+    http.Response response = await http.post(url, body: {
+      "ssid": ssid,
+      "password": password,
+    });
+    if (response.statusCode == 200) {
+      return Future<bool>.value(true);
+    }
+    return Future<bool>.value(false);
   }
 
   void sample() async {

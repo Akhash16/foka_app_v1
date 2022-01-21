@@ -1,13 +1,19 @@
+import 'dart:async';
+import 'package:cool_dropdown/cool_dropdown.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:foka_app_v1/main.dart';
+import 'package:foka_app_v1/screens/make_sure.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 
 class SmartConnet extends StatefulWidget {
-  const SmartConnet({Key? key}) : super(key: key);
+  // const SmartConnet({Key? key}) : super(key: key);
+  SmartConnet({this.hubId, this.devices});
+
+  final hubId, devices;
 
   static const String id = 'smart_connect';
 
@@ -19,63 +25,69 @@ class _SmartConnetState extends State<SmartConnet> {
   int indexValue1 = 0, indexValue2 = 0;
   // late int relay1, relay2;
 
+  List dropdownItemList = [];
+  late String hubId;
+  late String deviceId;
+
   late MqttServerClient client;
 
   @override
   void initState() {
-    print('running init');
-    // TODO: implement initState
+    getValues();
     super.initState();
-    Future<MqttServerClient> connectClient() async {
-      print('connect started');
-      client = MqttServerClient.withPort('164.52.212.96', MyApp.clientId, 1883);
-      client.logging(on: true);
-      client.onConnected = onConnected;
-      client.onDisconnected = onDisconnected;
-      client.onUnsubscribed = onUnsubscribed;
-      client.onSubscribed = onSubscribed;
-      client.onSubscribeFail = onSubscribeFail;
-      client.pongCallback = pong;
-      client.keepAlivePeriod = 20;
-
-      print('final con');
-      final connMessage = MqttConnectMessage()
-          .authenticateAs('admin', 'smartboat@rec&adr')
-          // ignore: deprecated_member_use
-          .withClientIdentifier(MyApp.clientId)
-          .keepAliveFor(6000)
-          .startClean()
-          .withWillQos(MqttQos.atLeastOnce);
-      client.connectionMessage = connMessage;
-      print('try');
-      try {
-        await client.connect();
-      } catch (e) {
-        print('catch');
-        print('Exception: $e');
-        client.disconnect();
-      }
-
-      print('try done');
-      client.updates!.listen((List<MqttReceivedMessage<MqttMessage>> c) {
-        MqttPublishMessage message = c[0].payload as MqttPublishMessage;
-        final payload = MqttPublishPayload.bytesToStringAsString(message.payload.message);
-
-        print('Received message:$payload from topic: ${c[0].topic}>');
-
-        print("message_received : $payload");
-      });
-
-      // client.subscribe('/DEMOHUB001/FKB001SC', MqttQos.exactlyOnce);
-
-      return client;
-    }
 
     void start() async {
       await connectClient();
+      client.subscribe("/$hubId/$deviceId", MqttQos.atLeastOnce);
     }
 
     start();
+  }
+
+  Future<MqttServerClient> connectClient() async {
+    print('connect started');
+    client = MqttServerClient.withPort('164.52.212.96', MyApp.clientId, 1883);
+    client.logging(on: true);
+    client.onConnected = onConnected;
+    client.onDisconnected = onDisconnected;
+    client.onUnsubscribed = onUnsubscribed;
+    client.onSubscribed = onSubscribed;
+    client.onSubscribeFail = onSubscribeFail;
+    client.pongCallback = pong;
+    client.keepAlivePeriod = 20;
+
+    print('final con');
+    final connMessage = MqttConnectMessage()
+        .authenticateAs('admin', 'smartboat@rec&adr')
+        // ignore: deprecated_member_use
+        .withClientIdentifier(MyApp.clientId)
+        .keepAliveFor(6000)
+        .startClean()
+        .withWillQos(MqttQos.atLeastOnce);
+    client.connectionMessage = connMessage;
+    print('try');
+    try {
+      await client.connect();
+    } catch (e) {
+      print('catch');
+      print('Exception: $e');
+      client.disconnect();
+    }
+
+    print('try done');
+    client.updates!.listen((List<MqttReceivedMessage<MqttMessage>> c) {
+      MqttPublishMessage message = c[0].payload as MqttPublishMessage;
+      final payload = MqttPublishPayload.bytesToStringAsString(message.payload.message);
+
+      print('Received message:$payload from topic: ${c[0].topic}>');
+    });
+
+    return client;
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   // connection succeeded
@@ -109,7 +121,7 @@ class _SmartConnetState extends State<SmartConnet> {
   }
 
   void publish(toPublish) {
-    const pubTopic = '/DEMOHUB001/FKB001SC';
+    final pubTopic = '/$hubId/$deviceId';
     final builder = MqttClientPayloadBuilder();
     builder.addString(toPublish);
     client.publishMessage(pubTopic, MqttQos.atLeastOnce, builder.payload!);
@@ -121,6 +133,19 @@ class _SmartConnetState extends State<SmartConnet> {
 
   void switchTwoToggle(value) {
     publish('{relay2: ' + value.toString() + '}');
+  }
+
+  void getValues() {
+    hubId = widget.hubId;
+    List tempDevices = widget.devices;
+    for (final device in tempDevices) {
+      dropdownItemList.add({
+        'label': device['devicename'],
+        'value': device['serial'],
+      });
+    }
+
+    deviceId = dropdownItemList[0]['value'];
   }
 
   @override
@@ -137,7 +162,52 @@ class _SmartConnetState extends State<SmartConnet> {
             Navigator.pop(context);
           },
         ),
-        title: const Text("Smart Connect"),
+        title: CoolDropdown(
+          dropdownHeight: dropdownItemList.length * 70 > 300 ? 300 : dropdownItemList.length * 70,
+          resultWidth: 180,
+          dropdownItemAlign: Alignment.center,
+          resultAlign: Alignment.center,
+          dropdownBD: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: Colors.black,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.3),
+                spreadRadius: 1,
+                blurRadius: 5,
+                offset: const Offset(0, 1),
+              ),
+            ],
+          ),
+          selectedItemBD: BoxDecoration(
+            color: const Color(0xff090f13),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          selectedItemTS: const TextStyle(color: const Color(0xFF6FCC76), fontSize: 20),
+          unselectedItemTS: const TextStyle(
+            fontSize: 20,
+            color: Colors.white,
+          ),
+          resultBD: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: const Color(0xff090f13),
+          ),
+          resultTS: const TextStyle(
+            fontSize: 20,
+            color: Colors.white,
+          ),
+
+          isTriangle: false,
+          dropdownList: dropdownItemList,
+          onChange: (_) async {
+            await connectClient();
+            client.subscribe("/$hubId/" + _['value'], MqttQos.atLeastOnce);
+            deviceId = _['value'];
+            print("The device number is " + _['value']);
+          },
+          defaultValue: dropdownItemList[0],
+          // placeholder: 'insert...',
+        ),
         centerTitle: true,
         actions: [
           IconButton(
@@ -264,7 +334,7 @@ class _SmartConnetState extends State<SmartConnet> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(8, 16, 8, 8),
                 child: InkWell(
-                  onTap: () {},
+                  onTap: () => Navigator.pushNamed(context, MakeSure.id),
                   child: DottedBorder(
                     dashPattern: const [10, 14],
                     strokeWidth: 2,
@@ -272,29 +342,30 @@ class _SmartConnetState extends State<SmartConnet> {
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: SizedBox(
-                          width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context).size.height * 0.05,
-                          child: Center(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.add_box_outlined,
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height * 0.05,
+                        child: Center(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.add_box_outlined,
+                                color: Colors.grey.shade600,
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                "Tap to add new device",
+                                style: GoogleFonts.montserrat(
+                                  fontWeight: FontWeight.w400,
                                   color: Colors.grey.shade600,
                                 ),
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                                Text(
-                                  "Tap to add new device",
-                                  style: GoogleFonts.montserrat(
-                                    fontWeight: FontWeight.w400,
-                                    color: Colors.grey.shade600,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ),

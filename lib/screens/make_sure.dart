@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:foka_app_v1/screens/connect_device.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
-
-import 'chose_device.dart';
 
 class MakeSure extends StatefulWidget {
   const MakeSure({Key? key}) : super(key: key);
@@ -19,7 +18,7 @@ class _MakeSureState extends State<MakeSure> {
         floatingActionButton: FloatingActionButton(
           backgroundColor: Colors.blue,
           onPressed: () {
-            Navigator.pushNamed(context, SelectService.id);
+            Navigator.pushNamed(context, ConnectDevice.id);
           },
           child: const Icon(
             Icons.navigate_next,

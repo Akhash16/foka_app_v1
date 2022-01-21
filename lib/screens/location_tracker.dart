@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:cool_dropdown/cool_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:foka_app_v1/main.dart';
 import 'package:foka_app_v1/screens/geofence.dart';
@@ -10,7 +9,12 @@ import 'package:mqtt_client/mqtt_server_client.dart';
 import 'home_screen.dart';
 
 class LocationScreen extends StatefulWidget {
-  const LocationScreen({Key? key}) : super(key: key);
+  // const LocationScreen({Key? key}) : super(key: key);
+
+  LocationScreen({this.hubId, this.deviceId});
+
+  final hubId, deviceId;
+
   static const id = "location_screen";
 
   @override
@@ -25,24 +29,24 @@ class _LocationScreenState extends State<LocationScreen> {
         const ImageConfiguration(size: Size(5, 5)), "assets/location.png");
   }
 
-  List dropdownItemList = [
-    {'label': 'Location Tracker 1', 'value': '1'},
-    {'label': 'Location Tracker 2', 'value': '2'},
-    {'label': 'Location Tracker 3', 'value': '3'},
-    {
-      'label': 'Location Tracker 4',
-      'value': '4'
-    }, // label is required and unique
-    {'label': 'Location Tracker 5', 'value': '5'},
-    {'label': 'Location Tracker 6', 'value': '6'},
-    {'label': 'Location Tracker 7', 'value': '7'}
-  ];
+  // List dropdownItemList = [
+  //   {'label': 'Location Tracker 1', 'value': '1'},
+  //   {'label': 'Location Tracker 2', 'value': '2'},
+  //   {'label': 'Location Tracker 3', 'value': '3'},
+  //   {'label': 'Location Tracker 4', 'value': '4'}, // label is required and unique
+  //   {'label': 'Location Tracker 5', 'value': '5'},
+  //   {'label': 'Location Tracker 6', 'value': '6'},
+  //   {'label': 'Location Tracker 7', 'value': '7'}
+  // ];
 
   // double lat = 13.0201638, long = 80.2217002, zoom = 20.83;
-  //59.9139, 10.7522
+  // 59.9139, 10.7522
   double lat = 59.9139;
   double long = 10.7522;
   List<String> parts = ['59.9139', '10.7522'];
+
+  late String hubId;
+  late String deviceId;
 
   late MqttServerClient client;
 
@@ -50,6 +54,9 @@ class _LocationScreenState extends State<LocationScreen> {
 
   @override
   void initState() {
+    hubId = widget.hubId;
+    deviceId = widget.deviceId;
+
     super.initState();
     setCustomMarker();
     Timer timer =
@@ -57,7 +64,7 @@ class _LocationScreenState extends State<LocationScreen> {
 
     void start() async {
       await connectClient();
-      client.subscribe("/DEMOHUB001/FKB001LT", MqttQos.atLeastOnce);
+      client.subscribe("/$hubId/$deviceId", MqttQos.atLeastOnce);
     }
 
     start();
