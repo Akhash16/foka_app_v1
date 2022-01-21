@@ -1,12 +1,12 @@
 import 'dart:async';
-import 'package:easy_geofencing/enums/geofence_status.dart';
+import 'package:cool_dropdown/cool_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:foka_app_v1/main.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
+
 import 'home_screen.dart';
-import 'package:easy_geofencing/easy_geofencing.dart';
 
 class LocationScreen extends StatefulWidget {
   const LocationScreen({Key? key}) : super(key: key);
@@ -18,13 +18,20 @@ class LocationScreen extends StatefulWidget {
 
 class _LocationScreenState extends State<LocationScreen> {
   Set<Marker> _markers = {};
-  Set<Circle> _circles = {};
-  String geofenceStatus = "";
   late BitmapDescriptor mapMarker;
   void setCustomMarker() async {
-    mapMarker = await BitmapDescriptor.fromAssetImage(
-        const ImageConfiguration(size: Size(5, 5)), "assets/location.png");
+    mapMarker = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(size: Size(5, 5)), "assets/location.png");
   }
+
+  List dropdownItemList = [
+    {'label': 'Location Tracker 1', 'value': '1'},
+    {'label': 'Location Tracker 2', 'value': '2'},
+    {'label': 'Location Tracker 3', 'value': '3'},
+    {'label': 'Location Tracker 4', 'value': '4'}, // label is required and unique
+    {'label': 'Location Tracker 5', 'value': '5'},
+    {'label': 'Location Tracker 6', 'value': '6'},
+    {'label': 'Location Tracker 7', 'value': '7'}
+  ];
 
   // double lat = 13.0201638, long = 80.2217002, zoom = 20.83;
   //59.9139, 10.7522
@@ -40,8 +47,7 @@ class _LocationScreenState extends State<LocationScreen> {
   void initState() {
     super.initState();
     setCustomMarker();
-    Timer timer =
-        Timer.periodic(const Duration(seconds: 1), (Timer t) => change());
+    Timer timer = Timer.periodic(const Duration(seconds: 1), (Timer t) => change());
 
     void start() async {
       await connectClient();
@@ -84,8 +90,7 @@ class _LocationScreenState extends State<LocationScreen> {
     print('try done');
     client.updates!.listen((List<MqttReceivedMessage<MqttMessage>> c) {
       MqttPublishMessage message = c[0].payload as MqttPublishMessage;
-      final payload =
-          MqttPublishPayload.bytesToStringAsString(message.payload.message);
+      final payload = MqttPublishPayload.bytesToStringAsString(message.payload.message);
 
       print('Received message:$payload from topic: ${c[0].topic}>');
 
@@ -146,8 +151,6 @@ class _LocationScreenState extends State<LocationScreen> {
         ),
       ),
     );
-    
-
     _goToTheBoat();
     setCustomMarker();
   }
@@ -178,7 +181,7 @@ class _LocationScreenState extends State<LocationScreen> {
           },
         ),
         title: const Text(
-          "Location Tracker",
+          'Location Tracker',
           style: TextStyle(
             fontSize: 20,
             color: Colors.white,
@@ -197,7 +200,6 @@ class _LocationScreenState extends State<LocationScreen> {
       body: GoogleMap(
         mapType: MapType.normal,
         markers: _markers,
-        circles: _circles,
         initialCameraPosition: CameraPosition(
           target: LatLng(lat, long),
           // zoom: 14,
@@ -205,16 +207,6 @@ class _LocationScreenState extends State<LocationScreen> {
         onMapCreated: (GoogleMapController controller) {
           _controller.complete(controller);
           setState(() {
-            _circles.add(
-              Circle(
-                circleId: const CircleId('id-1'),
-                radius: 100,
-                center: LatLng(lat, long),
-                fillColor: Colors.blue.shade200,
-                strokeColor: Colors.blue,
-                strokeWidth: 3,
-              ),
-            );
             _markers.add(
               Marker(
                 icon: mapMarker,
@@ -228,22 +220,10 @@ class _LocationScreenState extends State<LocationScreen> {
               ),
             );
           });
-          EasyGeofencing.startGeofenceService(
-            pointedLatitude: '$lat',
-            pointedLongitude: '$long',
-            radiusMeter: '100',
-            eventPeriodInSeconds: 5,
-          );
-          StreamSubscription<GeofenceStatus> geofenceStatusStream =
-        EasyGeofencing.getGeofenceStream()!.listen((GeofenceStatus status) {
-      print("The geofence status is : " + status.toString());
-      geofenceStatus = status.toString();
-    });
         },
       ),
       floatingActionButton: Padding(
-        padding: EdgeInsets.fromLTRB(
-            8, 8, MediaQuery.of(context).size.width * 0.3, 8),
+        padding: EdgeInsets.fromLTRB(8, 8, MediaQuery.of(context).size.width * 0.3, 8),
         child: FloatingActionButton.extended(
           elevation: 9,
           onPressed: _goToTheBoat,

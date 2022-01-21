@@ -61,8 +61,6 @@ dependencies:
   lottie: ^1.2.1
   simple_animations: ^4.0.1
   qr_code_scanner: ^0.6.1
-  easy_geofencing: ^0.2.0
-  geolocator: ^7.7.1 
   
 dev_dependencies:
   flutter_test:

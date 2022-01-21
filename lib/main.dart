@@ -43,7 +43,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       title: "Foka Tech",
-      initialRoute: LocationScreen.id,
+      initialRoute: QrScreen.id,
       routes: {
         LoginScreen.id: (context) => const LoginScreen(),
         RegisterScreen.id: (context) => const RegisterScreen(),
