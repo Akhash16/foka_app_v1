@@ -6,9 +6,10 @@ import 'package:foka_app_v1/utils/apiCalls.dart';
 
 class FluidSettingsPage extends StatefulWidget {
   // const FluidSettingsPage({Key? key}) : super(key: key);
-  FluidSettingsPage({this.settings});
+  FluidSettingsPage({this.settings, this.value});
 
   final dynamic settings;
+  final value;
 
   static const String id = 'fluid_settings_page';
 
@@ -143,31 +144,31 @@ class _FluidSettingsPageState extends State<FluidSettingsPage> {
             //   ),
             //   trailing: settingsTrailingIcon,
             // ),
-            settingsPageDivider,
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Text(
-                'Bilge Settings',
-                style: settingsHeadingTextStyle,
-              ),
-            ),
-            ListTile(
-              title: Text(
-                'Enable Alerts',
-                style: settingsLeadingTextStyle,
-              ),
-              trailing: Switch(
-                value: bilgeState,
-                onChanged: (value) {
-                  setState(() {
-                    bilgeState = value;
-                    settingsUpdate();
-                  });
-                },
-                inactiveTrackColor: Colors.white,
-                inactiveThumbColor: Colors.blueGrey,
-              ),
-            ),
+            // settingsPageDivider,
+            // Padding(
+            //   padding: const EdgeInsets.all(10.0),
+            //   child: Text(
+            //     'Bilge Settings',
+            //     style: settingsHeadingTextStyle,
+            //   ),
+            // ),
+            // ListTile(
+            //   title: Text(
+            //     'Enable Alerts',
+            //     style: settingsLeadingTextStyle,
+            //   ),
+            //   trailing: Switch(
+            //     value: bilgeState,
+            //     onChanged: (value) {
+            //       setState(() {
+            //         bilgeState = value;
+            //         settingsUpdate();
+            //       });
+            //     },
+            //     inactiveTrackColor: Colors.white,
+            //     inactiveThumbColor: Colors.blueGrey,
+            //   ),
+            // ),
           ],
         ),
       ),
