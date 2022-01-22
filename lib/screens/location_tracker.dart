@@ -173,7 +173,7 @@ class _LocationScreenState extends State<LocationScreen> {
           // bearing: 192.8334901395799,
           target: LatLng(lat, long),
           // tilt: 59.440717697143555,
-          zoom: 14,
+          zoom: 18,
         ),
       ),
     );

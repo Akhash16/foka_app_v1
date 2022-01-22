@@ -4,7 +4,7 @@ import 'package:foka_app_v1/utils/authentication.dart';
 import 'package:http/http.dart' as http;
 
 class ApiCalls {
-  final String _apiUrl = 'http://4b48-183-82-179-58.ngrok.io';
+  final String _apiUrl = 'https://e310-183-82-179-58.ngrok.io';
   final String _ip = 'http://192.168.4.1';
 
   List<dynamic> boats = [];
@@ -77,6 +77,23 @@ class ApiCalls {
   }
 
   void updateUltrasonicSettingsApi(String deviceName, dynamic settings) async {
+    Uri url = Uri.parse(_apiUrl + "/settingsManager/Ultrasonic/" + deviceName);
+    http.Response response = await http.put(url, body: settings);
+    // if (response.statusCode == 200) {
+    //   return Future<bool>.value(true);
+    // }
+    // return Future<bool>.value(false);
+  }
+
+  Future<dynamic> getBilgeSettingsApi(String deviceName) async {
+    Uri url = Uri.parse(_apiUrl + "/settingsManager/Ultrasonic?serial=" + deviceName);
+    http.Response response = await http.get(url);
+    var jsonResponse = jsonDecode(response.body);
+    var decodedData = jsonResponse['data'];
+    return decodedData[0];
+  }
+
+  void updateBilgeSettingsApi(String deviceName, dynamic settings) async {
     Uri url = Uri.parse(_apiUrl + "/settingsManager/Ultrasonic/" + deviceName);
     http.Response response = await http.put(url, body: settings);
     // if (response.statusCode == 200) {

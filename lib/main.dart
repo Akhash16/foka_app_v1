@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:foka_app_v1/screens/add_boat_verification.dart';
+import 'package:foka_app_v1/screens/bilge_settings.dart';
 import 'package:foka_app_v1/screens/chose_device.dart';
 import 'package:foka_app_v1/screens/connect_device.dart';
 import 'package:foka_app_v1/screens/fluid_monitor.dart';
@@ -58,6 +59,7 @@ class MyApp extends StatelessWidget {
         THSScreen.id: (context) => THSScreen(),
         THSSettingsPage.id: (context) => THSSettingsPage(),
         FluidSettingsPage.id: (context) => FluidSettingsPage(),
+        BilgeSettingsPage.id: (context) => BilgeSettingsPage(),
         AddBoatVerification.id: (context) => AddBoatVerification(),
         LocationScreen.id: (context) => LocationScreen(),
         WifiScreen.id: (context) => const WifiScreen(),

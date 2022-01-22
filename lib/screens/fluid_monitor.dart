@@ -3,6 +3,7 @@ import 'package:cool_dropdown/cool_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:foka_app_v1/components/rounded_button.dart';
 import 'package:foka_app_v1/main.dart';
+import 'package:foka_app_v1/screens/bilge_settings.dart';
 import 'package:foka_app_v1/screens/fluid_settings_page.dart';
 import 'package:foka_app_v1/utils/apiCalls.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -44,6 +45,7 @@ class _FluidMonitorState extends State<FluidMonitor> with TickerProviderStateMix
   int floatValue = 0;
   double toPrint = 0;
   late String deviceId;
+  int pageIndex = 0;
 
   late AnimationController _animationController;
   late Animation _animation;
@@ -191,6 +193,15 @@ class _FluidMonitorState extends State<FluidMonitor> with TickerProviderStateMix
     });
   }
 
+  void getFloatSettingsDataAndPush(String deviceId) async {
+    await ApiCalls().getBilgeSettingsApi(deviceId).then((value) {
+      print(value);
+      Navigator.push(context, MaterialPageRoute(builder: (context) {
+        return BilgeSettingsPage(settings: value);
+      }));
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -205,108 +216,123 @@ class _FluidMonitorState extends State<FluidMonitor> with TickerProviderStateMix
             Navigator.pop(context);
           },
         ),
-        title: CoolDropdown(
-          dropdownHeight: dropdownItemListUltrasonic.length * 70 > 300 ? 300 : dropdownItemListUltrasonic.length * 70,
+        title: pageIndex == 1
+            ? const Text(
+                'Bilge Status',
+                style: TextStyle(
+                  fontSize: 20,
+                  color: Colors.white,
+                ),
+              )
+            : CoolDropdown(
+                dropdownHeight: dropdownItemListUltrasonic.length * 70 > 300 ? 300 : dropdownItemListUltrasonic.length * 70,
 
-          resultWidth: 200,
-          dropdownItemAlign: Alignment.center,
-          resultAlign: Alignment.center,
-          dropdownBD: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: Colors.black,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.3),
-                spreadRadius: 1,
-                blurRadius: 10,
-                offset: const Offset(0, 1),
+                resultWidth: 200,
+                dropdownItemAlign: Alignment.center,
+                resultAlign: Alignment.center,
+                dropdownBD: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Colors.black,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.3),
+                      spreadRadius: 1,
+                      blurRadius: 10,
+                      offset: const Offset(0, 1),
+                    ),
+                  ],
+                ),
+                selectedItemBD: BoxDecoration(
+                  color: const Color(0xff090f13),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                selectedItemTS: const TextStyle(color: const Color(0xFF6FCC76), fontSize: 20),
+                unselectedItemTS: const TextStyle(
+                  fontSize: 20,
+                  color: Colors.white,
+                ),
+                resultBD: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: const Color(0xff090f13),
+                ),
+                resultTS: const TextStyle(
+                  fontSize: 20,
+                  color: Colors.white,
+                ),
+
+                isTriangle: false,
+                dropdownList: dropdownItemListUltrasonic,
+                onChange: (_) async {
+                  await connectClient();
+                  client.subscribe("/DEMOHUB001/" + _['value'], MqttQos.atLeastOnce);
+                  client.subscribe("/DEMOHUB001/" + _['value'] + "FLOAT", MqttQos.atLeastOnce);
+                  deviceId = _['value'];
+                  print("The device number is " + deviceId);
+                },
+                defaultValue: dropdownItemListUltrasonic[0],
+                // placeholder: 'insert...',
               ),
-            ],
-          ),
-          selectedItemBD: BoxDecoration(
-            color: const Color(0xff090f13),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          selectedItemTS: const TextStyle(color: const Color(0xFF6FCC76), fontSize: 20),
-          unselectedItemTS: const TextStyle(
-            fontSize: 20,
-            color: Colors.white,
-          ),
-          resultBD: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: const Color(0xff090f13),
-          ),
-          resultTS: const TextStyle(
-            fontSize: 20,
-            color: Colors.white,
-          ),
-
-          isTriangle: false,
-          dropdownList: dropdownItemListUltrasonic,
-          onChange: (_) async {
-            await connectClient();
-            client.subscribe("/DEMOHUB001/" + _['value'], MqttQos.atLeastOnce);
-            client.subscribe("/DEMOHUB001/" + _['value'] + "FLOAT", MqttQos.atLeastOnce);
-            deviceId = _['value'];
-            print("The device number is " + deviceId);
-          },
-          defaultValue: dropdownItemListUltrasonic[0],
-          // placeholder: 'insert...',
-        ),
         centerTitle: true,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.adjust),
-            onPressed: () {
-              showModalBottomSheet(
-                  context: context,
-                  builder: (context) {
-                    return Container(
-                      height: MediaQuery.of(context).size.height * 0.3,
-                      decoration: const BoxDecoration(
-                        color: Color(0xfff8f8f8),
-                        borderRadius: BorderRadius.only(topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
-                      ),
-                      child: Center(
-                          child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 18.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              'Tank Settings',
-                              style: GoogleFonts.montserrat(
-                                color: Colors.black,
-                                fontSize: 30,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 10.0,
-                            ),
-                            RoundedButton(
-                              title: 'Tap to Calibrate',
-                              color: Colors.indigo.shade900,
-                              onPressed: () {
-                                setState(() {
-                                  capacity = value;
-                                });
-                              },
-                              width: MediaQuery.of(context).size.width * 0.7,
-                            ),
-                          ],
-                        ),
-                      )),
-                    );
-                  });
-            },
-          ),
-          IconButton(
-            onPressed: () {
-              getUltrasonicSettingsDataAndPush(deviceId);
-            },
-            icon: const Icon(Icons.settings),
-          ),
+          // IconButton(
+          //   icon: const Icon(Icons.adjust),
+          //   onPressed: () {
+          //     showModalBottomSheet(
+          //         context: context,
+          //         builder: (context) {
+          //           return Container(
+          //             height: MediaQuery.of(context).size.height * 0.3,
+          //             decoration: const BoxDecoration(
+          //               color: Color(0xfff8f8f8),
+          //               borderRadius: BorderRadius.only(topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
+          //             ),
+          //             child: Center(
+          //                 child: Padding(
+          //               padding: const EdgeInsets.symmetric(vertical: 18.0),
+          //               child: Column(
+          //                 mainAxisAlignment: MainAxisAlignment.center,
+          //                 children: [
+          //                   Text(
+          //                     'Tank Settings',
+          //                     style: GoogleFonts.montserrat(
+          //                       color: Colors.black,
+          //                       fontSize: 30,
+          //                       fontWeight: FontWeight.w400,
+          //                     ),
+          //                   ),
+          //                   const SizedBox(
+          //                     height: 10.0,
+          //                   ),
+          //                   RoundedButton(
+          //                     title: 'Tap to Calibrate',
+          //                     color: Colors.indigo.shade900,
+          //                     onPressed: () {
+          //                       setState(() {
+          //                         capacity = value;
+          //                       });
+          //                     },
+          //                     width: MediaQuery.of(context).size.width * 0.7,
+          //                   ),
+          //                 ],
+          //               ),
+          //             )),
+          //           );
+          //         });
+          //   },
+          // ),
+          pageIndex == 0
+              ? IconButton(
+                  onPressed: () {
+                    getUltrasonicSettingsDataAndPush(deviceId);
+                  },
+                  icon: const Icon(Icons.settings),
+                )
+              : IconButton(
+                  onPressed: () {
+                    getFloatSettingsDataAndPush(deviceId);
+                  },
+                  icon: const Icon(Icons.settings),
+                )
         ],
       ),
       backgroundColor: const Color(0xff090f13),
@@ -317,7 +343,7 @@ class _FluidMonitorState extends State<FluidMonitor> with TickerProviderStateMix
           verticalPosition: 0.85,
           colors: const [Color(0xff090f13), Color(0xff090f13)],
           itemBuilder: (index, value) {
-            int pageIndex = (index % 2);
+            pageIndex = (index % 2);
             return Container(
               child: Stack(
                 alignment: Alignment.center,
