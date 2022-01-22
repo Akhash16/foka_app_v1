@@ -10,6 +10,7 @@ import 'package:foka_app_v1/screens/boat_add_data.dart';
 import 'package:foka_app_v1/screens/boats_page.dart';
 import 'package:foka_app_v1/screens/fluid_settings_page.dart';
 import 'package:foka_app_v1/screens/forgot_password.dart';
+import 'package:foka_app_v1/screens/geofence.dart';
 import 'package:foka_app_v1/screens/home_screen.dart';
 import 'package:foka_app_v1/screens/location_tracker.dart';
 import 'package:foka_app_v1/screens/login_screen.dart';
@@ -44,7 +45,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       title: "Foka Tech",
-      initialRoute: SplashScreen.id,
+      initialRoute: GeoFence.id,
       routes: {
         LoginScreen.id: (context) => const LoginScreen(),
         RegisterScreen.id: (context) => const RegisterScreen(),
@@ -67,7 +68,8 @@ class MyApp extends StatelessWidget {
         MakeSure.id: (context) => const MakeSure(),
         SelectService.id: (context) => const SelectService(),
         ConnectDevice.id: (context) => const ConnectDevice(),
-        QrScreen.id: (context) => const QrScreen(),
+        QrScreen.id : (context) => const QrScreen(),
+        GeoFence.id : (context) => const GeoFence(),
       },
     );
   }

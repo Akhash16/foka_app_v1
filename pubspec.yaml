@@ -63,6 +63,7 @@ dependencies:
   qr_code_scanner: ^0.6.1
   provider: ^6.0.2
   
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -71,7 +72,7 @@ dev_dependencies:
 
 flutter_native_splash:
           #42a5f5
-  color: "1a1e20"
+  color: "090f13"
   image: assets/foka_logo.png
   android: true
   ios: true
@@ -106,7 +107,8 @@ flutter:
     - assets/alert.json
     - assets/alert1.json
     - assets/connected.json
-
+    - assets/pin.png
+    - assets/just-arrived.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
