@@ -45,7 +45,11 @@ class MyApp extends StatelessWidget {
         ),
       ),
       title: "Foka Tech",
-      initialRoute: GeoFence.id,
+      // home: LocationScreen(
+      //   hubId: 'DEMOHUB001',
+      //   deviceId: 'FKB001LT',
+      // ),
+      initialRoute: SplashScreen.id,
       routes: {
         LoginScreen.id: (context) => const LoginScreen(),
         RegisterScreen.id: (context) => const RegisterScreen(),
@@ -68,8 +72,8 @@ class MyApp extends StatelessWidget {
         MakeSure.id: (context) => const MakeSure(),
         SelectService.id: (context) => const SelectService(),
         ConnectDevice.id: (context) => const ConnectDevice(),
-        QrScreen.id : (context) => const QrScreen(),
-        GeoFence.id : (context) => const GeoFence(),
+        QrScreen.id: (context) => const QrScreen(),
+        GeoFence.id: (context) => const GeoFence(),
       },
     );
   }

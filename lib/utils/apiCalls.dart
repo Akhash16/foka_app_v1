@@ -4,7 +4,7 @@ import 'package:foka_app_v1/utils/authentication.dart';
 import 'package:http/http.dart' as http;
 
 class ApiCalls {
-  final String _apiUrl = 'https://e310-183-82-179-58.ngrok.io';
+  final String _apiUrl = 'https://26a5-183-82-204-198.ngrok.io';
   final String _ip = 'http://192.168.4.1';
 
   List<dynamic> boats = [];

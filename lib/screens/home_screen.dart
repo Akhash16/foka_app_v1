@@ -88,18 +88,28 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             ? () {}
             : () async {
                 getDevices();
+                await ApiCalls().getTHSSettingsApi(devices[0][0]['serial']).then((value) {
+                  print(value);
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return THSScreen(
+                      hubId: widget.hubId,
+                      devices: devices[0],
+                      settings: value,
+                    );
+                  }));
+                });
                 // await ApiCalls().getTHSSettingsApi(deviceName).then((value) {
                 //   print(value);
                 //   Navigator.push(context, MaterialPageRoute(builder: (context) {
                 //     return THSSettingsPage(settings: value);
                 //   }));
                 // });
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return THSScreen(
-                    hubId: widget.hubId,
-                    devices: devices[0],
-                  );
-                }));
+                // Navigator.push(context, MaterialPageRoute(builder: (context) {
+                //   return THSScreen(
+                //     hubId: widget.hubId,
+                //     devices: devices[0],
+                //   );
+                // }));
               },
         child: DeviceCard(
           color: devices[0].length == 0 ? Colors.pink.shade600.withOpacity(0.2) : Colors.pink.shade600,
@@ -116,15 +126,25 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       InkWell(
         onTap: devices[1].length == 0 && devices[2] == 0
             ? () {}
-            : () {
+            : () async {
                 getDevices();
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return FluidMonitor(
-                    hubId: widget.hubId,
-                    devicesUltrasonic: devices[1],
-                    devicesFloat: devices[2],
-                  );
-                }));
+                await ApiCalls().getUltrasonicSettingsApi(devices[1][0]['serial']).then((value) {
+                  print(value);
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return FluidMonitor(
+                      hubId: widget.hubId,
+                      devicesUltrasonic: devices[1],
+                      settings: value,
+                    );
+                  }));
+                });
+                // Navigator.push(context, MaterialPageRoute(builder: (context) {
+                //   return FluidMonitor(
+                //     hubId: widget.hubId,
+                //     devicesUltrasonic: devices[1],
+                //     devicesFloat: devices[2],
+                //   );
+                // }));
               },
         child: DeviceCard(
           color: devices[1].length == 0 && devices[2].length == 0 ? const Color(0xff4b39ef).withOpacity(0.2) : const Color(0xff4b39ef),
@@ -132,10 +152,34 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           description: "Tap here to monitor fluid levels",
           icon: Icon(
             Icons.water,
-            color: devices[1].length == 0 && devices[2].length == 0 ? Colors.white.withOpacity(0.2) : const Color(0xffffffff),
+            color: devices[1].length == 0 ? Colors.white.withOpacity(0.2) : const Color(0xffffffff),
             size: 44,
           ),
-          opacity: devices[1].length == 0 && devices[2].length == 0 ? 0.2 : 1,
+          opacity: devices[1].length == 0 ? 0.2 : 1,
+        ),
+      ),
+      InkWell(
+        onTap: devices[2].length == 0
+            ? () {}
+            : () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return SmartConnet(
+                    hubId: widget.hubId,
+                    devices: devices[2],
+                  );
+                }));
+              },
+        child: DeviceCard(
+          // color: Color(0xff4b39ef),
+          color: devices[2].length == 0 ? Colors.grey.shade900.withOpacity(0.2) : Colors.grey.shade900,
+          title: "Float Sensor",
+          description: "Tap here to more details",
+          icon: Icon(
+            Icons.water,
+            color: devices[2].length == 0 ? Colors.white.withOpacity(0.2) : const Color(0xffffffff),
+            size: 44,
+          ),
+          opacity: devices[2].length == 0 ? 0.2 : 1,
         ),
       ),
       InkWell(
@@ -210,15 +254,25 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(
-          Icons.add,
-          color: Colors.white,
-        ),
+      // floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      // floatingActionButton: FloatingActionButton(
+      //   child: const Icon(
+      //     Icons.add,
+      //     color: Colors.white,
+      //   ),
+      //   onPressed: () {
+      //     Navigator.pushNamed(context, SelectService.id);
+      //   },
+      // ),
+      // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: FloatingActionButton.extended(
+        elevation: 9,
         onPressed: () {
           Navigator.pushNamed(context, SelectService.id);
         },
+        label: const Text('Add Device'),
+        icon: const Icon(Icons.add),
+        backgroundColor: Colors.lightBlueAccent.shade700,
       ),
       backgroundColor: const Color(0xff090f13),
       body: SafeArea(

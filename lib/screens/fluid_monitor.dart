@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:cool_dropdown/cool_dropdown.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_picker/flutter_picker.dart';
+import 'package:foka_app_v1/components/constants.dart';
 import 'package:foka_app_v1/components/rounded_button.dart';
 import 'package:foka_app_v1/main.dart';
 import 'package:foka_app_v1/screens/bilge_settings.dart';
@@ -15,9 +17,9 @@ import 'package:concentric_transition/concentric_transition.dart';
 class FluidMonitor extends StatefulWidget {
   // const FluidMonitor({Key? key}) : super(key: key);
 
-  FluidMonitor({this.hubId, this.devicesUltrasonic, this.devicesFloat});
+  FluidMonitor({this.hubId, this.devicesUltrasonic, this.settings});
 
-  final hubId, devicesUltrasonic, devicesFloat;
+  final hubId, devicesUltrasonic, settings;
 
   static const String id = 'fluid_monitor';
 
@@ -45,18 +47,27 @@ class _FluidMonitorState extends State<FluidMonitor> with TickerProviderStateMix
   int floatValue = 0;
   double toPrint = 0;
   late String deviceId;
-  int pageIndex = 0;
+
+  dynamic settings = [];
+
+  late String deviceName;
+
+  late bool fluidState;
+  bool bilgeState = false; // dont put
+  late int currentLowerValue;
+  int currentUpperValue = 100; //dont put
 
   late AnimationController _animationController;
   late Animation _animation;
-
-  bool isFluidScreen = true;
 
   late MqttServerClient client;
 
   @override
   void initState() {
     getValues();
+    // deviceName = settings['serial'];
+    // fluidState = settings['alert_fluid'] == 1 ? true : false;
+    // currentLowerValue = settings['low_tank'];
 
     _animationController = AnimationController(vsync: this, duration: const Duration(seconds: 2, milliseconds: 500));
     _animationController.repeat(reverse: true);
@@ -72,7 +83,7 @@ class _FluidMonitorState extends State<FluidMonitor> with TickerProviderStateMix
     void start() async {
       await connectClient();
       client.subscribe("/$hubId/$deviceId", MqttQos.atLeastOnce);
-      client.subscribe("/DEMOHUB001/FKB001FLOAT", MqttQos.atLeastOnce);
+      // client.subscribe("/DEMOHUB001/FKB001FLOAT", MqttQos.atLeastOnce);
     }
 
     start();
@@ -170,8 +181,18 @@ class _FluidMonitorState extends State<FluidMonitor> with TickerProviderStateMix
     });
   }
 
+  void getSettings(dynamic settings) {
+    this.settings = settings;
+    deviceName = this.settings['serial'];
+    fluidState = this.settings['alert_fluid'] == 1 ? true : false;
+    currentLowerValue = this.settings['low_tank'];
+  }
+
   void getValues() {
+    getSettings(widget.settings);
     hubId = widget.hubId;
+
+    dropdownItemListUltrasonic.clear();
 
     List tempDevicesUS = widget.devicesUltrasonic;
     for (final device in tempDevicesUS) {
@@ -182,6 +203,35 @@ class _FluidMonitorState extends State<FluidMonitor> with TickerProviderStateMix
     }
 
     deviceId = dropdownItemListUltrasonic[0]['value'];
+  }
+
+  settingsUpdate() {
+    ApiCalls().updateUltrasonicSettingsApi(deviceId, {
+      "alert_fluid": fluidState ? '1' : '0',
+      "low_tank": currentLowerValue.toString(),
+    });
+  }
+
+  showPickerNumber(BuildContext context, bool isUpperLimit) {
+    Picker(
+        adapter: NumberPickerAdapter(data: [
+          const NumberPickerColumn(begin: 0, end: 100),
+        ]),
+        hideHeader: true,
+        title: const Text("Please Select"),
+        onConfirm: (Picker picker, List value) {
+          int selectedValue = picker.getSelectedValues()[0] as int;
+          setState(() {
+            isUpperLimit
+                ? currentLowerValue <= selectedValue
+                    ? currentUpperValue = selectedValue
+                    : null
+                : currentUpperValue >= selectedValue
+                    ? currentLowerValue = selectedValue
+                    : null;
+          });
+          settingsUpdate();
+        }).showDialog(context);
   }
 
   void getUltrasonicSettingsDataAndPush(String deviceId) async {
@@ -216,231 +266,254 @@ class _FluidMonitorState extends State<FluidMonitor> with TickerProviderStateMix
             Navigator.pop(context);
           },
         ),
-        title: pageIndex == 1
-            ? const Text(
-                'Bilge Status',
-                style: TextStyle(
-                  fontSize: 20,
-                  color: Colors.white,
-                ),
-              )
-            : CoolDropdown(
-                dropdownHeight: dropdownItemListUltrasonic.length * 70 > 300 ? 300 : dropdownItemListUltrasonic.length * 70,
+        title: CoolDropdown(
+          dropdownHeight: dropdownItemListUltrasonic.length * 70 > 300 ? 300 : dropdownItemListUltrasonic.length * 70,
 
-                resultWidth: 200,
-                dropdownItemAlign: Alignment.center,
-                resultAlign: Alignment.center,
-                dropdownBD: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Colors.black,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.3),
-                      spreadRadius: 1,
-                      blurRadius: 10,
-                      offset: const Offset(0, 1),
-                    ),
-                  ],
-                ),
-                selectedItemBD: BoxDecoration(
-                  color: const Color(0xff090f13),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                selectedItemTS: const TextStyle(color: const Color(0xFF6FCC76), fontSize: 20),
-                unselectedItemTS: const TextStyle(
-                  fontSize: 20,
-                  color: Colors.white,
-                ),
-                resultBD: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: const Color(0xff090f13),
-                ),
-                resultTS: const TextStyle(
-                  fontSize: 20,
-                  color: Colors.white,
-                ),
-
-                isTriangle: false,
-                dropdownList: dropdownItemListUltrasonic,
-                onChange: (_) async {
-                  await connectClient();
-                  client.subscribe("/DEMOHUB001/" + _['value'], MqttQos.atLeastOnce);
-                  client.subscribe("/DEMOHUB001/" + _['value'] + "FLOAT", MqttQos.atLeastOnce);
-                  deviceId = _['value'];
-                  print("The device number is " + deviceId);
-                },
-                defaultValue: dropdownItemListUltrasonic[0],
-                // placeholder: 'insert...',
+          resultWidth: 200,
+          dropdownItemAlign: Alignment.center,
+          resultAlign: Alignment.center,
+          dropdownBD: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: Colors.black,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.3),
+                spreadRadius: 1,
+                blurRadius: 10,
+                offset: const Offset(0, 1),
               ),
+            ],
+          ),
+          selectedItemBD: BoxDecoration(
+            color: const Color(0xff090f13),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          selectedItemTS: const TextStyle(color: const Color(0xFF6FCC76), fontSize: 20),
+          unselectedItemTS: const TextStyle(
+            fontSize: 20,
+            color: Colors.white,
+          ),
+          resultBD: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: const Color(0xff090f13),
+          ),
+          resultTS: const TextStyle(
+            fontSize: 20,
+            color: Colors.white,
+          ),
+
+          isTriangle: false,
+          dropdownList: dropdownItemListUltrasonic,
+          onChange: (_) async {
+            await connectClient();
+            client.subscribe("/DEMOHUB001/" + _['value'], MqttQos.atLeastOnce);
+            // client.subscribe("/DEMOHUB001/" + _['value'] + "FLOAT", MqttQos.atLeastOnce);
+            deviceId = _['value'];
+            await ApiCalls().getUltrasonicSettingsApi(deviceId).then((value) {
+              getSettings(value);
+            });
+            print("The device number is " + deviceId);
+            setState(() {});
+          },
+          defaultValue: dropdownItemListUltrasonic[0],
+          // placeholder: 'insert...',
+        ),
         centerTitle: true,
+        // actions: [
+        //   // IconButton(
+        //   //   icon: const Icon(Icons.adjust),
+        //   //   onPressed: () {
+        //   //     showModalBottomSheet(
+        //   //         context: context,
+        //   //         builder: (context) {
+        //   //           return Container(
+        //   //             height: MediaQuery.of(context).size.height * 0.3,
+        //   //             decoration: const BoxDecoration(
+        //   //               color: Color(0xfff8f8f8),
+        //   //               borderRadius: BorderRadius.only(topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
+        //   //             ),
+        //   //             child: Center(
+        //   //                 child: Padding(
+        //   //               padding: const EdgeInsets.symmetric(vertical: 18.0),
+        //   //               child: Column(
+        //   //                 mainAxisAlignment: MainAxisAlignment.center,
+        //   //                 children: [
+        //   //                   Text(
+        //   //                     'Tank Settings',
+        //   //                     style: GoogleFonts.montserrat(
+        //   //                       color: Colors.black,
+        //   //                       fontSize: 30,
+        //   //                       fontWeight: FontWeight.w400,
+        //   //                     ),
+        //   //                   ),
+        //   //                   const SizedBox(
+        //   //                     height: 10.0,
+        //   //                   ),
+        //   //                   RoundedButton(
+        //   //                     title: 'Tap to Calibrate',
+        //   //                     color: Colors.indigo.shade900,
+        //   //                     onPressed: () {
+        //   //                       setState(() {
+        //   //                         capacity = value;
+        //   //                       });
+        //   //                     },
+        //   //                     width: MediaQuery.of(context).size.width * 0.7,
+        //   //                   ),
+        //   //                 ],
+        //   //               ),
+        //   //             )),
+        //   //           );
+        //   //         });
+        //   //   },
+        //   // ),
+        //   IconButton(
+        //     onPressed: () {
+        //       // getUltrasonicSettingsDataAndPush(deviceId);
+        //       Scaffold.of(context).openEndDrawer();
+        //     },
+        //     icon: const Icon(Icons.settings),
+        //   )
+        // ],
         actions: [
-          // IconButton(
-          //   icon: const Icon(Icons.adjust),
-          //   onPressed: () {
-          //     showModalBottomSheet(
-          //         context: context,
-          //         builder: (context) {
-          //           return Container(
-          //             height: MediaQuery.of(context).size.height * 0.3,
-          //             decoration: const BoxDecoration(
-          //               color: Color(0xfff8f8f8),
-          //               borderRadius: BorderRadius.only(topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
-          //             ),
-          //             child: Center(
-          //                 child: Padding(
-          //               padding: const EdgeInsets.symmetric(vertical: 18.0),
-          //               child: Column(
-          //                 mainAxisAlignment: MainAxisAlignment.center,
-          //                 children: [
-          //                   Text(
-          //                     'Tank Settings',
-          //                     style: GoogleFonts.montserrat(
-          //                       color: Colors.black,
-          //                       fontSize: 30,
-          //                       fontWeight: FontWeight.w400,
-          //                     ),
-          //                   ),
-          //                   const SizedBox(
-          //                     height: 10.0,
-          //                   ),
-          //                   RoundedButton(
-          //                     title: 'Tap to Calibrate',
-          //                     color: Colors.indigo.shade900,
-          //                     onPressed: () {
-          //                       setState(() {
-          //                         capacity = value;
-          //                       });
-          //                     },
-          //                     width: MediaQuery.of(context).size.width * 0.7,
-          //                   ),
-          //                 ],
-          //               ),
-          //             )),
-          //           );
-          //         });
-          //   },
-          // ),
-          pageIndex == 0
-              ? IconButton(
-                  onPressed: () {
-                    getUltrasonicSettingsDataAndPush(deviceId);
-                  },
-                  icon: const Icon(Icons.settings),
-                )
-              : IconButton(
-                  onPressed: () {
-                    getFloatSettingsDataAndPush(deviceId);
-                  },
-                  icon: const Icon(Icons.settings),
-                )
+          Builder(
+            builder: (context) => IconButton(
+              icon: const Icon(Icons.settings),
+              onPressed: () => Scaffold.of(context).openEndDrawer(),
+              tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
+            ),
+          ),
         ],
+      ),
+      endDrawer: Drawer(
+        backgroundColor: Colors.black,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(8, 40, 8, 0),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Text(
+                  'Fluid Monitor Settings',
+                  style: settingsHeadingTextStyle,
+                ),
+              ),
+              ListTile(
+                title: Text(
+                  'Enable Alerts',
+                  style: settingsLeadingTextStyle,
+                ),
+                trailing: Switch(
+                  value: fluidState,
+                  onChanged: (value) {
+                    setState(() {
+                      fluidState = value;
+                      settingsUpdate();
+                    });
+                  },
+                  inactiveTrackColor: Colors.white,
+                  inactiveThumbColor: Colors.blueGrey,
+                ),
+              ),
+              ListTile(
+                onTap: () => showPickerNumber(context, false),
+                leading: Text(
+                  'Lower Limit',
+                  style: settingsLeadingTextStyle,
+                ),
+                title: Text(
+                  currentLowerValue.toString(),
+                  style: settingsTitleTextStyle,
+                  textAlign: TextAlign.end,
+                ),
+                trailing: settingsTrailingIcon,
+              ),
+              // ListTile(
+              //   onTap: () => showPickerNumber(context, true),
+              //   leading: Text(
+              //     'Upper Limit',
+              //     style: settingsLeadingTextStyle,
+              //   ),
+              //   title: Text(
+              //     currentUpperValue.toString(),
+              //     style: settingsTitleTextStyle,
+              //     textAlign: TextAlign.end,
+              //   ),
+              //   trailing: settingsTrailingIcon,
+              // ),
+              // settingsPageDivider,
+              // Padding(
+              //   padding: const EdgeInsets.all(10.0),
+              //   child: Text(
+              //     'Bilge Settings',
+              //     style: settingsHeadingTextStyle,
+              //   ),
+              // ),
+              // ListTile(
+              //   title: Text(
+              //     'Enable Alerts',
+              //     style: settingsLeadingTextStyle,
+              //   ),
+              //   trailing: Switch(
+              //     value: bilgeState,
+              //     onChanged: (value) {
+              //       setState(() {
+              //         bilgeState = value;
+              //         settingsUpdate();
+              //       });
+              //     },
+              //     inactiveTrackColor: Colors.white,
+              //     inactiveThumbColor: Colors.blueGrey,
+              //   ),
+              // ),
+            ],
+          ),
+        ),
       ),
       backgroundColor: const Color(0xff090f13),
       body: Center(
         child: Container(
-            child: ConcentricPageView(
-          radius: 0,
-          verticalPosition: 0.85,
-          colors: const [Color(0xff090f13), Color(0xff090f13)],
-          itemBuilder: (index, value) {
-            pageIndex = (index % 2);
-            return Container(
-              child: Stack(
-                alignment: Alignment.center,
-                // mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  AnimatedOpacity(
-                    opacity: pageIndex == 0 ? 1.0 : 0.0,
-                    duration: const Duration(milliseconds: 500),
-                    child: Container(
-                      height: MediaQuery.of(context).size.height * 0.5,
-                      width: MediaQuery.of(context).size.width * 0.45,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.rectangle,
-                        borderRadius: BorderRadius.circular(10.0),
-                        color: const Color.fromARGB(255, 27, 28, 30),
-                        boxShadow: [
-                          BoxShadow(
-                            // color: Color.fromARGB(130, 237, 125, 58),
-                            color: toPrint >= 0.25 ? Colors.blue : Colors.red,
-                            blurRadius: _animation.value,
-                            spreadRadius: _animation.value * 0.1,
-                          ),
-                        ],
-                      ),
-                      child: LiquidLinearProgressIndicator(
-                        center: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.baseline,
-                          textBaseline: TextBaseline.alphabetic,
-                          children: [
-                            Text(
-                              (toPrint * 100).toStringAsFixed(0),
-                              // glowColor: Colors.blue,
-                              style: GoogleFonts.montserrat(color: Colors.white, fontSize: 40, fontWeight: FontWeight.w500),
-                            ),
-                            Text(
-                              '%',
-                              style: GoogleFonts.montserrat(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w500),
-                            ),
-                          ],
-                        ),
-                        backgroundColor: Colors.black12,
-                        valueColor: toPrint >= 0.25 ? const AlwaysStoppedAnimation(Colors.blue) : const AlwaysStoppedAnimation(Colors.red),
-                        value: toPrint,
-                        borderRadius: 10.0,
-                        borderWidth: 1.0,
-                        borderColor: Colors.black12,
-                        // borderColor: toPrint >= 25 ? Colors.blue : Colors.red,
-                        direction: Axis.vertical,
-                      ),
-                    ),
-                  ),
-                  AnimatedOpacity(
-                    opacity: pageIndex == 1 ? 1.0 : 0.0,
-                    duration: const Duration(milliseconds: 500),
-                    child: Container(
-                      height: MediaQuery.of(context).size.height * 0.2,
-                      width: MediaQuery.of(context).size.width * 0.7,
-                      decoration: BoxDecoration(
-                        color: Colors.white12,
-                        borderRadius: BorderRadius.circular(10.0),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.white10,
-                            offset: Offset(3.0, 3.0),
-                            blurRadius: 5.0,
-                            spreadRadius: 2.0,
-                          ),
-                        ],
-                      ),
-                      child: Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(18.0),
-                          child: Column(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: Text(
-                                  'Bilge Status',
-                                  style: GoogleFonts.montserrat(color: Colors.white, fontSize: 30, fontWeight: FontWeight.w700),
-                                ),
-                              ),
-                              Text(
-                                floatValue == 0 ? 'Normal' : 'Check Bilge',
-                                style: GoogleFonts.montserrat(color: floatValue == 0 ? Colors.green : Colors.red, fontSize: 25, fontWeight: FontWeight.w500),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+          height: MediaQuery.of(context).size.height * 0.5,
+          width: MediaQuery.of(context).size.width * 0.45,
+          decoration: BoxDecoration(
+            shape: BoxShape.rectangle,
+            borderRadius: BorderRadius.circular(10.0),
+            color: const Color.fromARGB(255, 27, 28, 30),
+            boxShadow: [
+              BoxShadow(
+                // color: Color.fromARGB(130, 237, 125, 58),
+                color: toPrint >= currentLowerValue / 100 ? Colors.blue : Colors.red,
+                blurRadius: _animation.value,
+                spreadRadius: _animation.value * 0.1,
               ),
-            );
-          },
-        )),
+            ],
+          ),
+          child: LiquidLinearProgressIndicator(
+            center: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.baseline,
+              textBaseline: TextBaseline.alphabetic,
+              children: [
+                Text(
+                  (toPrint * 100).toStringAsFixed(0),
+                  // glowColor: Colors.blue,
+                  style: GoogleFonts.montserrat(color: Colors.white, fontSize: 40, fontWeight: FontWeight.w500),
+                ),
+                Text(
+                  '%',
+                  style: GoogleFonts.montserrat(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w500),
+                ),
+              ],
+            ),
+            backgroundColor: Colors.black12,
+            valueColor: toPrint >= currentLowerValue / 100 ? const AlwaysStoppedAnimation(Colors.blue) : const AlwaysStoppedAnimation(Colors.red),
+            value: toPrint,
+            borderRadius: 10.0,
+            borderWidth: 1.0,
+            borderColor: Colors.black12,
+            // borderColor: toPrint >= 25 ? Colors.blue : Colors.red,
+            direction: Axis.vertical,
+          ),
+        ),
       ),
     );
   }
