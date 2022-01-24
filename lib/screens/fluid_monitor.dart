@@ -5,7 +5,7 @@ import 'package:flutter_picker/flutter_picker.dart';
 import 'package:foka_app_v1/components/constants.dart';
 import 'package:foka_app_v1/components/rounded_button.dart';
 import 'package:foka_app_v1/main.dart';
-import 'package:foka_app_v1/screens/bilge_settings.dart';
+import 'package:foka_app_v1/screens/bilge.dart';
 import 'package:foka_app_v1/screens/fluid_settings_page.dart';
 import 'package:foka_app_v1/utils/apiCalls.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -130,7 +130,7 @@ class _FluidMonitorState extends State<FluidMonitor> with TickerProviderStateMix
       // value = int.parse(parts[0]);
       // floatValue = int.parse(parts[1]);
 
-      c[0].topic.contains('US') ? value = int.parse(payload) : floatValue = int.parse(payload);
+      value = int.parse(payload);
       print("message_received : $value");
     });
 

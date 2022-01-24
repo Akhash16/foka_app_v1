@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:foka_app_v1/components/constants.dart';
 import 'package:foka_app_v1/components/rounded_button.dart';
 import 'package:foka_app_v1/screens/chose_device.dart';
+import 'package:foka_app_v1/screens/float_sensor.dart';
 import 'package:foka_app_v1/screens/location_tracker.dart';
 import 'package:foka_app_v1/screens/smart_connect.dart';
 import 'package:foka_app_v1/screens/ths_monitor.dart';
@@ -163,9 +164,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             ? () {}
             : () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return SmartConnet(
+                  return FloatSensor(
                     hubId: widget.hubId,
-                    devices: devices[2],
+                    deviceId: devices[2][0]['serial'],
                   );
                 }));
               },

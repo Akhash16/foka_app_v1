@@ -51,7 +51,7 @@ class _BilgeSettingsPageState extends State<BilgeSettingsPage> {
             Navigator.pop(context);
           },
         ),
-        title: const Text("Bilge Settings"),
+        title: const Text("Bilge"),
         centerTitle: true,
         actions: [
           IconButton(
