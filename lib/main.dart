@@ -19,7 +19,9 @@ import 'package:foka_app_v1/screens/onboarding.dart';
 import 'package:foka_app_v1/screens/qr_code.dart';
 import 'package:foka_app_v1/screens/register_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:foka_app_v1/screens/security_monitor.dart';
 import 'package:foka_app_v1/screens/smart_connect.dart';
+import 'package:foka_app_v1/screens/snaps_screen.dart';
 import 'package:foka_app_v1/screens/splash_screen.dart';
 import 'package:foka_app_v1/screens/ths_monitor.dart';
 import 'package:foka_app_v1/screens/ths_settings_page.dart';
@@ -40,12 +42,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
+        
         bottomSheetTheme: BottomSheetThemeData(
           backgroundColor: Colors.black54.withOpacity(0),
         ),
       ),
       title: "Foka Tech",
-      initialRoute: GeoFence.id,
+      initialRoute: SplashScreen.id,
       routes: {
         LoginScreen.id: (context) => const LoginScreen(),
         RegisterScreen.id: (context) => const RegisterScreen(),
@@ -70,6 +73,8 @@ class MyApp extends StatelessWidget {
         ConnectDevice.id: (context) => const ConnectDevice(),
         QrScreen.id : (context) => const QrScreen(),
         GeoFence.id : (context) => const GeoFence(),
+        SecurityScreen.id : (context) => const SecurityScreen(),
+        SnapsScreen.id : (context) => const SnapsScreen(),
       },
     );
   }
