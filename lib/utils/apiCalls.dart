@@ -4,7 +4,7 @@ import 'package:foka_app_v1/utils/authentication.dart';
 import 'package:http/http.dart' as http;
 
 class ApiCalls {
-  final String _apiUrl = 'https://e588-183-82-204-231.ngrok.io';
+  final String _apiUrl = 'https://7874-183-82-27-66.ngrok.io';
   final String _ip = 'http://192.168.4.1';
 
   List<dynamic> boats = [];
@@ -100,6 +100,36 @@ class ApiCalls {
     //   return Future<bool>.value(true);
     // }
     // return Future<bool>.value(false);
+  }
+
+  Future<dynamic> getSmartConnectSettingsApi(String deviceName) async {
+    Uri url = Uri.parse(_apiUrl + "/settingsManager/SmartConnect?serial=" + deviceName);
+    http.Response response = await http.get(url);
+    var jsonResponse = jsonDecode(response.body);
+    var decodedData = jsonResponse['data'];
+    return decodedData[0];
+  }
+
+  void updateSmartConnectSettingsApi(String deviceName, dynamic settings) async {
+    Uri url = Uri.parse(_apiUrl + '/settingsManager/SmartConnect/' + deviceName);
+    http.Response response = await http.put(url, body: settings);
+    print(settings);
+    print(response.statusCode);
+  }
+
+  Future<dynamic> getLocationSettingsApi(String deviceName) async {
+    Uri url = Uri.parse(_apiUrl + "/settingsManager/Location?serial=" + deviceName);
+    http.Response response = await http.get(url);
+    var jsonResponse = jsonDecode(response.body);
+    var decodedData = jsonResponse['data'];
+    print(decodedData);
+    return decodedData[0];
+  }
+
+  void updateLocationSettingsApi(String deviceName, dynamic settings) async {
+    Uri url = Uri.parse(_apiUrl + '/settingsManager/Location/' + deviceName);
+    http.Response response = await http.put(url, body: settings);
+    print(response.statusCode);
   }
 
   Future<List> getHubDevices(String hubId) async {

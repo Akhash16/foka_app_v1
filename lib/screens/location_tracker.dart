@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:foka_app_v1/main.dart';
 import 'package:foka_app_v1/screens/geofence.dart';
+import 'package:foka_app_v1/utils/apiCalls.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
@@ -11,9 +12,9 @@ import 'home_screen.dart';
 class LocationScreen extends StatefulWidget {
   // const LocationScreen({Key? key}) : super(key: key);
 
-  LocationScreen({this.hubId, this.deviceId});
+  LocationScreen({this.hubId, this.deviceId, this.boatName, this.settings});
 
-  final hubId, deviceId;
+  final hubId, deviceId, boatName, settings;
 
   static const id = "location_screen";
 
@@ -25,8 +26,7 @@ class _LocationScreenState extends State<LocationScreen> {
   Set<Marker> _markers = {};
   late BitmapDescriptor mapMarker;
   void setCustomMarker() async {
-    mapMarker = await BitmapDescriptor.fromAssetImage(
-        const ImageConfiguration(size: Size(5, 5)), "assets/location.png");
+    mapMarker = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(size: Size(5, 5)), "assets/location.png");
   }
 
   // List dropdownItemList = [
@@ -59,8 +59,7 @@ class _LocationScreenState extends State<LocationScreen> {
 
     super.initState();
     setCustomMarker();
-    Timer timer =
-        Timer.periodic(const Duration(seconds: 1), (Timer t) => change());
+    Timer timer = Timer.periodic(const Duration(seconds: 1), (Timer t) => change());
 
     void start() async {
       await connectClient();
@@ -103,8 +102,7 @@ class _LocationScreenState extends State<LocationScreen> {
     print('try done');
     client.updates!.listen((List<MqttReceivedMessage<MqttMessage>> c) {
       MqttPublishMessage message = c[0].payload as MqttPublishMessage;
-      final payload =
-          MqttPublishPayload.bytesToStringAsString(message.payload.message);
+      final payload = MqttPublishPayload.bytesToStringAsString(message.payload.message);
 
       print('Received message:$payload from topic: ${c[0].topic}>');
 
@@ -160,7 +158,7 @@ class _LocationScreenState extends State<LocationScreen> {
         markerId: const MarkerId('id-1'),
         position: LatLng(lat, long),
         infoWindow: InfoWindow(
-          title: "Co-ordinates",
+          title: "${widget.boatName}",
           snippet: "$lat,$long",
         ),
       ),
@@ -228,7 +226,7 @@ class _LocationScreenState extends State<LocationScreen> {
                 markerId: const MarkerId('id-1'),
                 position: LatLng(lat, long),
                 infoWindow: InfoWindow(
-                  title: "Boat Name",
+                  title: "${widget.boatName}",
                   snippet: "$lat,$long",
                 ),
               ),
@@ -240,9 +238,30 @@ class _LocationScreenState extends State<LocationScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           FloatingActionButton.extended(
+            heroTag: "Geofence",
             elevation: 9,
-            onPressed: () {
-              Navigator.pushNamed(context, GeoFence.id);
+            onPressed: () async {
+              print('lat $lat');
+              print('long $long');
+
+              await ApiCalls().getLocationSettingsApi(deviceId).then((value) {
+                print(value);
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return GeoFence(
+                    lat: lat,
+                    long: long,
+                    settings: value,
+                  );
+                }));
+              });
+
+              // Navigator.push(context, MaterialPageRoute(builder: (context) {
+              //   return GeoFence(
+              //     lat: lat,
+              //     long: long,
+              //     settings: widget.settings,
+              //   );
+              // }));
             },
             label: const Text('Geofence'),
             icon: const Icon(Icons.gps_fixed_outlined),

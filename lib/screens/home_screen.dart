@@ -186,13 +186,18 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       InkWell(
         onTap: devices[3].length == 0
             ? () {}
-            : () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return SmartConnet(
-                    hubId: widget.hubId,
-                    devices: devices[3],
-                  );
-                }));
+            : () async {
+                getDevices();
+                await ApiCalls().getSmartConnectSettingsApi(devices[3][0]['serial']).then((value) {
+                  print(value);
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return SmartConnect(
+                      hubId: widget.hubId,
+                      devices: devices[3],
+                      settings: value,
+                    );
+                  }));
+                });
               },
         child: DeviceCard(
           // color: Color(0xff4b39ef),
@@ -210,13 +215,25 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       InkWell(
         onTap: devices[4].length == 0
             ? () {}
-            : () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return LocationScreen(
-                    hubId: widget.hubId,
-                    deviceId: devices[4][0]['serial'],
-                  );
-                }));
+            : () async {
+                await ApiCalls().getLocationSettingsApi(devices[4][0]['serial']).then((value) {
+                  print(value);
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return LocationScreen(
+                      hubId: widget.hubId,
+                      deviceId: devices[4][0]['serial'],
+                      boatName: widget.boatName,
+                      settings: value,
+                    );
+                  }));
+                });
+                // Navigator.push(context, MaterialPageRoute(builder: (context) {
+                //   return LocationScreen(
+                //     hubId: widget.hubId,
+                //     deviceId: devices[4][0]['serial'],
+                //     boatName: widget.boatName,
+                //   );
+                // }));
               },
         child: DeviceCard(
           color: devices[4].length == 0 ? const Color(0xff8b0f32).withOpacity(0.2) : const Color(0xff8b0f32),

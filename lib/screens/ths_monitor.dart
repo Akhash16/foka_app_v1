@@ -226,14 +226,14 @@ class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMix
     });
   }
 
-  void getTHSSettingsDataAndPush(String deviceId) async {
-    await ApiCalls().getTHSSettingsApi(deviceId).then((value) {
-      print(value);
-      Navigator.push(context, MaterialPageRoute(builder: (context) {
-        return THSSettingsPage(settings: value);
-      }));
-    });
-  }
+  // void getTHSSettingsDataAndPush(String deviceId) async {
+  //   await ApiCalls().getTHSSettingsApi(deviceId).then((value) {
+  //     print(value);
+  //     Navigator.push(context, MaterialPageRoute(builder: (context) {
+  //       return THSSettingsPage(settings: value);
+  //     }));
+  //   });
+  // }
 
   showPickerNumberTemperature(BuildContext context, bool isUpperLimit) {
     Picker(
