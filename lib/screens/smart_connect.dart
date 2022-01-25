@@ -139,7 +139,7 @@ class _SmartConnetState extends State<SmartConnet> {
   }
 
   void change(int index) {
-    publish('{${relay[index]["name"]}: ${relay[index]["value"]}}');
+    publish('{relay${index + 1}: ${relay[index]["value"]}}');
   }
 
   void getValues() {
@@ -245,6 +245,7 @@ class _SmartConnetState extends State<SmartConnet> {
                   itemCount: relay.length,
                   itemBuilder: (context, index) {
                     return ListTile(
+                      leading: const Icon(Icons.edit, color: Colors.white),
                       title: Text(
                         relay[index]['name'],
                         style: settingsTitleTextStyle,
