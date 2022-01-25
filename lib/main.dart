@@ -1,9 +1,10 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:foka_app_v1/screens/add_boat_verification.dart';
-import 'package:foka_app_v1/screens/bilge_settings.dart';
+import 'package:foka_app_v1/screens/bilge.dart';
 import 'package:foka_app_v1/screens/chose_device.dart';
 import 'package:foka_app_v1/screens/connect_device.dart';
+import 'package:foka_app_v1/screens/float_sensor.dart';
 import 'package:foka_app_v1/screens/fluid_monitor.dart';
 import 'package:foka_app_v1/screens/add_boat_screen.dart';
 import 'package:foka_app_v1/screens/boat_add_data.dart';
@@ -48,6 +49,10 @@ class MyApp extends StatelessWidget {
         ),
       ),
       title: "Foka Tech",
+      // home: LocationScreen(
+      //   hubId: 'DEMOHUB001',
+      //   deviceId: 'FKB001LT',
+      // ),
       initialRoute: SplashScreen.id,
       routes: {
         LoginScreen.id: (context) => const LoginScreen(),
@@ -59,6 +64,7 @@ class MyApp extends StatelessWidget {
         BoatAddData.id: (context) => const BoatAddData(),
         AddBoatScreen.id: (context) => const AddBoatScreen(),
         FluidMonitor.id: (context) => FluidMonitor(),
+        FloatSensor.id: (context) => FloatSensor(),
         SmartConnet.id: (context) => SmartConnet(),
         THSScreen.id: (context) => THSScreen(),
         THSSettingsPage.id: (context) => THSSettingsPage(),

@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'package:cool_dropdown/cool_dropdown.dart';
-import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
+import 'package:foka_app_v1/components/constants.dart';
+import 'package:foka_app_v1/components/rounded_button.dart';
 import 'package:foka_app_v1/main.dart';
-import 'package:foka_app_v1/screens/make_sure.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import 'package:mqtt_client/mqtt_client.dart';
@@ -28,6 +28,17 @@ class _SmartConnetState extends State<SmartConnet> {
   List dropdownItemList = [];
   late String hubId;
   late String deviceId;
+
+  late List<dynamic> relay = [
+    {"name": "Relay 1", "value": 0, "usable": true},
+    {"name": "Relay 2", "value": 0, "usable": true},
+    {"name": "Relay 3", "value": 0, "usable": true},
+    {"name": "Relay 4", "value": 0, "usable": true},
+    {"name": "Relay 5", "value": 0, "usable": true},
+    {"name": "Relay 6", "value": 0, "usable": true},
+    {"name": "Relay 7", "value": 0, "usable": true},
+    {"name": "Relay 8", "value": 0, "usable": true},
+  ];
 
   late MqttServerClient client;
 
@@ -120,19 +131,15 @@ class _SmartConnetState extends State<SmartConnet> {
     print('Ping response client callback invoked');
   }
 
-  void publish(toPublish) {
+  void publish(String toPublish) {
     final pubTopic = '/$hubId/$deviceId';
     final builder = MqttClientPayloadBuilder();
     builder.addString(toPublish);
     client.publishMessage(pubTopic, MqttQos.atLeastOnce, builder.payload!);
   }
 
-  void switchOneToggle(value) {
-    publish('{relay1: ' + value.toString() + '}');
-  }
-
-  void switchTwoToggle(value) {
-    publish('{relay2: ' + value.toString() + '}');
+  void change(int index) {
+    publish('{relay${index + 1}: ${relay[index]["value"]}}');
   }
 
   void getValues() {
@@ -150,6 +157,8 @@ class _SmartConnetState extends State<SmartConnet> {
 
   @override
   Widget build(BuildContext context) {
+    String newName = '';
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xff090f13),
@@ -210,168 +219,213 @@ class _SmartConnetState extends State<SmartConnet> {
         ),
         centerTitle: true,
         actions: [
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.settings),
+          Builder(
+            builder: (context) => IconButton(
+              icon: const Icon(Icons.settings),
+              onPressed: () => Scaffold.of(context).openEndDrawer(),
+              tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
+            ),
           ),
         ],
       ),
+      endDrawer: Drawer(
+        backgroundColor: Colors.black,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(8, 40, 8, 8),
+                child: Text(
+                  'Smart Connect Settings',
+                  style: settingsHeadingTextStyle,
+                ),
+              ),
+              ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: relay.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      leading: const Icon(Icons.edit, color: Colors.white),
+                      title: Text(
+                        relay[index]['name'],
+                        style: settingsTitleTextStyle,
+                      ),
+                      trailing: Switch(
+                        value: relay[index]['usable'],
+                        onChanged: (value) {
+                          setState(() {
+                            relay[index]['value'] = 0;
+                            relay[index]['usable'] = value;
+                            // settingsUpdate();
+                          });
+                        },
+                        inactiveTrackColor: Colors.white,
+                        inactiveThumbColor: Colors.blueGrey,
+                      ),
+                    );
+                  }),
+            ],
+          ),
+        ),
+      ),
+      // endDrawer: Drawer(
+      //   backgroundColor: Colors.black,
+      //   child: ListView(
+      //     children: [
+      //       ListTile(
+      //         title: Text(
+      //           relay[0]['name'],
+      //           style: settingsTitleTextStyle,
+      //         ),
+      //         trailing: Switch(
+      //           value: relay[0]['usable'],
+      //           onChanged: (value) {
+      //             setState(() {
+      //               relay[0]['usable'] = value;
+      //               // settingsUpdate();
+      //             });
+      //           },
+      //           inactiveTrackColor: Colors.white,
+      //           inactiveThumbColor: Colors.blueGrey,
+      //         ),
+      //       ),
+      //     ],
+      //   ),
+      // ),
       backgroundColor: const Color(0xff090f13),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 18),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Padding(
-              //   padding: const EdgeInsets.all(8.0),
-              //   child: Text(
-              //     "Boat Name",
-              //     style: GoogleFonts.lexendDeca(
-              //         color: const Color(0xffffffff),
-              //         fontSize: 28,
-              //         fontWeight: FontWeight.w700),
-              //   ),
-              // ),
-              const SizedBox(
-                height: 10,
+          child: GridView.builder(
+              itemCount: relay.length,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisSpacing: 10.0,
+                crossAxisSpacing: 10.0,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: const Color(0xff1d2429),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      height: 150,
-                      width: MediaQuery.of(context).size.width * 0.4,
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              "Relay 1",
+              itemBuilder: (context, index) {
+                return AnimatedOpacity(
+                  opacity: relay[index]['usable'] ? 1 : 0.3,
+                  duration: const Duration(milliseconds: 500),
+                  child: Card(
+                    color: const Color(0xff1d2429),
+                    shape: BeveledRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Text(
+                              relay[index]['name'],
                               style: GoogleFonts.montserrat(color: Colors.white, fontWeight: FontWeight.w400, fontSize: 25),
                             ),
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          ToggleSwitch(
-                            cornerRadius: 20,
-                            animate: true,
-                            fontSize: 10,
-                            inactiveBgColor: const Color(0xff303030),
-                            inactiveFgColor: Colors.white,
-                            minWidth: MediaQuery.of(context).size.width * 0.15,
-                            initialLabelIndex: indexValue1,
-                            totalSwitches: 2,
-                            labels: const ['OFF', 'ON'],
-                            customTextStyles: [
-                              GoogleFonts.montserrat(fontWeight: FontWeight.w400, color: Colors.white),
-                              GoogleFonts.montserrat(fontWeight: FontWeight.w400, color: Colors.white),
-                            ],
-                            onToggle: (index) {
-                              // print('switched to: $index');
-                              switchOneToggle(index);
-                              indexValue1 = index;
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: const Color(0xff1d2429),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      height: 150,
-                      width: MediaQuery.of(context).size.width * 0.4,
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              "Relay 2",
-                              style: GoogleFonts.montserrat(color: Colors.white, fontWeight: FontWeight.w400, fontSize: 25),
+                            IconButton(
+                              icon: const Icon(Icons.edit),
+                              onPressed: !relay[index]['usable']
+                                  ? null
+                                  : () {
+                                      showModalBottomSheet(
+                                          isScrollControlled: true,
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            // return ChangeRelayName(
+                                            //   index: index,
+                                            //   relay: relay,
+                                            // );
+                                            return Container(
+                                              color: Colors.black45,
+                                              child: Container(
+                                                height: MediaQuery.of(context).size.height * 0.75,
+                                                decoration: BoxDecoration(
+                                                  color: const Color(0xff1d2429).withOpacity(0.75),
+                                                  borderRadius: const BorderRadius.only(
+                                                    topLeft: Radius.circular(20.0),
+                                                    topRight: Radius.circular(20.0),
+                                                  ),
+                                                ),
+                                                child: Center(
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.all(18.0),
+                                                    child: Column(
+                                                      // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                      children: [
+                                                        Text(
+                                                          'Change Name',
+                                                          style: settingsHeadingTextStyle,
+                                                        ),
+                                                        Padding(
+                                                          padding: const EdgeInsets.all(18.0),
+                                                          child: TextField(
+                                                            decoration: const InputDecoration(
+                                                              border: OutlineInputBorder(),
+                                                              labelText: 'Change Relay Name',
+                                                              labelStyle: TextStyle(color: Colors.white),
+                                                              hintText: 'Enter New Name for Relay',
+                                                              hintStyle: TextStyle(color: Colors.white54),
+                                                            ),
+                                                            style: TextStyle(color: Colors.yellow.shade200),
+                                                            onChanged: (value) {
+                                                              newName = value;
+                                                            },
+                                                          ),
+                                                        ),
+                                                        RoundedButton(
+                                                          title: 'Change',
+                                                          color: Colors.lightBlueAccent,
+                                                          onPressed: () {
+                                                            if (newName != '') {
+                                                              setState(() {
+                                                                relay[index]['name'] = newName;
+                                                                newName = '';
+                                                              });
+                                                            }
+                                                            Navigator.pop(context);
+                                                          },
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          });
+                                    },
+                              color: Colors.white,
                             ),
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          ToggleSwitch(
-                            cornerRadius: 20,
-                            animate: true,
-                            fontSize: 10,
-                            inactiveBgColor: const Color(0xff303030),
-                            inactiveFgColor: Colors.white,
-                            minWidth: MediaQuery.of(context).size.width * 0.15,
-                            initialLabelIndex: indexValue2,
-                            totalSwitches: 2,
-                            labels: const ['OFF', 'ON'],
-                            customTextStyles: [
-                              GoogleFonts.montserrat(fontWeight: FontWeight.w400, color: Colors.white),
-                              GoogleFonts.montserrat(fontWeight: FontWeight.w400, color: Colors.white),
-                            ],
-                            onToggle: (index) {
-                              // print('switched to: $index');
-                              switchTwoToggle(index);
-                              indexValue2 = index;
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(8, 16, 8, 8),
-                child: InkWell(
-                  onTap: () => Navigator.pushNamed(context, MakeSure.id),
-                  child: DottedBorder(
-                    dashPattern: const [10, 14],
-                    strokeWidth: 2,
-                    color: Colors.grey.shade600,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: SizedBox(
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height * 0.05,
-                        child: Center(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.add_box_outlined,
-                                color: Colors.grey.shade600,
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              Text(
-                                "Tap to add new device",
-                                style: GoogleFonts.montserrat(
-                                  fontWeight: FontWeight.w400,
-                                  color: Colors.grey.shade600,
-                                ),
-                              ),
-                            ],
-                          ),
+                          ],
                         ),
-                      ),
+                        // const SizedBox(
+                        //   height: 20,
+                        // ),
+                        ToggleSwitch(
+                          cornerRadius: 20,
+                          animate: true,
+                          fontSize: 10,
+                          inactiveBgColor: const Color(0xff303030),
+                          inactiveFgColor: Colors.white,
+                          minWidth: MediaQuery.of(context).size.width * 0.15,
+                          initialLabelIndex: relay[index]['value'],
+                          totalSwitches: 2,
+                          labels: const ['OFF', 'ON'],
+                          customTextStyles: [
+                            GoogleFonts.montserrat(fontWeight: FontWeight.w400, color: Colors.white),
+                            GoogleFonts.montserrat(fontWeight: FontWeight.w400, color: Colors.white),
+                          ],
+                          changeOnTap: relay[index]['usable'],
+                          onToggle: (value) {
+                            // print('switched to: $index');
+                            relay[index]['value'] = value;
+                            change(index);
+                          },
+                        ),
+                      ],
                     ),
                   ),
-                ),
-              )
-            ],
-          ),
+                );
+              }),
         ),
       ),
     );
