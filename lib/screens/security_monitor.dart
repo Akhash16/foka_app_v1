@@ -115,6 +115,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
                           primary: Colors.white,
                         ),
                         onPressed: () {
+                          
                           setState(() {
                             if (alertStatus == "OFF") {
                               alertStatus = "ON";

@@ -1,6 +1,7 @@
-import 'package:card_swiper/card_swiper.dart';
+import 'package:appinio_swiper/appinio_swiper.dart';
 import 'package:flutter/material.dart';
 import 'package:foka_app_v1/screens/security_monitor.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class SnapsScreen extends StatefulWidget {
   const SnapsScreen({Key? key}) : super(key: key);
@@ -11,18 +12,27 @@ class SnapsScreen extends StatefulWidget {
 }
 
 class _SnapsScreenState extends State<SnapsScreen> {
-  List<String> snaps = [
-    "https://i.ytimg.com/vi/QZRQaE1a0hU/maxresdefault.jpg",
-    "https://i1.sndcdn.com/artworks-KvOyhrp1m4i4KfUv-U1fZCQ-t500x500.jpg",
-    "https://www.anime-planet.com/images/characters/147676.jpg?t=1568503248",
-    "https://i.pinimg.com/originals/ac/c4/58/acc4588c3637fc185d6a09449b4fc766.png"
-  ];
-
   @override
   Widget build(BuildContext context) {
+    List<Widget> snaps = [
+      const SnapWidget(
+        imgUrl: 'https://picsum.photos/500/700?random=1',
+        text: 'hello',
+      ),
+      const SnapWidget(
+        imgUrl: 'https://picsum.photos/500/700?random=2',
+        text: 'hello',
+      ),
+      const SnapWidget(
+        imgUrl: 'https://picsum.photos/500/700?random=3',
+        text: 'hello',
+      ),
+      const SnapWidget(
+        imgUrl: 'https://picsum.photos/500/700?random=4',
+        text: 'hello',
+      ),
+    ];
     return Scaffold(
-      
-      
       backgroundColor: const Color(0xff090f13),
       appBar: AppBar(
         backgroundColor: const Color(0xff090f13),
@@ -49,21 +59,58 @@ class _SnapsScreenState extends State<SnapsScreen> {
           ),
         ],
       ),
-      body: Container(
-        child: Swiper(
-          itemBuilder: (BuildContext context, int index) {
-            return Padding(
-              padding: const EdgeInsets.all(0.0),
-              child: Image.network(
-                snaps[index],
-                fit: BoxFit.cover,
-              ),
-            );
+      body: SizedBox(
+        width: double.infinity,
+        height: double.infinity,
+        child: AppinioSwiper(
+          onEnd: () {
+            print("reached the end");
+            // setState(() {});
           },
-          itemCount: snaps.length,
-          pagination: const SwiperPagination(builder: SwiperPagination.dots),
-          control: const SwiperControl(color: Colors.white),
+          cards: snaps,
         ),
+      ),
+    );
+  }
+}
+
+class SnapWidget extends StatelessWidget {
+  final String text, imgUrl;
+
+  // ignore: use_key_in_widget_constructors
+  const SnapWidget({required this.imgUrl, required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(0),
+        color: Colors.teal.shade100,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.shade800.withOpacity(0.7),
+            spreadRadius: 3,
+            blurRadius: 5,
+            offset: const Offset(0, 2), // changes position of shadow
+          ),
+        ],
+      ),
+      width: MediaQuery.of(context).size.width * 0.8,
+      height: MediaQuery.of(context).size.height * 0.6,
+      child: Column(
+        children: [
+          Image.network(
+            "$imgUrl",
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              "$text",
+              style: GoogleFonts.montserrat(
+                  color: Colors.black, fontSize: 30, fontWeight: FontWeight.w500),
+            ),
+          )
+        ],
       ),
     );
   }

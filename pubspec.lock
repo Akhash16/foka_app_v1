@@ -8,6 +8,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.0"
+  appinio_swiper:
+    dependency: "direct main"
+    description:
+      name: appinio_swiper
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.2"
   archive:
     dependency: transitive
     description:
@@ -492,6 +499,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.4.0"
+  photo_card_swiper:
+    dependency: "direct main"
+    description:
+      name: photo_card_swiper
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.6"
   platform:
     dependency: transitive
     description:

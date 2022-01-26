@@ -52,7 +52,7 @@ class MyApp extends StatelessWidget {
       //   hubId: 'DEMOHUB001',
       //   deviceId: 'FKB001LT',
       // ),
-      initialRoute: SplashScreen.id,
+      initialRoute: SecurityScreen.id,
       routes: {
         LoginScreen.id: (context) => const LoginScreen(),
         RegisterScreen.id: (context) => const RegisterScreen(),
