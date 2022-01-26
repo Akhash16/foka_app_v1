@@ -102,6 +102,36 @@ class ApiCalls {
     // return Future<bool>.value(false);
   }
 
+  Future<dynamic> getSmartConnectSettingsApi(String deviceName) async {
+    Uri url = Uri.parse(_apiUrl + "/settingsManager/SmartConnect?serial=" + deviceName);
+    http.Response response = await http.get(url);
+    var jsonResponse = jsonDecode(response.body);
+    var decodedData = jsonResponse['data'];
+    return decodedData[0];
+  }
+
+  void updateSmartConnectSettingsApi(String deviceName, dynamic settings) async {
+    Uri url = Uri.parse(_apiUrl + '/settingsManager/SmartConnect/' + deviceName);
+    http.Response response = await http.put(url, body: settings);
+    print(settings);
+    print(response.statusCode);
+  }
+
+  Future<dynamic> getLocationSettingsApi(String deviceName) async {
+    Uri url = Uri.parse(_apiUrl + "/settingsManager/Location?serial=" + deviceName);
+    http.Response response = await http.get(url);
+    var jsonResponse = jsonDecode(response.body);
+    var decodedData = jsonResponse['data'];
+    print(decodedData);
+    return decodedData[0];
+  }
+
+  void updateLocationSettingsApi(String deviceName, dynamic settings) async {
+    Uri url = Uri.parse(_apiUrl + '/settingsManager/Location/' + deviceName);
+    http.Response response = await http.put(url, body: settings);
+    print(response.statusCode);
+  }
+
   Future<List> getHubDevices(String hubId) async {
     Uri url = Uri.parse(_apiUrl + "/deviceSyncManager?hubid=" + hubId);
     http.Response response = await http.get(url);

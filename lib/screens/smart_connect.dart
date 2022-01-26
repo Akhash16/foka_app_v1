@@ -4,30 +4,32 @@ import 'package:flutter/material.dart';
 import 'package:foka_app_v1/components/constants.dart';
 import 'package:foka_app_v1/components/rounded_button.dart';
 import 'package:foka_app_v1/main.dart';
+import 'package:foka_app_v1/utils/apiCalls.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 
-class SmartConnet extends StatefulWidget {
-  // const SmartConnet({Key? key}) : super(key: key);
-  SmartConnet({this.hubId, this.devices});
+class SmartConnect extends StatefulWidget {
+  // const SmartConnect({Key? key}) : super(key: key);
+  SmartConnect({this.hubId, this.devices, this.settings});
 
-  final hubId, devices;
+  final hubId, devices, settings;
 
   static const String id = 'smart_connect';
 
   @override
-  _SmartConnetState createState() => _SmartConnetState();
+  _SmartConnectState createState() => _SmartConnectState();
 }
 
-class _SmartConnetState extends State<SmartConnet> {
+class _SmartConnectState extends State<SmartConnect> {
   int indexValue1 = 0, indexValue2 = 0;
   // late int relay1, relay2;
 
   List dropdownItemList = [];
   late String hubId;
   late String deviceId;
+  late dynamic settings;
 
   late List<dynamic> relay = [
     {"name": "Relay 1", "value": 0, "usable": true},
@@ -142,8 +144,44 @@ class _SmartConnetState extends State<SmartConnet> {
     publish('{relay${index + 1}: ${relay[index]["value"]}}');
   }
 
+  void getSettings(dynamic settings) {
+    this.settings = settings;
+
+    deviceId = this.settings['serial'];
+
+    setState(() {
+      relay[0]['name'] = this.settings['p1_name'];
+      relay[1]['name'] = this.settings['p2_name'];
+      relay[2]['name'] = this.settings['p3_name'];
+      relay[3]['name'] = this.settings['p4_name'];
+      relay[4]['name'] = this.settings['p5_name'];
+      relay[5]['name'] = this.settings['p6_name'];
+      relay[6]['name'] = this.settings['p7_name'];
+      relay[7]['name'] = this.settings['p8_name'];
+
+      relay[0]['value'] = this.settings['p1_set'];
+      relay[1]['value'] = this.settings['p2_set'];
+      relay[2]['value'] = this.settings['p3_set'];
+      relay[3]['value'] = this.settings['p4_set'];
+      relay[4]['value'] = this.settings['p5_set'];
+      relay[5]['value'] = this.settings['p6_set'];
+      relay[6]['value'] = this.settings['p7_set'];
+      relay[7]['value'] = this.settings['p8_set'];
+
+      relay[0]['usable'] = this.settings['p1_enable'] == 1;
+      relay[1]['usable'] = this.settings['p2_enable'] == 1;
+      relay[2]['usable'] = this.settings['p3_enable'] == 1;
+      relay[3]['usable'] = this.settings['p4_enable'] == 1;
+      relay[4]['usable'] = this.settings['p5_enable'] == 1;
+      relay[5]['usable'] = this.settings['p6_enable'] == 1;
+      relay[6]['usable'] = this.settings['p7_enable'] == 1;
+      relay[7]['usable'] = this.settings['p8_enable'] == 1;
+    });
+  }
+
   void getValues() {
     hubId = widget.hubId;
+    getSettings(widget.settings);
     List tempDevices = widget.devices;
     for (final device in tempDevices) {
       dropdownItemList.add({
@@ -153,6 +191,35 @@ class _SmartConnetState extends State<SmartConnet> {
     }
 
     deviceId = dropdownItemList[0]['value'];
+  }
+
+  settingsUpdate() {
+    ApiCalls().updateSmartConnectSettingsApi(deviceId, {
+      "p1_enable": relay[0]['usable'] ? '1' : '0',
+      "p1_name": relay[0]['name'],
+      "p2_enable": relay[1]['usable'] ? '1' : '0',
+      "p2_name": relay[1]['name'],
+      "p3_enable": relay[2]['usable'] ? '1' : '0',
+      "p3_name": relay[2]['name'],
+      "p4_enable": relay[3]['usable'] ? '1' : '0',
+      "p4_name": relay[3]['name'],
+      "p5_enable": relay[4]['usable'] ? '1' : '0',
+      "p5_name": relay[4]['name'],
+      "p6_enable": relay[5]['usable'] ? '1' : '0',
+      "p6_name": relay[5]['name'],
+      "p7_enable": relay[6]['usable'] ? '1' : '0',
+      "p7_name": relay[6]['name'],
+      "p8_enable": relay[7]['usable'] ? '1' : '0',
+      "p8_name": relay[7]['name'],
+      "p1_set": relay[0]['value'].toString(),
+      "p2_set": relay[1]['value'].toString(),
+      "p3_set": relay[2]['value'].toString(),
+      "p4_set": relay[3]['value'].toString(),
+      "p5_set": relay[4]['value'].toString(),
+      "p6_set": relay[5]['value'].toString(),
+      "p7_set": relay[6]['value'].toString(),
+      "p8_set": relay[7]['value'].toString()
+    });
   }
 
   @override
@@ -245,7 +312,81 @@ class _SmartConnetState extends State<SmartConnet> {
                   itemCount: relay.length,
                   itemBuilder: (context, index) {
                     return ListTile(
-                      leading: const Icon(Icons.edit, color: Colors.white),
+                      leading: InkWell(
+                        onTap: () {
+                          showModalBottomSheet(
+                              isScrollControlled: true,
+                              context: context,
+                              builder: (BuildContext context) {
+                                // return ChangeRelayName(
+                                //   index: index,
+                                //   relay: relay,
+                                // );
+                                return Container(
+                                  color: Colors.black45,
+                                  child: Container(
+                                    height: MediaQuery.of(context).size.height * 0.75,
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xff1d2429).withOpacity(0.75),
+                                      borderRadius: const BorderRadius.only(
+                                        topLeft: Radius.circular(20.0),
+                                        topRight: Radius.circular(20.0),
+                                      ),
+                                    ),
+                                    child: Center(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(18.0),
+                                        child: Column(
+                                          // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            Text(
+                                              'Change Name',
+                                              style: settingsHeadingTextStyle,
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.all(18.0),
+                                              child: TextField(
+                                                decoration: const InputDecoration(
+                                                  border: OutlineInputBorder(),
+                                                  labelText: 'Change Relay Name',
+                                                  labelStyle: TextStyle(color: Colors.white),
+                                                  hintText: 'Enter New Name for Relay',
+                                                  hintStyle: TextStyle(color: Colors.white54),
+                                                ),
+                                                style: TextStyle(color: Colors.yellow.shade200),
+                                                onChanged: (value) {
+                                                  newName = value;
+                                                },
+                                              ),
+                                            ),
+                                            RoundedButton(
+                                              title: 'Change',
+                                              color: Colors.lightBlueAccent,
+                                              onPressed: () {
+                                                if (newName != '') {
+                                                  setState(() {
+                                                    relay[index]['name'] = newName;
+                                                    newName = '';
+                                                  });
+                                                  settingsUpdate();
+                                                }
+                                                Navigator.pop(context);
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              });
+                          settingsUpdate();
+                        },
+                        child: const Icon(
+                          Icons.edit,
+                          color: Colors.white,
+                        ),
+                      ),
                       title: Text(
                         relay[index]['name'],
                         style: settingsTitleTextStyle,
@@ -256,8 +397,8 @@ class _SmartConnetState extends State<SmartConnet> {
                           setState(() {
                             relay[index]['value'] = 0;
                             relay[index]['usable'] = value;
-                            // settingsUpdate();
                           });
+                          settingsUpdate();
                         },
                         inactiveTrackColor: Colors.white,
                         inactiveThumbColor: Colors.blueGrey,
@@ -315,87 +456,9 @@ class _SmartConnetState extends State<SmartConnet> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Text(
-                              relay[index]['name'],
-                              style: GoogleFonts.montserrat(color: Colors.white, fontWeight: FontWeight.w400, fontSize: 25),
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.edit),
-                              onPressed: !relay[index]['usable']
-                                  ? null
-                                  : () {
-                                      showModalBottomSheet(
-                                          isScrollControlled: true,
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            // return ChangeRelayName(
-                                            //   index: index,
-                                            //   relay: relay,
-                                            // );
-                                            return Container(
-                                              color: Colors.black45,
-                                              child: Container(
-                                                height: MediaQuery.of(context).size.height * 0.75,
-                                                decoration: BoxDecoration(
-                                                  color: const Color(0xff1d2429).withOpacity(0.75),
-                                                  borderRadius: const BorderRadius.only(
-                                                    topLeft: Radius.circular(20.0),
-                                                    topRight: Radius.circular(20.0),
-                                                  ),
-                                                ),
-                                                child: Center(
-                                                  child: Padding(
-                                                    padding: const EdgeInsets.all(18.0),
-                                                    child: Column(
-                                                      // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                      children: [
-                                                        Text(
-                                                          'Change Name',
-                                                          style: settingsHeadingTextStyle,
-                                                        ),
-                                                        Padding(
-                                                          padding: const EdgeInsets.all(18.0),
-                                                          child: TextField(
-                                                            decoration: const InputDecoration(
-                                                              border: OutlineInputBorder(),
-                                                              labelText: 'Change Relay Name',
-                                                              labelStyle: TextStyle(color: Colors.white),
-                                                              hintText: 'Enter New Name for Relay',
-                                                              hintStyle: TextStyle(color: Colors.white54),
-                                                            ),
-                                                            style: TextStyle(color: Colors.yellow.shade200),
-                                                            onChanged: (value) {
-                                                              newName = value;
-                                                            },
-                                                          ),
-                                                        ),
-                                                        RoundedButton(
-                                                          title: 'Change',
-                                                          color: Colors.lightBlueAccent,
-                                                          onPressed: () {
-                                                            if (newName != '') {
-                                                              setState(() {
-                                                                relay[index]['name'] = newName;
-                                                                newName = '';
-                                                              });
-                                                            }
-                                                            Navigator.pop(context);
-                                                          },
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            );
-                                          });
-                                    },
-                              color: Colors.white,
-                            ),
-                          ],
+                        Text(
+                          relay[index]['name'],
+                          style: GoogleFonts.montserrat(color: Colors.white, fontWeight: FontWeight.w400, fontSize: 25),
                         ),
                         // const SizedBox(
                         //   height: 20,
@@ -419,6 +482,7 @@ class _SmartConnetState extends State<SmartConnet> {
                             // print('switched to: $index');
                             relay[index]['value'] = value;
                             change(index);
+                            settingsUpdate();
                           },
                         ),
                       ],

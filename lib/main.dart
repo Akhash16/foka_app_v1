@@ -43,7 +43,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        
         bottomSheetTheme: BottomSheetThemeData(
           backgroundColor: Colors.black54.withOpacity(0),
         ),
@@ -65,7 +64,7 @@ class MyApp extends StatelessWidget {
         AddBoatScreen.id: (context) => const AddBoatScreen(),
         FluidMonitor.id: (context) => FluidMonitor(),
         FloatSensor.id: (context) => FloatSensor(),
-        SmartConnet.id: (context) => SmartConnet(),
+        SmartConnect.id: (context) => SmartConnect(),
         THSScreen.id: (context) => THSScreen(),
         THSSettingsPage.id: (context) => THSSettingsPage(),
         FluidSettingsPage.id: (context) => FluidSettingsPage(),
@@ -77,10 +76,10 @@ class MyApp extends StatelessWidget {
         MakeSure.id: (context) => const MakeSure(),
         SelectService.id: (context) => const SelectService(),
         ConnectDevice.id: (context) => const ConnectDevice(),
-        QrScreen.id : (context) => const QrScreen(),
-        GeoFence.id : (context) => const GeoFence(),
-        SecurityScreen.id : (context) => const SecurityScreen(),
-        SnapsScreen.id : (context) => const SnapsScreen(),
+        QrScreen.id: (context) => const QrScreen(),
+        GeoFence.id: (context) => GeoFence(),
+        SecurityScreen.id: (context) => const SecurityScreen(),
+        SnapsScreen.id: (context) => const SnapsScreen(),
       },
     );
   }
