@@ -13,11 +13,12 @@ class SelectService extends StatefulWidget {
 
 class _SelectServiceState extends State<SelectService> {
   List<Service> services = [
-    Service('Location Tracker', 'https://img.icons8.com/external-vitaliy-gorbachev-flat-vitaly-gorbachev/2x/external-cleaning-labour-day-vitaliy-gorbachev-flat-vitaly-gorbachev.png'),
-    Service('THS Monitor', 'https://img.icons8.com/external-vitaliy-gorbachev-flat-vitaly-gorbachev/2x/external-plumber-labour-day-vitaliy-gorbachev-flat-vitaly-gorbachev.png'),
-    Service('Security Monitor', 'https://img.icons8.com/external-wanicon-flat-wanicon/2x/external-multimeter-car-service-wanicon-flat-wanicon.png'),
-    Service('Smart Connect', 'https://img.icons8.com/external-itim2101-flat-itim2101/2x/external-painter-male-occupation-avatar-itim2101-flat-itim2101.png'),
-    Service('Fluid Monitor', 'https://img.icons8.com/fluency/2x/drill.png'),
+    Service('Location Tracker', 'https://img.icons8.com/stickers/344/worldwide-location.png'),
+    Service('THS Monitor', 'https://img.icons8.com/external-flatart-icons-flat-flatarticons/344/external-temperature-internet-of-things-flatart-icons-flat-flatarticons.png'),
+    Service('Security Monitor', 'https://img.icons8.com/color/344/wallmount-camera.png'),
+    Service('Smart Connect', 'https://img.icons8.com/color/344/share-2.png'),
+    Service('Fluid Monitor', 'https://img.icons8.com/color/344/water.png'),
+    Service('Float Sensor', 'https://img.icons8.com/color/344/period-slider.png'),
   ];
 
   int selectedService = -1;

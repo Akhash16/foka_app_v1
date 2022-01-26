@@ -42,6 +42,7 @@ class _QrScreenState extends State<QrScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.ac_unit),
         onPressed: () {
           Navigator.pushAndRemoveUntil(
             context,
