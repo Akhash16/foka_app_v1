@@ -65,7 +65,7 @@ class _SnapsScreenState extends State<SnapsScreen> {
         child: AppinioSwiper(
           onEnd: () {
             print("reached the end");
-            // setState(() {});
+            setState(() {});
           },
           cards: snaps,
         ),
@@ -84,6 +84,7 @@ class SnapWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
+        // border: Border.all(width: 1,color: const Color(0xff090f13),),
         borderRadius: BorderRadius.circular(0),
         color: Colors.teal.shade100,
         boxShadow: [
@@ -91,7 +92,7 @@ class SnapWidget extends StatelessWidget {
             color: Colors.grey.shade800.withOpacity(0.7),
             spreadRadius: 3,
             blurRadius: 5,
-            offset: const Offset(0, 2), // changes position of shadow
+            offset: const Offset(0, 3), // changes position of shadow
           ),
         ],
       ),
@@ -101,6 +102,7 @@ class SnapWidget extends StatelessWidget {
         children: [
           Image.network(
             "$imgUrl",
+            fit: BoxFit.fitWidth,
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),

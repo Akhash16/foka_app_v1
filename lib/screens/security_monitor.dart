@@ -1,3 +1,4 @@
+import 'package:animate_icons/animate_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:foka_app_v1/components/rounded_button.dart';
 import 'package:foka_app_v1/screens/home_screen.dart';
@@ -13,6 +14,12 @@ class SecurityScreen extends StatefulWidget {
 }
 
 class _SecurityScreenState extends State<SecurityScreen> {
+  late AnimateIconController controller;
+  void initState() {
+    controller = AnimateIconController();
+    super.initState();
+  }
+
   String alertStatus = "OFF";
   @override
   Widget build(BuildContext context) {
@@ -50,9 +57,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            
             Column(
-             
               children: [
                 const SizedBox(
                   height: 20,
@@ -83,17 +88,36 @@ class _SecurityScreenState extends State<SecurityScreen> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            alertStatus == "OFF"
-                                ? const Icon(
-                                    Icons.lock_open_rounded,
-                                    color: Colors.white,
-                                    size: 60,
-                                  )
-                                : const Icon(
-                                    Icons.lock_rounded,
-                                    color: Colors.white,
-                                    size: 60,
-                                  ),
+                             AnimateIcons(
+                          startIcon: Icons.lock,
+                          endIcon: Icons.lock_open_outlined,
+                          controller: controller,
+                          startTooltip: 'Icons.lock_outline',
+                          // add this tooltip for the end icon
+                          endTooltip: 'Icons.lock_open_outlined',
+                          size: 60.0,
+                          onStartIconPress: () {
+                            return true;
+                          },
+                          onEndIconPress: () {
+                            return true;
+                          },
+                          duration: Duration(milliseconds: 500),
+                          startIconColor: Colors.white,
+                          endIconColor: Colors.white,
+                          clockwise: false,
+                        ),
+                            // alertStatus == "OFF"
+                            //     ? const Icon(
+                            //         Icons.lock_open_rounded,
+                            //         color: Colors.white,
+                            //         size: 60,
+                            //       )
+                            //     : const Icon(
+                            //         Icons.lock_rounded,
+                            //         color: Colors.white,
+                            //         size: 60,
+                            //       ),
                             Padding(
                               padding: const EdgeInsets.fromLTRB(0, 20, 0, 30),
                               child: Text(
@@ -110,12 +134,9 @@ class _SecurityScreenState extends State<SecurityScreen> {
                       ),
                     ),
                     Container(
-                      child: TextButton(
-                        style: TextButton.styleFrom(
-                          primary: Colors.white,
-                        ),
-                        onPressed: () {
-                          
+                      child:GestureDetector(
+                        
+                        onTap: () {
                           setState(() {
                             if (alertStatus == "OFF") {
                               alertStatus = "ON";
@@ -124,17 +145,36 @@ class _SecurityScreenState extends State<SecurityScreen> {
                             }
                           });
                         },
-                        child: alertStatus == "ON"
-                            ? const Icon(
-                                Icons.lock_open_rounded,
-                                color: Colors.white,
-                                size: 40,
-                              )
-                            : const Icon(
-                                Icons.lock_rounded,
-                                color: Colors.white,
-                                size: 40,
-                              ),
+                        child: AnimateIcons(
+                          startIcon: Icons.lock,
+                          endIcon: Icons.lock_open_outlined,
+                          controller: controller,
+                          startTooltip: 'Icons.lock_outline',
+                          // add this tooltip for the end icon
+                          endTooltip: 'Icons.lock_open_outlined',
+                          size: 40.0,
+                          onStartIconPress: () {
+                            return true;
+                          },
+                          onEndIconPress: () {
+                            return true;
+                          },
+                          duration: Duration(milliseconds: 500),
+                          startIconColor: Colors.white,
+                          endIconColor: Colors.white,
+                          clockwise: false,
+                        ),
+                        // child: alertStatus == "ON"
+                        //     ? const Icon(
+                        //         Icons.lock_open_rounded,
+                        //         color: Colors.white,
+                        //         size: 40,
+                        //       )
+                        //     : const Icon(
+                        //         Icons.lock_rounded,
+                        //         color: Colors.white,
+                        //         size: 40,
+                        //       ),
                       ),
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,

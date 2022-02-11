@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:foka_app_v1/screens/add_boat_verification.dart';
+import 'package:foka_app_v1/screens/battery_monitor.dart';
 import 'package:foka_app_v1/screens/bilge.dart';
 import 'package:foka_app_v1/screens/chose_device.dart';
 import 'package:foka_app_v1/screens/connect_device.dart';
@@ -52,7 +53,7 @@ class MyApp extends StatelessWidget {
       //   hubId: 'DEMOHUB001',
       //   deviceId: 'FKB001LT',
       // ),
-      initialRoute: SecurityScreen.id,
+      initialRoute: BatteryMonitor.id,
       routes: {
         LoginScreen.id: (context) => const LoginScreen(),
         RegisterScreen.id: (context) => const RegisterScreen(),
@@ -80,6 +81,7 @@ class MyApp extends StatelessWidget {
         GeoFence.id: (context) => GeoFence(),
         SecurityScreen.id: (context) => const SecurityScreen(),
         SnapsScreen.id: (context) => const SnapsScreen(),
+        BatteryMonitor.id: (context) => const BatteryMonitor(),
       },
     );
   }

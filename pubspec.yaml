@@ -65,6 +65,9 @@ dependencies:
   card_swiper : ^2.0.1
   appinio_swiper: ^1.0.2
   photo_card_swiper: ^0.0.6
+  animate_icons: ^2.0.0
+  
+  step_progress_indicator: ^1.0.2
   
   
 dev_dependencies:
