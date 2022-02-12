@@ -12,9 +12,32 @@ class BatteryMonitor extends StatefulWidget {
   _BatteryMonitorState createState() => _BatteryMonitorState();
 }
 
-class _BatteryMonitorState extends State<BatteryMonitor> {
-  var b1Percentage = 75, b2Percentage = 60;
-  List<Color> colors = [Color(0xff45C55C),Color(0xff5BBBFC)];
+class _BatteryMonitorState extends State<BatteryMonitor>
+    with TickerProviderStateMixin {
+  late AnimationController animationController;
+  late Animation animation1, animation2;
+
+  var b1Percentage = 75.0, b2Percentage = 100.0;
+  List<Color> colors = [const Color(0xff45C55C), const Color(0xff5BBBFC)];
+
+  @override
+  void initState() {
+    super.initState();
+    animationController = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 500));
+    animation1 = Tween<double>(begin: 0.0, end: b1Percentage)
+        .animate(animationController)
+      ..addListener(() {
+        setState(() {});
+      });
+    animation2 = Tween<double>(begin: 0.0, end: b2Percentage)
+        .animate(animationController)
+      ..addListener(() {
+        setState(() {});
+      });
+    animationController.forward();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,82 +60,102 @@ class _BatteryMonitorState extends State<BatteryMonitor> {
         centerTitle: true,
         actions: [
           IconButton(
-            onPressed: () {
-              // Navigator.pushNamed(context, THSSettingsPage.id);
-            },
+            onPressed: () {},
             icon: const Icon(Icons.settings),
           ),
         ],
       ),
-      body: Container(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              CircularStepProgressIndicator(
-                
-                gradientColor: LinearGradient(colors: colors),
-                child: Center(
-                  child: Column(
-                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                       Icon(Icons.flash_on,color: Colors.white,size: 40,),
-                      Text(
-                        "$b1Percentage"+" %",
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            CircularStepProgressIndicator(
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.flash_on,
+                      color: Colors.white,
+                      size: 40,
+                    ),
+                    RichText(
+                      text: TextSpan(
                         style: GoogleFonts.montserrat(
                             color: Colors.white,
-                            fontSize: 30,
-                            fontWeight: FontWeight.bold),
+                            fontSize: 40,
+                            fontWeight: FontWeight.w500),
+                        children: <TextSpan>[
+                          TextSpan(text: b1Percentage.toStringAsFixed(0)),
+                          const TextSpan(
+                              text: " %",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 20)),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                totalSteps: 100,
-                currentStep: b1Percentage,
-                
-                stepSize: 1,
-                selectedColor: Colors.greenAccent,
-                unselectedColor: Colors.grey[500],
-                padding: 0,
-                width: MediaQuery.of(context).size.width*0.5,
-                height:MediaQuery.of(context).size.width*0.5,
-                selectedStepSize: 20,
-                roundedCap: (_, __) => true,
               ),
-              CircularStepProgressIndicator(
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.flash_on,color: Colors.white,size: 40,),
-                      Text(
-                        "$b2Percentage"+" %",
+              totalSteps: 100,
+              currentStep: animation1.value.toInt(),
+              stepSize: 20,
+              selectedColor: Colors.greenAccent,
+              unselectedColor: Colors.grey[700],
+              padding: 0,
+              width: MediaQuery.of(context).size.width * 0.5,
+              height: MediaQuery.of(context).size.width * 0.5,
+              selectedStepSize: 20,
+              roundedCap: (_, __) => true,
+            ),
+            CircularStepProgressIndicator(
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.flash_on,
+                      color: Colors.white,
+                      size: 40,
+                    ),
+                    RichText(
+                      text: TextSpan(
                         style: GoogleFonts.montserrat(
                             color: Colors.white,
-                            fontSize: 30,
-                            fontWeight: FontWeight.bold),
+                            fontSize: 40,
+                            fontWeight: FontWeight.w500),
+                        children: <TextSpan>[
+                          TextSpan(text: b2Percentage.toStringAsFixed(0)),
+                          const TextSpan(
+                              text: " %",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 20)),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                totalSteps: 100,
-                currentStep: b2Percentage,
-                stepSize: 5,
-                selectedColor: Colors.greenAccent,
-                unselectedColor: Colors.grey[500],
-                padding: 0,
-                 width: MediaQuery.of(context).size.width*0.5,
-                height:MediaQuery.of(context).size.width*0.5,
-                selectedStepSize: 20,
-                roundedCap: (_, __) => true,
-                
               ),
-              
-              
-            ],
-          ),
+              totalSteps: 100,
+              currentStep: animation2.value.toInt(),
+              stepSize: 20,
+              selectedColor: Colors.greenAccent,
+              unselectedColor: Colors.grey[700],
+              padding: 0,
+              width: MediaQuery.of(context).size.width * 0.5,
+              height: MediaQuery.of(context).size.width * 0.5,
+              selectedStepSize: 20,
+              roundedCap: (_, __) => true,
+            ),
+          ],
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    animationController.dispose();
+    super.dispose();
   }
 }
