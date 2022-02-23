@@ -22,8 +22,6 @@ class AddBoatVerification extends StatefulWidget {
 }
 
 class _AddBoatVerificationState extends State<AddBoatVerification> {
-  bool _onEditing = true;
-  late String _code;
   bool showSpinner = false;
 
   TextEditingController textController = TextEditingController();
@@ -89,10 +87,10 @@ class _AddBoatVerificationState extends State<AddBoatVerification> {
                 duration: const Duration(milliseconds: 900),
                 child: ConfirmationSlider(
                   onConfirmation: () {
-                    if (!_onEditing) {
-                      ApiCalls().addBoatsApi(widget.hubId, widget.boatName, _code);
-                      Navigator.popAndPushNamed(context, SplashScreen.id);
-                    }
+                    // if (textController.text != '') {
+                    // ApiCalls().addBoatsApi(widget.hubId, widget.boatName, textController.text);
+                    // Navigator.popAndPushNamed(context, SplashScreen.id);
+                    // }
                   },
                   height: 60,
                   width: 260,

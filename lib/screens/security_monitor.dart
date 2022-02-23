@@ -18,6 +18,11 @@ class SecurityScreen extends StatefulWidget {
 class _SecurityScreenState extends State<SecurityScreen> with TickerProviderStateMixin {
   late AnimationController controller1;
   late AnimationController controller2;
+  late AnimationController controller3;
+
+  late Animation colorAnimation1;
+  late Animation colorAnimation2;
+
   bool alertStatus = false;
   int sliderValue = 1000;
 
@@ -25,10 +30,28 @@ class _SecurityScreenState extends State<SecurityScreen> with TickerProviderStat
   void initState() {
     super.initState();
     controller1 = AnimationController(vsync: this, duration: const Duration(milliseconds: 2000));
-    controller2 = AnimationController(vsync: this, duration: const Duration(milliseconds: 2000));
+    controller2 = AnimationController(vsync: this, duration: const Duration(milliseconds: 400));
+    controller3 = AnimationController(vsync: this, duration: const Duration(milliseconds: 400));
+
+    colorAnimation1 = ColorTween(
+      begin: Colors.red,
+      end: Colors.green,
+    ).animate(controller2)
+      ..addListener(() {
+        setState(() {});
+      });
+
+    colorAnimation2 = ColorTween(
+      begin: Colors.redAccent.withOpacity(0.3),
+      end: Colors.greenAccent.withOpacity(0.3),
+    ).animate(controller3)
+      ..addListener(() {
+        setState(() {});
+      });
 
     controller1.forward();
     controller2.forward();
+    controller3.forward();
 
     checkIsAlert();
   }
@@ -38,6 +61,7 @@ class _SecurityScreenState extends State<SecurityScreen> with TickerProviderStat
     super.dispose();
     controller1.dispose();
     controller2.dispose();
+    controller3.dispose();
   }
 
   void checkIsAlert() async {
@@ -45,6 +69,7 @@ class _SecurityScreenState extends State<SecurityScreen> with TickerProviderStat
       if (!alertStatus) {
         controller1.reverse();
         controller2.reverse();
+        controller3.reverse();
       }
     });
   }
@@ -141,11 +166,13 @@ class _SecurityScreenState extends State<SecurityScreen> with TickerProviderStat
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           // color: Color(0xff277D8E),
-                          color: alertStatus ? Colors.greenAccent.shade700 : Colors.red.shade600,
+                          color: colorAnimation1.value,
+                          // color: alertStatus ? Colors.greenAccent.shade700 : Colors.red.shade600,
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.grey.shade800.withOpacity(0.7),
-                              spreadRadius: 5,
+                              color: colorAnimation2.value,
+                              // color: alertStatus ? Colors.greenAccent.shade700.withOpacity(0.3) : Colors.red.shade600.withOpacity(0.3),
+                              spreadRadius: 10,
                               blurRadius: 7,
                               offset: const Offset(0, 4), // changes position of shadow
                             ),
@@ -174,27 +201,30 @@ class _SecurityScreenState extends State<SecurityScreen> with TickerProviderStat
                             if (alertStatus) {
                               controller1.forward();
                               controller2.forward();
+                              controller3.forward();
                             } else {
                               controller1.reverse();
                               controller2.reverse();
+                              controller3.reverse();
                             }
                           });
                         },
                         child: Lottie.network(
                           'https://assets7.lottiefiles.com/packages/lf20_egjaXa.json',
-                          controller: controller2,
+                          controller: controller1,
                         ),
                       ),
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         // color: const Color(0xff84BEC9),
-                        color: Colors.lightBlueAccent.shade400,
+                        color: colorAnimation2.value,
                         boxShadow: [
                           BoxShadow(
                             color: Colors.grey.shade700.withOpacity(0.5),
                             spreadRadius: 3,
                             blurRadius: 7,
-                            offset: const Offset(0, 3), // changes position of shadow
+                            offset: const Offset(0, 3),
+                            // changes position of shadow
                           ),
                         ],
                       ),

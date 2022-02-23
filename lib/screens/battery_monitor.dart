@@ -14,8 +14,7 @@ class BatteryMonitor extends StatefulWidget {
   _BatteryMonitorState createState() => _BatteryMonitorState();
 }
 
-class _BatteryMonitorState extends State<BatteryMonitor>
-    with TickerProviderStateMixin {
+class _BatteryMonitorState extends State<BatteryMonitor> with TickerProviderStateMixin {
   late AnimationController animationController;
   late Animation animation1, animation2;
 
@@ -31,20 +30,24 @@ class _BatteryMonitorState extends State<BatteryMonitor>
     // VoltageTimeStamp(10, DateTime.now()),
     VoltageTimeStamp(15, DateTime.parse("2022-02-23 21:27:00")),
     VoltageTimeStamp(20, DateTime.parse("2022-02-23 23:27:00")),
+
+    VoltageTimeStamp(15, DateTime.parse("2022-02-24 11:27:00")),
+    VoltageTimeStamp(20, DateTime.parse("2022-02-24 13:27:00")),
+    VoltageTimeStamp(5, DateTime.parse("2022-02-24 19:14:31")),
+    // VoltageTimeStamp(10, DateTime.now()),
+    VoltageTimeStamp(15, DateTime.parse("2022-02-24 21:27:00")),
+    VoltageTimeStamp(20, DateTime.parse("2022-02-24 23:27:00")),
   ];
 
   @override
   void initState() {
     super.initState();
-    animationController = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 500));
-    animation1 = Tween<double>(begin: 0.0, end: b1Percentage)
-        .animate(animationController)
+    animationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 1000));
+    animation1 = Tween<double>(begin: 0.0, end: b1Percentage).animate(animationController)
       ..addListener(() {
         setState(() {});
       });
-    animation2 = Tween<double>(begin: 0.0, end: b2Percentage)
-        .animate(animationController)
+    animation2 = Tween<double>(begin: 0.0, end: b2Percentage).animate(animationController)
       ..addListener(() {
         setState(() {});
       });
@@ -96,16 +99,10 @@ class _BatteryMonitorState extends State<BatteryMonitor>
                       ),
                       RichText(
                         text: TextSpan(
-                          style: GoogleFonts.montserrat(
-                              color: Colors.white,
-                              fontSize: 35,
-                              fontWeight: FontWeight.w500),
+                          style: GoogleFonts.montserrat(color: Colors.white, fontSize: 35, fontWeight: FontWeight.w500),
                           children: <TextSpan>[
                             TextSpan(text: b1Percentage.toStringAsFixed(0)),
-                            const TextSpan(
-                                text: " %",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 20)),
+                            const TextSpan(text: " %", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
                           ],
                         ),
                       ),
@@ -114,13 +111,13 @@ class _BatteryMonitorState extends State<BatteryMonitor>
                 ),
                 totalSteps: 100,
                 currentStep: animation1.value.toInt(),
-                stepSize: 20,
+                stepSize: 12,
                 selectedColor: Colors.greenAccent,
                 unselectedColor: Colors.grey[700],
                 padding: 0,
                 width: MediaQuery.of(context).size.width * 0.4,
                 height: MediaQuery.of(context).size.width * 0.4,
-                selectedStepSize: 20,
+                selectedStepSize: 12,
                 roundedCap: (_, __) => true,
               ),
               CircularStepProgressIndicator(
@@ -135,16 +132,10 @@ class _BatteryMonitorState extends State<BatteryMonitor>
                       ),
                       RichText(
                         text: TextSpan(
-                          style: GoogleFonts.montserrat(
-                              color: Colors.white,
-                              fontSize: 35,
-                              fontWeight: FontWeight.w500),
+                          style: GoogleFonts.montserrat(color: Colors.white, fontSize: 35, fontWeight: FontWeight.w500),
                           children: <TextSpan>[
                             TextSpan(text: b2Percentage.toStringAsFixed(0)),
-                            const TextSpan(
-                                text: " %",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 20)),
+                            const TextSpan(text: " %", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
                           ],
                         ),
                       ),
@@ -153,13 +144,13 @@ class _BatteryMonitorState extends State<BatteryMonitor>
                 ),
                 totalSteps: 100,
                 currentStep: animation2.value.toInt(),
-                stepSize: 20,
+                stepSize: 12,
                 selectedColor: Colors.greenAccent,
                 unselectedColor: Colors.grey[700],
                 padding: 0,
                 width: MediaQuery.of(context).size.width * 0.4,
                 height: MediaQuery.of(context).size.width * 0.4,
-                selectedStepSize: 20,
+                selectedStepSize: 12,
                 roundedCap: (_, __) => true,
               ),
             ],
@@ -171,19 +162,13 @@ class _BatteryMonitorState extends State<BatteryMonitor>
               primaryXAxis: DateTimeAxis(
                 title: AxisTitle(
                   text: 'Time',
-                  textStyle: GoogleFonts.montserrat(
-                      color: Colors.deepOrange,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w300),
+                  textStyle: GoogleFonts.montserrat(color: Colors.deepOrange, fontSize: 16, fontWeight: FontWeight.w300),
                 ),
               ),
               primaryYAxis: NumericAxis(
                 title: AxisTitle(
                   text: 'Voltage',
-                  textStyle: GoogleFonts.montserrat(
-                      color: Colors.deepOrange,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w300),
+                  textStyle: GoogleFonts.montserrat(color: Colors.deepOrange, fontSize: 16, fontWeight: FontWeight.w300),
                 ),
               ),
               // primaryXAxis: DateTimeAxis(name: "Time"),
@@ -193,10 +178,8 @@ class _BatteryMonitorState extends State<BatteryMonitor>
                   xAxisName: "Time",
                   yAxisName: "Voltage",
                   dataSource: chartData,
-                  xValueMapper: (VoltageTimeStamp timeStamp, _) =>
-                      timeStamp.time,
-                  yValueMapper: (VoltageTimeStamp timeStamp, _) =>
-                      timeStamp.voltage,
+                  xValueMapper: (VoltageTimeStamp timeStamp, _) => timeStamp.time,
+                  yValueMapper: (VoltageTimeStamp timeStamp, _) => timeStamp.voltage,
                 ),
               ],
             ),
