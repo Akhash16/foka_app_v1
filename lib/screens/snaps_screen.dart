@@ -16,19 +16,19 @@ class _SnapsScreenState extends State<SnapsScreen> {
   Widget build(BuildContext context) {
     List<Widget> snaps = [
       const SnapWidget(
-        imgUrl: 'https://picsum.photos/500/700?random=1',
+        imgUrl: 'https://picsum.photos/500/500?random=1',
         text: 'hello',
       ),
       const SnapWidget(
-        imgUrl: 'https://picsum.photos/500/700?random=2',
+        imgUrl: 'https://picsum.photos/500/500?random=2',
         text: 'hello',
       ),
       const SnapWidget(
-        imgUrl: 'https://picsum.photos/500/700?random=3',
+        imgUrl: 'https://picsum.photos/500/500?random=3',
         text: 'hello',
       ),
       const SnapWidget(
-        imgUrl: 'https://picsum.photos/500/700?random=4',
+        imgUrl: 'https://picsum.photos/500/500?random=4',
         text: 'hello',
       ),
     ];
@@ -97,19 +97,20 @@ class SnapWidget extends StatelessWidget {
         ],
       ),
       width: MediaQuery.of(context).size.width * 0.8,
-      height: MediaQuery.of(context).size.height * 0.6,
+      height: MediaQuery.of(context).size.height * 0.3,
       child: Column(
         children: [
           Image.network(
             "$imgUrl",
-            fit: BoxFit.fitWidth,
+            height: MediaQuery.of(context).size.height * 0.7,
+            width: MediaQuery.of(context).size.width * 1,
+            fit: BoxFit.fill,
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
               "$text",
-              style: GoogleFonts.montserrat(
-                  color: Colors.black, fontSize: 30, fontWeight: FontWeight.w500),
+              style: GoogleFonts.montserrat(color: Colors.black, fontSize: 30, fontWeight: FontWeight.w500),
             ),
           )
         ],

@@ -26,6 +26,8 @@ class _AddBoatVerificationState extends State<AddBoatVerification> {
   late String _code;
   bool showSpinner = false;
 
+  TextEditingController textController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,54 +42,45 @@ class _AddBoatVerificationState extends State<AddBoatVerification> {
                 delay: const Duration(milliseconds: 500),
                 duration: const Duration(milliseconds: 600),
                 child: Text(
-                  'Enter OTP',
+                  'Boat Name',
                   style: GoogleFonts.montserrat(
                     color: Colors.white,
-                    fontSize: 25,
+                    fontSize: 30,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
               ),
-              const SizedBox(height: 10.0),
               FadeInDown(
                 delay: const Duration(milliseconds: 600),
                 duration: const Duration(milliseconds: 700),
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: VerificationCode(
-                    length: 4,
-                    underlineWidth: 3,
-                    itemSize: 70.0,
-                    textStyle: GoogleFonts.montserrat(
+                  padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 16),
+                  child: TextField(
+                    controller: textController,
+                    style: GoogleFonts.montserrat(
                       color: Colors.white,
-                      fontSize: 25,
+                      fontSize: 15,
                       fontWeight: FontWeight.w400,
                     ),
-                    underlineColor: Colors.lightBlueAccent,
-                    keyboardType: TextInputType.number,
-                    underlineUnfocusedColor: Colors.white,
-                    onCompleted: (value) {
-                      setState(() {
-                        _code = value;
-                      });
-                    },
-                    onEditing: (value) {
-                      setState(() {
-                        _onEditing = value;
-                      });
-                    },
+                    textAlign: TextAlign.center,
+                    decoration: InputDecoration(
+                      labelStyle: const TextStyle(color: Colors.white),
+                      focusedBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.blue, width: 2.0),
+                      ),
+                      enabledBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.green, width: 2.0),
+                      ),
+                      hintText: 'Enter Boat Name',
+                      hintStyle: GoogleFonts.montserrat(
+                        color: Colors.white24,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
                   ),
                 ),
               ),
-              // const SizedBox(height: 20),
-              // Text(
-              //   _onEditing ? 'Entering Code' : 'Code is ' + _code,
-              //   style: GoogleFonts.montserrat(
-              //     color: Colors.white,
-              //     fontSize: 20,
-              //     fontWeight: FontWeight.w400,
-              //   ),
-              // ),
               const SizedBox(
                 height: 20.0,
               ),
