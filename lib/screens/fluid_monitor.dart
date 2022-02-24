@@ -8,6 +8,7 @@ import 'package:foka_app_v1/main.dart';
 import 'package:foka_app_v1/screens/bilge.dart';
 import 'package:foka_app_v1/screens/fluid_settings_page.dart';
 import 'package:foka_app_v1/utils/apiCalls.dart';
+import 'package:foka_app_v1/utils/data.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
 import 'package:mqtt_client/mqtt_client.dart';
@@ -17,9 +18,9 @@ import 'package:concentric_transition/concentric_transition.dart';
 class FluidMonitor extends StatefulWidget {
   // const FluidMonitor({Key? key}) : super(key: key);
 
-  FluidMonitor({this.hubId, this.devicesUltrasonic, this.settings});
+  // FluidMonitor({this.hubId, this.devicesUltrasonic, this.settings});
 
-  final hubId, devicesUltrasonic, settings;
+  // final hubId, devicesUltrasonic, settings;
 
   static const String id = 'fluid_monitor';
 
@@ -189,12 +190,12 @@ class _FluidMonitorState extends State<FluidMonitor> with TickerProviderStateMix
   }
 
   void getValues() {
-    getSettings(widget.settings);
-    hubId = widget.hubId;
+    getSettings(Data().getSettings());
+    hubId = Data().getHubId();
 
     dropdownItemListUltrasonic.clear();
 
-    List tempDevicesUS = widget.devicesUltrasonic;
+    List tempDevicesUS = Data().getDevices();
     for (final device in tempDevicesUS) {
       dropdownItemListUltrasonic.add({
         'label': device['devicename'],
@@ -215,7 +216,7 @@ class _FluidMonitorState extends State<FluidMonitor> with TickerProviderStateMix
   showPickerNumber(BuildContext context, bool isUpperLimit) {
     Picker(
         adapter: NumberPickerAdapter(data: [
-          const NumberPickerColumn(begin: 0, end: 100),
+          NumberPickerColumn(begin: 0, end: 100, initValue: currentLowerValue),
         ]),
         hideHeader: true,
         title: const Text("Please Select"),

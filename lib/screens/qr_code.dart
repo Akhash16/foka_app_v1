@@ -44,16 +44,18 @@ class _QrScreenState extends State<QrScreen> {
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.ac_unit),
         onPressed: () {
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-              builder: (context) => HomeScreen(
-                hubId: "DEMOHUB0001",
-                boatName: "My Boat 1",
-              ),
-            ),
-            ModalRoute.withName(HomeScreen.id),
-          );
+          Navigator.popUntil(context, ModalRoute.withName(HomeScreen.id));
+          // Navigator.popUntil(context, (route) => route.isFirst);
+          // Navigator.pushAndRemoveUntil(
+          //   context,
+          //   MaterialPageRoute(
+          //     builder: (context) => HomeScreen(
+          //       hubId: "DEMOHUB0001",
+          //       boatName: "My Boat 1",
+          //     ),
+          //   ),
+          //   ModalRoute.withName(HomeScreen.id),
+          // );
           // Navigator.of(context).pushAndRemoveUntil(
           //   MaterialPageRoute(
           //     builder: (context) => HomeScreen(
@@ -109,7 +111,7 @@ class _QrScreenState extends State<QrScreen> {
       dynamic data = jsonDecode(result!.code!);
       ApiCalls().addHub(data['ssid'].toString(), data['password'].toString()).then((value) {
         if (value) {
-          Navigator.of(context).popUntil(ModalRoute.withName(HomeScreen.id));
+          Navigator.popUntil(context, ModalRoute.withName(HomeScreen.id));
         } else {
           print("post failed");
         }

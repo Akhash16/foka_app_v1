@@ -1,11 +1,17 @@
+import 'dart:async';
+
 import 'package:animated_icon_button/animated_icon_button.dart';
 import 'package:flutter/material.dart';
 import 'package:foka_app_v1/components/constants.dart';
 import 'package:foka_app_v1/components/rounded_button.dart';
+import 'package:foka_app_v1/main.dart';
 import 'package:foka_app_v1/screens/home_screen.dart';
 import 'package:foka_app_v1/screens/snaps_screen.dart';
+import 'package:foka_app_v1/utils/data.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
+import 'package:mqtt_client/mqtt_client.dart';
+import 'package:mqtt_client/mqtt_server_client.dart';
 
 class SecurityScreen extends StatefulWidget {
   const SecurityScreen({Key? key}) : super(key: key);
@@ -25,6 +31,11 @@ class _SecurityScreenState extends State<SecurityScreen> with TickerProviderStat
 
   bool alertStatus = false;
   int sliderValue = 1000;
+
+  late MqttServerClient client;
+
+  String hubId = Data().getHubId();
+  String deviceId = Data().getDevices()[0]['serial'];
 
   @override
   void initState() {
@@ -54,14 +65,110 @@ class _SecurityScreenState extends State<SecurityScreen> with TickerProviderStat
     controller3.forward();
 
     checkIsAlert();
+
+    print('running init');
+    // TODO: implement initState
+    super.initState();
+    Timer timer = Timer.periodic(const Duration(seconds: 1), (Timer t) => change());
+
+    void start() async {
+      await connectClient();
+      client.subscribe("/$hubId/$deviceId", MqttQos.atLeastOnce);
+      // client.subscribe("/DEMOHUB001/FKB001FLOAT", MqttQos.atLeastOnce);
+    }
+
+    start();
+  }
+
+  Future<MqttServerClient> connectClient() async {
+    print('connect started');
+    client = MqttServerClient.withPort('164.52.212.96', MyApp.clientId, 1883);
+    client.logging(on: true);
+    client.onConnected = onConnected;
+    client.onDisconnected = onDisconnected;
+    client.onUnsubscribed = onUnsubscribed;
+    client.onSubscribed = onSubscribed;
+    client.onSubscribeFail = onSubscribeFail;
+    client.pongCallback = pong;
+    client.keepAlivePeriod = 20;
+
+    print('final con');
+    final connMessage = MqttConnectMessage()
+        .authenticateAs('admin', 'smartboat@rec&adr')
+        // ignore: deprecated_member_use
+        .withClientIdentifier(MyApp.clientId)
+        .keepAliveFor(6000)
+        .startClean()
+        .withWillQos(MqttQos.atLeastOnce);
+    client.connectionMessage = connMessage;
+    print('try');
+    try {
+      await client.connect();
+    } catch (e) {
+      print('catch');
+      print('Exception: $e');
+      client.disconnect();
+    }
+
+    print('try done');
+    client.updates!.listen((List<MqttReceivedMessage<MqttMessage>> c) {
+      MqttPublishMessage message = c[0].payload as MqttPublishMessage;
+      final payload = MqttPublishPayload.bytesToStringAsString(message.payload.message);
+
+      print('Received message:$payload from topic: ${c[0].topic}>');
+      // alertStatus = payload == '0' ? false : true;
+    });
+
+    return client;
+  }
+
+  // connection succeeded
+  void onConnected() {
+    print('Connected');
+  }
+
+// unconnected
+  void onDisconnected() {
+    print('Disconnected');
+  }
+
+// subscribe to topic succeeded
+  void onSubscribed(String topic) {
+    print('Subscribed topic: $topic');
+  }
+
+// subscribe to topic failed
+  void onSubscribeFail(String topic) {
+    print('Failed to subscribe $topic');
+  }
+
+// unsubscribe succeeded
+  void onUnsubscribed(String? topic) {
+    print('Unsubscribed topic: $topic');
+  }
+
+// PING response received
+  void pong() {
+    print('Ping response client callback invoked');
+  }
+
+  void publish(String toPublish) {
+    final pubTopic = '/$hubId/$deviceId';
+    final builder = MqttClientPayloadBuilder();
+    builder.addString(toPublish);
+    client.publishMessage(pubTopic, MqttQos.atLeastOnce, builder.payload!);
+  }
+
+  void change() {
+    setState(() {});
   }
 
   @override
   void dispose() {
-    super.dispose();
     controller1.dispose();
     controller2.dispose();
     controller3.dispose();
+    super.dispose();
   }
 
   void checkIsAlert() async {
@@ -198,6 +305,7 @@ class _SecurityScreenState extends State<SecurityScreen> with TickerProviderStat
                         onPressed: () {
                           setState(() {
                             alertStatus = !alertStatus;
+                            publish(alertStatus.toString());
                             if (alertStatus) {
                               controller1.forward();
                               controller2.forward();

@@ -4,7 +4,7 @@ import 'package:foka_app_v1/utils/authentication.dart';
 import 'package:http/http.dart' as http;
 
 class ApiCalls {
-  final String _apiUrl = 'https://b6ec-183-82-178-36.ngrok.io';
+  final String _apiUrl = 'http://0c78-183-82-30-161.ngrok.io';
   final String _ip = 'http://192.168.4.1';
 
   List<dynamic> boats = [];
@@ -143,6 +143,7 @@ class ApiCalls {
       jsonResponse['SC'],
       jsonResponse['LT'],
       jsonResponse['SE'],
+      jsonResponse['BMS'],
     ];
     return Future<List>.value(hubDevices);
   }
@@ -158,6 +159,7 @@ class ApiCalls {
       jsonResponse['SC'],
       jsonResponse['LT'],
       jsonResponse['SE'],
+      jsonResponse['BMS'],
     ];
     return Future<List>.value(connectedDevices);
   }
@@ -173,6 +175,7 @@ class ApiCalls {
       jsonResponse['SC'].length,
       jsonResponse['LT'].length,
       jsonResponse['SE'].length,
+      jsonResponse['BMS'].length,
     ];
     return Future<List>.value(connectedDevices);
   }
@@ -188,6 +191,7 @@ class ApiCalls {
       jsonResponse['SC'].length,
       jsonResponse['LT'].length,
       jsonResponse['SE'].length,
+      jsonResponse['BMS'].length,
     ];
     return Future<List>.value(hubDevices);
   }

@@ -5,6 +5,7 @@ import 'package:foka_app_v1/components/constants.dart';
 import 'package:foka_app_v1/components/rounded_button.dart';
 import 'package:foka_app_v1/main.dart';
 import 'package:foka_app_v1/utils/apiCalls.dart';
+import 'package:foka_app_v1/utils/data.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import 'package:mqtt_client/mqtt_client.dart';
@@ -12,9 +13,9 @@ import 'package:mqtt_client/mqtt_server_client.dart';
 
 class SmartConnect extends StatefulWidget {
   // const SmartConnect({Key? key}) : super(key: key);
-  SmartConnect({this.hubId, this.devices, this.settings});
+  // SmartConnect({this.hubId, this.devices, this.settings});
 
-  final hubId, devices, settings;
+  // final hubId, devices, settings;
 
   static const String id = 'smart_connect';
 
@@ -180,9 +181,9 @@ class _SmartConnectState extends State<SmartConnect> {
   }
 
   void getValues() {
-    hubId = widget.hubId;
-    getSettings(widget.settings);
-    List tempDevices = widget.devices;
+    hubId = Data().getHubId();
+    getSettings(Data().getSettings());
+    List tempDevices = Data().getDevices();
     for (final device in tempDevices) {
       dropdownItemList.add({
         'label': device['devicename'],

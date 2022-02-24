@@ -6,14 +6,15 @@ import 'package:foka_app_v1/screens/add_boat_screen.dart';
 import 'package:fab_circular_menu/fab_circular_menu.dart';
 import 'package:foka_app_v1/screens/login_screen.dart';
 import 'package:foka_app_v1/utils/authentication.dart';
+import 'package:foka_app_v1/utils/data.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 
 class BoatsPage extends StatefulWidget {
-  final boatData;
+  // final boatData;
 
   // const BoatsPage({Key? key}) : super(key: key);
-  BoatsPage({this.boatData});
+  // BoatsPage({this.boatData});
 
   static const String id = 'boats_page';
 
@@ -42,7 +43,7 @@ class _BoatsPageState extends State<BoatsPage> {
   @override
   void initState() {
     super.initState();
-    getBoats(widget.boatData);
+    getBoats(Data().getBoatData());
   }
 
   void getBoats(boatData) {
@@ -193,10 +194,15 @@ class _BoatsPageState extends State<BoatsPage> {
                         return Builder(
                           builder: (BuildContext context) {
                             return InkWell(
+                              // onTap: () {
+                              //   Navigator.push(context, MaterialPageRoute(builder: (context) {
+                              //     return HomeScreen(hubId: boat['hubid'], boatName: boat['title']);
+                              //   }));
+                              // },
                               onTap: () {
-                                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                  return HomeScreen(hubId: boat['hubid'], boatName: boat['title']);
-                                }));
+                                Data().setHubId(boat['hubid']);
+                                Data().setBoatName(boat['title']);
+                                Navigator.pushNamed(context, HomeScreen.id);
                               },
                               child: Container(
                                 width: MediaQuery.of(context).size.width,

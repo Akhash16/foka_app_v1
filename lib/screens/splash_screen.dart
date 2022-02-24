@@ -3,6 +3,7 @@ import 'package:foka_app_v1/screens/boats_page.dart';
 import 'package:foka_app_v1/screens/login_screen.dart';
 import 'package:foka_app_v1/utils/apiCalls.dart';
 import 'package:foka_app_v1/utils/authentication.dart';
+import 'package:foka_app_v1/utils/data.dart';
 import 'package:lottie/lottie.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -23,9 +24,12 @@ class _SplashScreenState extends State<SplashScreen> {
 
   void getBoatDataAndPush(String email) async {
     await ApiCalls().getBoatsApi(email).then((value) {
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
-        return BoatsPage(boatData: value);
-      }));
+      // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
+      //   return BoatsPage(boatData: value);
+      // }));
+      print(value);
+      Data().setBoatData(value);
+      Navigator.popAndPushNamed(context, BoatsPage.id);
     });
     // print(boatData);
     // Navigator.popAndPushNamed(context, BoatsPage.id);
@@ -56,7 +60,6 @@ class _SplashScreenState extends State<SplashScreen> {
     }
 
     return Scaffold(
-      
       backgroundColor: const Color(0xff090f13),
       body: Center(
         child: Container(

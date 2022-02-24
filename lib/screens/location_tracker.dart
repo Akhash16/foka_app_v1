@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:foka_app_v1/main.dart';
 import 'package:foka_app_v1/screens/geofence.dart';
 import 'package:foka_app_v1/utils/apiCalls.dart';
+import 'package:foka_app_v1/utils/data.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
@@ -12,9 +13,9 @@ import 'home_screen.dart';
 class LocationScreen extends StatefulWidget {
   // const LocationScreen({Key? key}) : super(key: key);
 
-  LocationScreen({this.hubId, this.deviceId, this.boatName, this.settings});
+  // LocationScreen({this.hubId, this.deviceId, this.boatName, this.settings});
 
-  final hubId, deviceId, boatName, settings;
+  // final hubId, deviceId, boatName, settings;
 
   static const id = "location_screen";
 
@@ -54,8 +55,8 @@ class _LocationScreenState extends State<LocationScreen> {
 
   @override
   void initState() {
-    hubId = widget.hubId;
-    deviceId = widget.deviceId;
+    hubId = Data().getHubId();
+    deviceId = Data().getDevices()[0]['serial'];
 
     super.initState();
     setCustomMarker();
@@ -158,7 +159,7 @@ class _LocationScreenState extends State<LocationScreen> {
         markerId: const MarkerId('id-1'),
         position: LatLng(lat, long),
         infoWindow: InfoWindow(
-          title: "${widget.boatName}",
+          title: Data().getBoatName(),
           snippet: "$lat,$long",
         ),
       ),
@@ -226,7 +227,7 @@ class _LocationScreenState extends State<LocationScreen> {
                 markerId: const MarkerId('id-1'),
                 position: LatLng(lat, long),
                 infoWindow: InfoWindow(
-                  title: "${widget.boatName}",
+                  title: Data().getBoatName(),
                   snippet: "$lat,$long",
                 ),
               ),

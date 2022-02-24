@@ -6,6 +6,7 @@ import 'package:foka_app_v1/screens/forgot_password.dart';
 import 'package:foka_app_v1/screens/register_screen.dart';
 import 'package:foka_app_v1/utils/apiCalls.dart';
 import 'package:foka_app_v1/utils/authentication.dart';
+import 'package:foka_app_v1/utils/data.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
@@ -32,10 +33,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void getBoatDataAndPush(String email) async {
     var boatData = await ApiCalls().getBoatsApi(email);
-    // Navigator.popAndPushNamed(context, BoatsPage.id);
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
-      return BoatsPage(boatData: boatData);
-    }));
+    Data().setBoatData(boatData);
+    Navigator.popAndPushNamed(context, BoatsPage.id);
+    // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
+    //   return BoatsPage(boatData: boatData);
+    // }));
   }
 
   @override

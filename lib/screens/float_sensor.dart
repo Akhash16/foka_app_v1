@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:foka_app_v1/components/constants.dart';
 import 'package:foka_app_v1/main.dart';
+import 'package:foka_app_v1/utils/data.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
@@ -10,9 +11,9 @@ import 'package:mqtt_client/mqtt_server_client.dart';
 class FloatSensor extends StatefulWidget {
   // const FloatSensor({ Key? key }) : super(key: key);
 
-  FloatSensor({this.hubId, this.deviceId});
+  // FloatSensor({this.hubId, this.deviceId});
 
-  final hubId, deviceId;
+  // final hubId, deviceId;
 
   static const String id = 'float_sensor';
 
@@ -143,8 +144,8 @@ class _FloatSensorState extends State<FloatSensor> {
   }
 
   void getValues() {
-    hubId = widget.hubId;
-    deviceId = widget.deviceId;
+    hubId = Data().getHubId();
+    deviceId = Data().getDevices()[0]['serial'];
   }
 
   settingsUpdate() {

@@ -7,6 +7,7 @@ import 'package:foka_app_v1/main.dart';
 import 'package:foka_app_v1/screens/home_screen.dart';
 import 'package:foka_app_v1/screens/ths_settings_page.dart';
 import 'package:foka_app_v1/utils/apiCalls.dart';
+import 'package:foka_app_v1/utils/data.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import 'package:mqtt_client/mqtt_client.dart';
@@ -14,9 +15,9 @@ import 'package:mqtt_client/mqtt_server_client.dart';
 
 class THSScreen extends StatefulWidget {
   // const THSScreen({Key? key}) : super(key: key);
-  THSScreen({this.hubId, this.devices, this.settings});
+  // THSScreen({this.hubId, this.devices, this.settings});
 
-  final hubId, devices, settings;
+  // final hubId, devices, settings;
 
   static const id = "ths_monitor";
 
@@ -200,9 +201,9 @@ class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMix
   }
 
   void getValues() {
-    hubId = widget.hubId;
-    getSettings(widget.settings);
-    List tempDevices = widget.devices;
+    hubId = Data().getHubId();
+    getSettings(Data().getSettings());
+    List tempDevices = Data().getDevices();
     for (final device in tempDevices) {
       dropdownItemList.add({
         'label': device['devicename'],
@@ -224,6 +225,7 @@ class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMix
       "low_hum": humidityCurrentLowerValue.toString(),
       "high_hum": humidityCurrentUpperValue.toString(),
     });
+    Data().setSettings(settings);
   }
 
   // void getTHSSettingsDataAndPush(String deviceId) async {
@@ -238,7 +240,7 @@ class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMix
   showPickerNumberTemperature(BuildContext context, bool isUpperLimit) {
     Picker(
         adapter: NumberPickerAdapter(data: [
-          const NumberPickerColumn(begin: -50, end: 100),
+          NumberPickerColumn(begin: -50, end: 100, initValue: isUpperLimit ? tempCurrentUpperValue : tempCurrentLowerValue),
         ]),
         hideHeader: true,
         itemExtent: 35.0,
@@ -263,7 +265,7 @@ class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMix
   showPickerNumberGas(BuildContext context, bool isUpperLimit) {
     Picker(
         adapter: NumberPickerAdapter(data: [
-          const NumberPickerColumn(begin: 0, end: 10000, jump: 100),
+          NumberPickerColumn(begin: 0, end: 10000, jump: 100, initValue: isUpperLimit ? gasCurrentUpperValue : gasCurrentLowerValue),
         ]),
         hideHeader: true,
         itemExtent: 35.0,
@@ -287,7 +289,7 @@ class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMix
   showPickerNumberHumidity(BuildContext context, bool isUpperLimit) {
     Picker(
         adapter: NumberPickerAdapter(data: [
-          const NumberPickerColumn(begin: 0, end: 100),
+          NumberPickerColumn(begin: 0, end: 100, initValue: isUpperLimit ? humidityCurrentUpperValue : humidityCurrentLowerValue),
         ]),
         hideHeader: true,
         itemExtent: 35.0,
