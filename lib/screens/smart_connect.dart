@@ -12,7 +12,7 @@ import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 
 class SmartConnect extends StatefulWidget {
-  // const SmartConnect({Key? key}) : super(key: key);
+  const SmartConnect({Key? key}) : super(key: key);
   // SmartConnect({this.hubId, this.devices, this.settings});
 
   // final hubId, devices, settings;

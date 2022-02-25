@@ -18,7 +18,7 @@ import 'package:progresso/progresso.dart';
 import 'fluid_monitor.dart';
 
 class HomeScreen extends StatefulWidget {
-  // const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({Key? key}) : super(key: key);
 
   // HomeScreen({this.hubId, this.boatName});
 

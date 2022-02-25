@@ -13,7 +13,7 @@ import 'package:lottie/lottie.dart';
 class BoatsPage extends StatefulWidget {
   // final boatData;
 
-  // const BoatsPage({Key? key}) : super(key: key);
+  const BoatsPage({Key? key}) : super(key: key);
   // BoatsPage({this.boatData});
 
   static const String id = 'boats_page';

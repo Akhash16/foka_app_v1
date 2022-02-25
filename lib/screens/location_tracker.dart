@@ -11,7 +11,7 @@ import 'package:mqtt_client/mqtt_server_client.dart';
 import 'home_screen.dart';
 
 class LocationScreen extends StatefulWidget {
-  // const LocationScreen({Key? key}) : super(key: key);
+  const LocationScreen({Key? key}) : super(key: key);
 
   // LocationScreen({this.hubId, this.deviceId, this.boatName, this.settings});
 

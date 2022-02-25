@@ -9,7 +9,7 @@ import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 
 class FloatSensor extends StatefulWidget {
-  // const FloatSensor({ Key? key }) : super(key: key);
+  const FloatSensor({Key? key}) : super(key: key);
 
   // FloatSensor({this.hubId, this.deviceId});
 

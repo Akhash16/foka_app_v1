@@ -16,7 +16,7 @@ import 'package:mqtt_client/mqtt_server_client.dart';
 import 'package:concentric_transition/concentric_transition.dart';
 
 class FluidMonitor extends StatefulWidget {
-  // const FluidMonitor({Key? key}) : super(key: key);
+  const FluidMonitor({Key? key}) : super(key: key);
 
   // FluidMonitor({this.hubId, this.devicesUltrasonic, this.settings});
 

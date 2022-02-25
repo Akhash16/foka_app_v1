@@ -14,7 +14,7 @@ import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 
 class THSScreen extends StatefulWidget {
-  // const THSScreen({Key? key}) : super(key: key);
+  const THSScreen({Key? key}) : super(key: key);
   // THSScreen({this.hubId, this.devices, this.settings});
 
   // final hubId, devices, settings;
