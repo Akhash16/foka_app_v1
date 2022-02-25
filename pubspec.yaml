@@ -68,7 +68,7 @@ dependencies:
   animate_icons: ^2.0.0 
   step_progress_indicator: ^1.0.2
   animated_icon_button: ^1.0.2
-  syncfusion_flutter_charts: ^19.4.53 
+  draw_graph: ^1.0.0
 
   
 dev_dependencies:

@@ -1,9 +1,9 @@
+import 'package:draw_graph/draw_graph.dart';
+import 'package:draw_graph/models/feature.dart';
 import 'package:flutter/material.dart';
 import 'package:foka_app_v1/screens/home_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:syncfusion_flutter_charts/sparkcharts.dart';
 
 class BatteryMonitor extends StatefulWidget {
   const BatteryMonitor({Key? key}) : super(key: key);
@@ -14,40 +14,38 @@ class BatteryMonitor extends StatefulWidget {
   _BatteryMonitorState createState() => _BatteryMonitorState();
 }
 
-class _BatteryMonitorState extends State<BatteryMonitor> with TickerProviderStateMixin {
+class _BatteryMonitorState extends State<BatteryMonitor>
+    with TickerProviderStateMixin {
   late AnimationController animationController;
   late Animation animation1, animation2;
 
-  var b1Percentage = 75.0, b2Percentage = 100.0;
+  var b1Percentage = 75.0, b2Percentage = 95.0;
   List<Color> colors = [const Color(0xff45C55C), const Color(0xff5BBBFC)];
-
-  List<VoltageTimeStamp> chartData = [
-    VoltageTimeStamp(5, DateTime.parse("2022-02-23 09:14:31")),
-    // VoltageTimeStamp(10, DateTime.now()),
-    VoltageTimeStamp(15, DateTime.parse("2022-02-23 11:27:00")),
-    VoltageTimeStamp(20, DateTime.parse("2022-02-23 13:27:00")),
-    VoltageTimeStamp(5, DateTime.parse("2022-02-23 19:14:31")),
-    // VoltageTimeStamp(10, DateTime.now()),
-    VoltageTimeStamp(15, DateTime.parse("2022-02-23 21:27:00")),
-    VoltageTimeStamp(20, DateTime.parse("2022-02-23 23:27:00")),
-
-    VoltageTimeStamp(15, DateTime.parse("2022-02-24 11:27:00")),
-    VoltageTimeStamp(20, DateTime.parse("2022-02-24 13:27:00")),
-    VoltageTimeStamp(5, DateTime.parse("2022-02-24 19:14:31")),
-    // VoltageTimeStamp(10, DateTime.now()),
-    VoltageTimeStamp(15, DateTime.parse("2022-02-24 21:27:00")),
-    VoltageTimeStamp(20, DateTime.parse("2022-02-24 23:27:00")),
+  List<Feature> features = [
+    Feature(
+      title: "Drink Water",
+      color: Colors.lightBlueAccent,
+      data: [0.2, 0.6, 0.55, 0.7, 0.45,0.5],
+    ),
+    Feature(
+      title: "Drink Water",
+      color: Colors.greenAccent,
+      data: [0.25, 0.69, 0.57, 0.62, 0.83,0.61],
+    ),
   ];
 
   @override
   void initState() {
     super.initState();
-    animationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 1000));
-    animation1 = Tween<double>(begin: 0.0, end: b1Percentage).animate(animationController)
+    animationController = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1000));
+    animation1 = Tween<double>(begin: 0.0, end: b1Percentage)
+        .animate(animationController)
       ..addListener(() {
         setState(() {});
       });
-    animation2 = Tween<double>(begin: 0.0, end: b2Percentage).animate(animationController)
+    animation2 = Tween<double>(begin: 0.0, end: b2Percentage)
+        .animate(animationController)
       ..addListener(() {
         setState(() {});
       });
@@ -99,10 +97,16 @@ class _BatteryMonitorState extends State<BatteryMonitor> with TickerProviderStat
                       ),
                       RichText(
                         text: TextSpan(
-                          style: GoogleFonts.montserrat(color: Colors.white, fontSize: 35, fontWeight: FontWeight.w500),
+                          style: GoogleFonts.montserrat(
+                              color: Colors.white,
+                              fontSize: 35,
+                              fontWeight: FontWeight.w500),
                           children: <TextSpan>[
                             TextSpan(text: b1Percentage.toStringAsFixed(0)),
-                            const TextSpan(text: " %", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                            const TextSpan(
+                                text: " %",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 18)),
                           ],
                         ),
                       ),
@@ -112,7 +116,7 @@ class _BatteryMonitorState extends State<BatteryMonitor> with TickerProviderStat
                 totalSteps: 100,
                 currentStep: animation1.value.toInt(),
                 stepSize: 12,
-                selectedColor: Colors.greenAccent,
+                selectedColor:  Colors.lightBlueAccent,
                 unselectedColor: Colors.grey[700],
                 padding: 0,
                 width: MediaQuery.of(context).size.width * 0.4,
@@ -132,10 +136,16 @@ class _BatteryMonitorState extends State<BatteryMonitor> with TickerProviderStat
                       ),
                       RichText(
                         text: TextSpan(
-                          style: GoogleFonts.montserrat(color: Colors.white, fontSize: 35, fontWeight: FontWeight.w500),
+                          style: GoogleFonts.montserrat(
+                              color: Colors.white,
+                              fontSize: 35,
+                              fontWeight: FontWeight.w500),
                           children: <TextSpan>[
                             TextSpan(text: b2Percentage.toStringAsFixed(0)),
-                            const TextSpan(text: " %", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                            const TextSpan(
+                                text: " %",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 18)),
                           ],
                         ),
                       ),
@@ -155,33 +165,48 @@ class _BatteryMonitorState extends State<BatteryMonitor> with TickerProviderStat
               ),
             ],
           ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(0, 0, 13, 0),
-            child: SfCartesianChart(
-              enableAxisAnimation: true,
-              primaryXAxis: DateTimeAxis(
-                title: AxisTitle(
-                  text: 'Time',
-                  textStyle: GoogleFonts.montserrat(color: Colors.deepOrange, fontSize: 16, fontWeight: FontWeight.w300),
-                ),
-              ),
-              primaryYAxis: NumericAxis(
-                title: AxisTitle(
-                  text: 'Voltage',
-                  textStyle: GoogleFonts.montserrat(color: Colors.deepOrange, fontSize: 16, fontWeight: FontWeight.w300),
-                ),
-              ),
-              // primaryXAxis: DateTimeAxis(name: "Time"),
-              series: <ChartSeries>[
-                LineSeries<VoltageTimeStamp, DateTime>(
-                  color: Colors.greenAccent,
-                  xAxisName: "Time",
-                  yAxisName: "Voltage",
-                  dataSource: chartData,
-                  xValueMapper: (VoltageTimeStamp timeStamp, _) => timeStamp.time,
-                  yValueMapper: (VoltageTimeStamp timeStamp, _) => timeStamp.voltage,
-                ),
-              ],
+          // Padding(
+          //   padding: const EdgeInsets.fromLTRB(0, 0, 13, 0),
+          //   child: SfCartesianChart(
+          //     enableAxisAnimation: true,
+          //     primaryXAxis: DateTimeAxis(
+          //       title: AxisTitle(
+          //         text: 'Time',
+          //         textStyle: GoogleFonts.montserrat(color: Colors.deepOrange, fontSize: 16, fontWeight: FontWeight.w300),
+          //       ),
+          //     ),
+          //     primaryYAxis: NumericAxis(
+          //       title: AxisTitle(
+          //         text: 'Voltage',
+          //         textStyle: GoogleFonts.montserrat(color: Colors.deepOrange, fontSize: 16, fontWeight: FontWeight.w300),
+          //       ),
+          //     ),
+          //     // primaryXAxis: DateTimeAxis(name: "Time"),
+          //     series: <ChartSeries>[
+          //       LineSeries<VoltageTimeStamp, DateTime>(
+          //         color: Colors.greenAccent,
+          //         xAxisName: "Time",
+          //         yAxisName: "Voltage",
+          //         dataSource: chartData,
+          //         xValueMapper: (VoltageTimeStamp timeStamp, _) => timeStamp.time,
+          //         yValueMapper: (VoltageTimeStamp timeStamp, _) => timeStamp.voltage,
+          //       ),
+          //     ],
+          //   ),
+          // ),
+          Container(
+            height: MediaQuery.of(context).size.height*0.4,
+            width:  MediaQuery.of(context).size.width,
+            child: LineGraph(
+              features: features,
+              size: const Size(320, 400),
+              labelX: const ['6:30', '7:30', '8:30','9:30','10:30','11:30'],
+              labelY: const ['15V', '20V', '25V', '30V', '35V'],
+              
+              graphColor: Colors.white30,
+              graphOpacity: 0.2,
+              
+              descriptionHeight: 130,
             ),
           ),
         ],
@@ -196,8 +221,8 @@ class _BatteryMonitorState extends State<BatteryMonitor> with TickerProviderStat
   }
 }
 
-class VoltageTimeStamp {
-  VoltageTimeStamp(this.voltage, this.time);
-  final DateTime time;
-  final double voltage;
-}
+// class VoltageTimeStamp {
+//   VoltageTimeStamp(this.voltage, this.time);
+//   final DateTime time;
+//   final double voltage;
+// }
