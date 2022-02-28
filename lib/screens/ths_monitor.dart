@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:cool_dropdown/cool_dropdown.dart';
+import 'package:draw_graph/draw_graph.dart';
+import 'package:draw_graph/models/feature.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_picker/flutter_picker.dart';
 import 'package:foka_app_v1/components/constants.dart';
@@ -64,6 +66,10 @@ class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMix
 
   List<String> parts = ['6000', '21.0', '34.0'];
   late String deviceId;
+
+  List<String> xLabel = ['', '', '', '', '', '', '', '', '', '', '', ''];
+  List<int> gasList = [];
+  List<double> data = [10.0, 0.900, 0.800, 0.700, 0.600, 0.500, 0.400, 0.300, 0.200, 0.100];
 
   @override
   void initState() {
@@ -144,6 +150,7 @@ class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMix
   @override
   void dispose() {
     _animationController.dispose();
+    client.disconnect();
     super.dispose();
   }
 
@@ -182,6 +189,11 @@ class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMix
       gas = int.parse(parts[0]);
       temperature = double.parse(parts[1]);
       humidity = double.parse(parts[2]) <= 100 ? double.parse(parts[2]) : 100;
+      // xLabel.add('');
+      // gasList.add(gas);
+      data.add(gas / 10000);
+      data.removeAt(0);
+      print('data' + data.toString());
     });
   }
 
@@ -312,6 +324,15 @@ class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMix
 
   @override
   Widget build(BuildContext context) {
+    List<Feature> features = [
+      Feature(
+        title: "Drink Water",
+        color: Colors.lightBlueAccent,
+        // data: [0.2, 0.6, 0.55, 0.7, 0.45, 0.5],
+        data: data,
+      ),
+    ];
+
     return Scaffold(
       backgroundColor: const Color(0xff090f13),
       appBar: AppBar(
@@ -462,19 +483,19 @@ class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMix
                     inactiveThumbColor: Colors.blueGrey,
                   ),
                 ),
-                // ListTile(
-                //   onTap: () => showPickerNumberGas(context, false),
-                //   leading: Text(
-                //     'Lower Limit',
-                //     style: settingsLeadingTextStyle,
-                //   ),
-                //   title: Text(
-                //     gasCurrentLowerValue.toString(),
-                //     style: settingsTitleTextStyle,
-                //     textAlign: TextAlign.end,
-                //   ),
-                //   trailing: settingsTrailingIcon,
-                // ),
+                ListTile(
+                  onTap: () => showPickerNumberGas(context, false),
+                  leading: Text(
+                    'Lower Limit',
+                    style: settingsLeadingTextStyle,
+                  ),
+                  title: Text(
+                    gasCurrentLowerValue.toString(),
+                    style: settingsTitleTextStyle,
+                    textAlign: TextAlign.end,
+                  ),
+                  trailing: settingsTrailingIcon,
+                ),
                 ListTile(
                   onTap: () => showPickerNumberGas(context, true),
                   leading: Text(
@@ -643,26 +664,17 @@ class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMix
                     width: 200,
                     height: 200,
                     child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            gas.toStringAsFixed(0),
-                            style: GoogleFonts.montserrat(
-                              color: Colors.white,
-                              fontSize: 45,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          Text(
-                            'ppm',
-                            style: GoogleFonts.montserrat(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                        ],
+                      child: Text(
+                        gas < gasCurrentLowerValue
+                            ? 'Low'
+                            : gas < gasCurrentUpperValue
+                                ? 'Medium'
+                                : 'High',
+                        style: GoogleFonts.montserrat(
+                          color: Colors.white,
+                          fontSize: 30,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                     decoration: BoxDecoration(
@@ -671,7 +683,11 @@ class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMix
                       boxShadow: [
                         BoxShadow(
                             // color: Color.fromARGB(130, 237, 125, 58),
-                            color: gas < gasCurrentUpperValue ? Colors.green : Colors.red,
+                            color: gas < gasCurrentLowerValue
+                                ? Colors.green
+                                : gas < gasCurrentUpperValue
+                                    ? Colors.yellow
+                                    : Colors.red,
                             blurRadius: _animation.value,
                             spreadRadius: _animation.value)
                       ],
@@ -685,47 +701,82 @@ class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMix
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: Container(
-                width: MediaQuery.of(context).size.width * 0.85,
-                height: 140,
-                decoration: BoxDecoration(
-                  // color: Colors.white12,
-                  color: const Color(0xff1d2429),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.all(10.0),
-                      child: Text(
-                        "Humidity",
-                        style: GoogleFonts.montserrat(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w400),
+              child: Stack(
+                children: [
+                  AnimatedOpacity(
+                    duration: const Duration(milliseconds: 500),
+                    opacity: indexValue == 0 ? 1.0 : 0.0,
+                    child: Container(
+                      width: MediaQuery.of(context).size.width * 0.85,
+                      height: 140,
+                      decoration: BoxDecoration(
+                        // color: Colors.white12,
+                        color: const Color(0xff1d2429),
+                        borderRadius: BorderRadius.circular(20),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
-                      child: Row(
+                      child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Image.asset(
-                            'assets/humidity.png',
-                            height: 35,
-                            width: 35,
-                            color: Colors.white,
+                          Padding(
+                            padding: EdgeInsets.all(10.0),
+                            child: Text(
+                              "Humidity",
+                              style: GoogleFonts.montserrat(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w400),
+                            ),
                           ),
-                          const SizedBox(
-                            width: 20,
-                          ),
-                          Text(
-                            humidity.toStringAsFixed(1) + " %",
-                            style: GoogleFonts.montserrat(color: Colors.white, fontSize: 35, fontWeight: FontWeight.w500),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset(
+                                  'assets/humidity.png',
+                                  height: 35,
+                                  width: 35,
+                                  color: Colors.white,
+                                ),
+                                const SizedBox(
+                                  width: 20,
+                                ),
+                                Text(
+                                  humidity.toStringAsFixed(1) + " %",
+                                  style: GoogleFonts.montserrat(color: Colors.white, fontSize: 35, fontWeight: FontWeight.w500),
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                  AnimatedOpacity(
+                    duration: const Duration(milliseconds: 500),
+                    opacity: indexValue == 1 ? 1.0 : 0.0,
+                    child: Container(
+                      width: MediaQuery.of(context).size.width * 0.85,
+                      height: 180,
+                      decoration: BoxDecoration(
+                        // color: Colors.white12,
+                        color: const Color(0xff1d2429),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(18.0),
+                        child: LineGraph(
+                          features: features,
+                          size: const Size(320, 400),
+                          labelX: xLabel,
+                          // labelX: const ['6:30', '7:30'],
+                          // labelX: const ['6:30', '7:30', '8:30', '9:30', '10:30', '21:30', '26:30', '27:30', '28:30', '29:30', '30:30', '31:30'],
+                          labelY: const ['2000', '4000', '6000', '8000', '10000'],
+                          graphColor: Colors.white30,
+                          graphOpacity: 0.2,
+                          descriptionHeight: 130,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
             Row(
