@@ -32,6 +32,8 @@ class _SmartConnectState extends State<SmartConnect> {
   late String deviceId;
   late dynamic settings;
 
+  late List<int> values = [1, 1, 1, 1, 1, 1, 1, 1];
+
   late List<dynamic> relay = [
     {"name": "Relay 1", "value": 0, "usable": true},
     {"name": "Relay 2", "value": 0, "usable": true},
@@ -49,6 +51,7 @@ class _SmartConnectState extends State<SmartConnect> {
   void initState() {
     getValues();
     super.initState();
+    Timer timer = Timer.periodic(const Duration(seconds: 1), (Timer t) => change());
 
     void start() async {
       await connectClient();
@@ -94,6 +97,7 @@ class _SmartConnectState extends State<SmartConnect> {
       final payload = MqttPublishPayload.bytesToStringAsString(message.payload.message);
 
       print('Received message:$payload from topic: ${c[0].topic}>');
+      values = payload.split(',').map(int.parse).toList();
     });
 
     return client;
@@ -135,14 +139,20 @@ class _SmartConnectState extends State<SmartConnect> {
   }
 
   void publish(String toPublish) {
-    final pubTopic = '/$hubId/$deviceId';
+    final pubTopic = '/$hubId/$deviceId/InputNode';
     final builder = MqttClientPayloadBuilder();
     builder.addString(toPublish);
     client.publishMessage(pubTopic, MqttQos.atLeastOnce, builder.payload!);
   }
 
-  void change(int index) {
-    publish('{relay${index + 1}: ${relay[index]["value"]}}');
+  void changePublish(int index) {
+    publish('{"serial": "$deviceId", "relaynumber": "relay${index + 1}", "val": ${values[index]}}');
+  }
+
+  void change() {
+    setState(() {
+      // values = values;
+    });
   }
 
   void getSettings(dynamic settings) {
@@ -160,14 +170,14 @@ class _SmartConnectState extends State<SmartConnect> {
       relay[6]['name'] = this.settings['p7_name'];
       relay[7]['name'] = this.settings['p8_name'];
 
-      relay[0]['value'] = this.settings['p1_set'];
-      relay[1]['value'] = this.settings['p2_set'];
-      relay[2]['value'] = this.settings['p3_set'];
-      relay[3]['value'] = this.settings['p4_set'];
-      relay[4]['value'] = this.settings['p5_set'];
-      relay[5]['value'] = this.settings['p6_set'];
-      relay[6]['value'] = this.settings['p7_set'];
-      relay[7]['value'] = this.settings['p8_set'];
+      // relay[0]['value'] = this.settings['p1_set'];
+      // relay[1]['value'] = this.settings['p2_set'];
+      // relay[2]['value'] = this.settings['p3_set'];
+      // relay[3]['value'] = this.settings['p4_set'];
+      // relay[4]['value'] = this.settings['p5_set'];
+      // relay[5]['value'] = this.settings['p6_set'];
+      // relay[6]['value'] = this.settings['p7_set'];
+      // relay[7]['value'] = this.settings['p8_set'];
 
       relay[0]['usable'] = this.settings['p1_enable'] == 1;
       relay[1]['usable'] = this.settings['p2_enable'] == 1;
@@ -212,14 +222,14 @@ class _SmartConnectState extends State<SmartConnect> {
       "p7_name": relay[6]['name'],
       "p8_enable": relay[7]['usable'] ? '1' : '0',
       "p8_name": relay[7]['name'],
-      "p1_set": relay[0]['value'].toString(),
-      "p2_set": relay[1]['value'].toString(),
-      "p3_set": relay[2]['value'].toString(),
-      "p4_set": relay[3]['value'].toString(),
-      "p5_set": relay[4]['value'].toString(),
-      "p6_set": relay[5]['value'].toString(),
-      "p7_set": relay[6]['value'].toString(),
-      "p8_set": relay[7]['value'].toString()
+      // "p1_set": relay[0]['value'].toString(),
+      // "p2_set": relay[1]['value'].toString(),
+      // "p3_set": relay[2]['value'].toString(),
+      // "p4_set": relay[3]['value'].toString(),
+      // "p5_set": relay[4]['value'].toString(),
+      // "p6_set": relay[5]['value'].toString(),
+      // "p7_set": relay[6]['value'].toString(),
+      // "p8_set": relay[7]['value'].toString()
     });
   }
 
@@ -396,10 +406,12 @@ class _SmartConnectState extends State<SmartConnect> {
                         value: relay[index]['usable'],
                         onChanged: (value) {
                           setState(() {
-                            relay[index]['value'] = 0;
+                            values[index] = 0;
+                            // relay[index]['value'] = 0;
                             relay[index]['usable'] = value;
                           });
                           settingsUpdate();
+                          changePublish(index);
                         },
                         inactiveTrackColor: Colors.white,
                         inactiveThumbColor: Colors.blueGrey,
@@ -471,7 +483,8 @@ class _SmartConnectState extends State<SmartConnect> {
                           inactiveBgColor: const Color(0xff303030),
                           inactiveFgColor: Colors.white,
                           minWidth: MediaQuery.of(context).size.width * 0.15,
-                          initialLabelIndex: relay[index]['value'],
+                          // initialLabelIndex: relay[index]['value'],
+                          initialLabelIndex: values[index],
                           totalSwitches: 2,
                           labels: const ['OFF', 'ON'],
                           customTextStyles: [
@@ -481,8 +494,9 @@ class _SmartConnectState extends State<SmartConnect> {
                           changeOnTap: relay[index]['usable'],
                           onToggle: (value) {
                             // print('switched to: $index');
-                            relay[index]['value'] = value;
-                            change(index);
+                            // relay[index]['value'] = value;
+                            values[index] = value;
+                            changePublish(index);
                             settingsUpdate();
                           },
                         ),

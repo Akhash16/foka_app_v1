@@ -4,7 +4,7 @@ import 'package:foka_app_v1/utils/authentication.dart';
 import 'package:http/http.dart' as http;
 
 class ApiCalls {
-  final String _apiUrl = 'http://e1e8-183-82-177-178.ngrok.io';
+  final String _apiUrl = 'https://9998-183-82-25-113.ngrok.io';
   final String _ip = 'http://192.168.4.1';
 
   List<dynamic> boats = [];
@@ -130,6 +130,15 @@ class ApiCalls {
     Uri url = Uri.parse(_apiUrl + '/settingsManager/Location/' + deviceName);
     http.Response response = await http.put(url, body: settings);
     print(response.statusCode);
+  }
+
+  Future<dynamic> snapScreenApi(String deviceName) async {
+    Uri url = Uri.parse(_apiUrl + '/securityURLHandler?hubid=' + deviceName);
+    http.Response response = await http.get(url);
+    var jsonResponse = jsonDecode(response.body);
+    var decodedData = jsonResponse['data'];
+    print(decodedData);
+    return decodedData;
   }
 
   Future<List> getHubDevices(String hubId) async {

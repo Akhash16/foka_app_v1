@@ -116,7 +116,7 @@ class _SecurityScreenState extends State<SecurityScreen> with TickerProviderStat
       final payload = MqttPublishPayload.bytesToStringAsString(message.payload.message);
 
       print('Received message:$payload from topic: ${c[0].topic}>');
-      // alertStatus = payload == '0' ? false : true;
+      alertStatus = payload == 'true';
     });
 
     return client;
@@ -153,7 +153,7 @@ class _SecurityScreenState extends State<SecurityScreen> with TickerProviderStat
   }
 
   void publish(String toPublish) {
-    final pubTopic = '/$hubId/$deviceId';
+    final pubTopic = '/$hubId/$deviceId/InputNode';
     final builder = MqttClientPayloadBuilder();
     builder.addString(toPublish);
     client.publishMessage(pubTopic, MqttQos.atLeastOnce, builder.payload!);
@@ -172,7 +172,7 @@ class _SecurityScreenState extends State<SecurityScreen> with TickerProviderStat
   }
 
   void checkIsAlert() async {
-    await Future.delayed(const Duration(seconds: 2), () {
+    await Future.delayed(const Duration(seconds: 4), () {
       if (!alertStatus) {
         controller1.reverse();
         controller2.reverse();
