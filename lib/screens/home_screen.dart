@@ -13,6 +13,8 @@ import 'package:foka_app_v1/screens/ths_monitor.dart';
 import 'package:foka_app_v1/utils/apiCalls.dart';
 import 'package:foka_app_v1/utils/data.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
+import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:progresso/progresso.dart';
 
 import 'fluid_monitor.dart';
@@ -32,6 +34,9 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   late AnimationController controller;
+
+  bool showSpinner = true;
+  
 
   List<String> deviceNames = [
     'THS Monitor',
@@ -74,6 +79,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     setState(() {
       items = buildItems(devices);
     });
+    showSpinner = false;
   }
 
   Future<List> getDiagonsticData() async {
@@ -84,7 +90,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       activeOrNot
           .add(hubDevices[i] == 0 ? -1 : hubDevices[i] - connectedDevices[i]);
     }
+    
+
     return Future<List>.value(activeOrNot);
+   
+    
   }
 
   List<Widget> buildItems(dynamic devices) {
@@ -347,234 +357,339 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      // floatingActionButton: FloatingActionButton(
-      //   child: const Icon(
-      //     Icons.add,
-      //     color: Colors.white,
-      //   ),
-      //   onPressed: () {
-      //     Navigator.pushNamed(context, SelectService.id);
-      //   },
-      // ),
-      // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      // floatingActionButton: FloatingActionButton.extended(
-      //   elevation: 9,
-      //   onPressed: () {
-      //     Navigator.pushNamed(context, SelectService.id);
-      //   },
-      //   label: const Text('Add Device'),
-      //   icon: const Icon(Icons.add),
-      //   backgroundColor: Colors.lightBlueAccent.shade700,
-      // ),
-      backgroundColor: const Color(0xff090f13),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 18),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                "Your Boat",
-                style: GoogleFonts.lexendDeca(
-                    color: const Color(0xff95a1ac),
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    Data().getBoatName(),
-                    style: GoogleFonts.lexendDeca(
-                        color: const Color(0xffffffff),
-                        fontSize: 28,
-                        fontWeight: FontWeight.w700),
-                  ),
-                      RoundedButton(
-                        width: 100,
-                    title: 'Add Device',
-                    color: Colors.deepPurple,
-                    onPressed: () {
-                      Navigator.pushNamed(context, SelectService.id);
-                    },
-                  ),
-                  
-                ],
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
-                child: Image.network(
-                  "https://cdn.discordapp.com/attachments/867367813047779338/921427885888249876/117-1176532_yacht-png-transparent-yacht-side-view-png-png-removebg-preview.png",
-                  fit: BoxFit.fill,
+    return ModalProgressHUD(
+      
+      opacity: 0.75,
+      color: Colors.black,
+      inAsyncCall: showSpinner,
+      child: Scaffold(
+        
+        backgroundColor: const Color(0xff090f13),
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 18),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Your Boat",
+                  style: GoogleFonts.lexendDeca(
+                      color: const Color(0xff95a1ac),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400),
                 ),
-              ),
-              // Padding(
-              //   padding: const EdgeInsets.fromLTRB(8, 13, 8, 12),
-              //   child: Progresso(
-              //     progressColor: const Color(0xFF39d2c0),
-              //     backgroundStrokeWidth: 16,
-              //     progressStrokeWidth: 13,
-              //     progress: 0.7,
-              //     progressStrokeCap: StrokeCap.round,
-              //     backgroundStrokeCap: StrokeCap.round,
-              //   ),
-              //   // child: Row(
-              //   //   mainAxisSize: MainAxisSize.max,
-              //   //   mainAxisAlignment: MainAxisAlignment.center,
-              //   //   children: [
-              //   //     Stack(
-              //   //       children: [
-              //   //         Container(
-              //   //           width: MediaQuery.of(context).size.width * 0.9,
-              //   //           height: 17,
-              //   //           decoration: BoxDecoration(
-              //   //             color: const Color(0xffdbe2e7),
-              //   //             borderRadius: BorderRadius.circular(8),
-              //   //           ),
-              //   //         ),
-              //   //         Padding(
-              //   //           padding:
-              //   //               const EdgeInsetsDirectional.fromSTEB(2, 2, 2, 2),
-              //   //           child: Container(
-              //   //             width: MediaQuery.of(context).size.width * 0.4,
-              //   //             height: 13,
-              //   //             decoration: BoxDecoration(
-              //   //               color: const Color(0xff39d2c0),
-              //   //               borderRadius: BorderRadius.circular(8),
-              //   //             ),
-              //   //           ),
-              //   //         ),
-              //   //       ],
-              //   //     ),
-              //   //   ],
-              //   // ),
-              // ),
-
-              // Padding(
-              //   padding: const EdgeInsets.all(8.0),
-              //   child: Row(
-              //     mainAxisAlignment: MainAxisAlignment.spaceAround,
-              //     children: [
-              //       Column(
-              //         children: [
-              //           Text(
-              //             "Charge",
-              //             style: GoogleFonts.lexendDeca(color: const Color(0xff95a1ac), fontSize: 14, fontWeight: FontWeight.w400),
-              //           ),
-              //           Text(
-              //             "70%",
-              //             style: GoogleFonts.lexendDeca(color: const Color(0xffffffff), fontSize: 28, fontWeight: FontWeight.w700),
-              //           ),
-              //         ],
-              //       ),
-              //       Column(
-              //         children: [
-              //           Text(
-              //             "Status",
-              //             style: GoogleFonts.lexendDeca(color: const Color(0xff95a1ac), fontSize: 14, fontWeight: FontWeight.w400),
-              //           ),
-              //           Text(
-              //             "Good",
-              //             style: GoogleFonts.lexendDeca(color: const Color(0xFF39d2c0), fontSize: 28, fontWeight: FontWeight.w700),
-              //           ),
-              //         ],
-              //       ),
-              //     ],
-              //   ),
-              // ),
-
-              // RoundedButton(
-              //   title: 'Add Device',
-              //   color: Colors.lightBlueAccent,
-              //   onPressed: () {
-              //     Navigator.pushNamed(context, SelectService.id);
-              //   },
-              // ),
-              const SizedBox(
-                height: 13,
-              ),
-              Center(
-                child: RoundedButton(
-                  title: "Start Diagnostic",
-                  color: const Color(0xFF107896),
-                  onPressed: () async {
-                    await getDiagonsticData().then((value) {
-                      print(value);
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            backgroundColor: Colors.white,
-                            title: const Center(
-                                child: const Text('Diagonstic Results')),
-                            content: Container(
-                              width: double.minPositive,
-                              child: ListView.builder(
-                                shrinkWrap: true,
-                                itemCount: deviceNames.length,
-                                itemBuilder: (context, index) {
-                                  return ListTile(
-                                    title: Text(
-                                      deviceNames[index],
-                                      style: homeScreenDialogTextStyle,
-                                    ),
-                                    trailing: value[index] == -1
-                                        ? const Icon(
-                                            Icons.warning,
-                                            color: Colors.red,
-                                          )
-                                        : value[index] == 0
-                                            ? const Icon(
-                                                Icons.check_circle,
-                                                color: Colors.green,
-                                              )
-                                            : const Icon(
-                                                Icons.info,
-                                                color: Colors.orange,
-                                              ),
-                                  );
-                                },
-                              ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      Data().getBoatName(),
+                      style: GoogleFonts.lexendDeca(
+                          color: const Color(0xffffffff),
+                          fontSize: 28,
+                          fontWeight: FontWeight.w700),
+                    ),
+                    // RaisedButton(
+                    //   elevation: 10,
+                    //   onPressed: () {},
+                    //   color: Colors.white,
+                    //   child: Padding(
+                    //     padding: EdgeInsets.all(10),
+                    //     child: Row(
+                    //       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    //       children: <Widget>[
+                    //         Container(
+                    //           height: 55,
+                    //           color: Colors.deepPurple,
+                    //           child: Icon(
+                    //             Icons.settings,
+                    //             color: Colors.white,
+                    //           ),
+                    //         ),
+                    //         Text(
+                    //           'Settings',
+                    //           style: TextStyle(
+                    //             fontSize: 25,
+                    //           ),
+                    //         ),
+                    //       ],
+                    //     ),
+                    //   ),
+                    // ),
+                    //     RoundedButton(
+                    //       width: 100,
+                    //   title: 'Add Device',
+                    //   color: Colors.deepPurple,
+                    //   onPressed: () {
+                    //     Navigator.pushNamed(context, SelectService.id);
+                    //   },
+                    // ),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, SelectService.id);
+                      },
+                      style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              Colors.pink.shade500)),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.add_circle_outline,
+                            color: Colors.white,
+                          ),
+                          Text(
+                            "  Add Device",
+                            style: GoogleFonts.lexendDeca(
+                              fontSize: 17,
+                              fontWeight: FontWeight.w300,
                             ),
-                          );
-                        },
-                      );
-                    });
-                  },
-                  width: MediaQuery.of(context).size.width * 0.5,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.03,
-              ),
-              // Center(
-              //   child: CircularProgressIndicator(
-              //     backgroundColor: Colors.white,
-              //     // color: Colors.white,
-              //     value: controller.value,
-              //     semanticsLabel: 'Linear progress indicator',
-              //   ),
-              // ),
-              // SizedBox(
-              //   height: 20.0,
-              // ),
-              CarouselSlider(
-                items: items,
-                options: CarouselOptions(
-                  height: MediaQuery.of(context).size.height * 0.23,
-                  viewportFraction: 0.63,
-                  enlargeCenterPage: true,
-                  // onPageChanged: callbackFunction,
-                  scrollDirection: Axis.horizontal,
+                const SizedBox(
+                  height: 10,
                 ),
-              )
-            ],
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
+                  child: Image.network(
+                    "https://cdn.discordapp.com/attachments/867367813047779338/921427885888249876/117-1176532_yacht-png-transparent-yacht-side-view-png-png-removebg-preview.png",
+                    fit: BoxFit.fill,
+                  ),
+                ),
+                // Padding(
+                //   padding: const EdgeInsets.fromLTRB(8, 13, 8, 12),
+                //   child: Progresso(
+                //     progressColor: const Color(0xFF39d2c0),
+                //     backgroundStrokeWidth: 16,
+                //     progressStrokeWidth: 13,
+                //     progress: 0.7,
+                //     progressStrokeCap: StrokeCap.round,
+                //     backgroundStrokeCap: StrokeCap.round,
+                //   ),
+                //   // child: Row(
+                //   //   mainAxisSize: MainAxisSize.max,
+                //   //   mainAxisAlignment: MainAxisAlignment.center,
+                //   //   children: [
+                //   //     Stack(
+                //   //       children: [
+                //   //         Container(
+                //   //           width: MediaQuery.of(context).size.width * 0.9,
+                //   //           height: 17,
+                //   //           decoration: BoxDecoration(
+                //   //             color: const Color(0xffdbe2e7),
+                //   //             borderRadius: BorderRadius.circular(8),
+                //   //           ),
+                //   //         ),
+                //   //         Padding(
+                //   //           padding:
+                //   //               const EdgeInsetsDirectional.fromSTEB(2, 2, 2, 2),
+                //   //           child: Container(
+                //   //             width: MediaQuery.of(context).size.width * 0.4,
+                //   //             height: 13,
+                //   //             decoration: BoxDecoration(
+                //   //               color: const Color(0xff39d2c0),
+                //   //               borderRadius: BorderRadius.circular(8),
+                //   //             ),
+                //   //           ),
+                //   //         ),
+                //   //       ],
+                //   //     ),
+                //   //   ],
+                //   // ),
+                // ),
+
+                // Padding(
+                //   padding: const EdgeInsets.all(8.0),
+                //   child: Row(
+                //     mainAxisAlignment: MainAxisAlignment.spaceAround,
+                //     children: [
+                //       Column(
+                //         children: [
+                //           Text(
+                //             "Charge",
+                //             style: GoogleFonts.lexendDeca(color: const Color(0xff95a1ac), fontSize: 14, fontWeight: FontWeight.w400),
+                //           ),
+                //           Text(
+                //             "70%",
+                //             style: GoogleFonts.lexendDeca(color: const Color(0xffffffff), fontSize: 28, fontWeight: FontWeight.w700),
+                //           ),
+                //         ],
+                //       ),
+                //       Column(
+                //         children: [
+                //           Text(
+                //             "Status",
+                //             style: GoogleFonts.lexendDeca(color: const Color(0xff95a1ac), fontSize: 14, fontWeight: FontWeight.w400),
+                //           ),
+                //           Text(
+                //             "Good",
+                //             style: GoogleFonts.lexendDeca(color: const Color(0xFF39d2c0), fontSize: 28, fontWeight: FontWeight.w700),
+                //           ),
+                //         ],
+                //       ),
+                //     ],
+                //   ),
+                // ),
+
+                // RoundedButton(
+                //   title: 'Add Device',
+                //   color: Colors.lightBlueAccent,
+                //   onPressed: () {
+                //     Navigator.pushNamed(context, SelectService.id);
+                //   },
+                // ),
+                const SizedBox(
+                  height: 13,
+                ),
+                // Center(
+                //   child: RoundedButton(
+                //     title: "Start Diagnostic",
+                //     color: const Color(0xFF107896),
+                //     onPressed: () async {
+                //       await getDiagonsticData().then((value) {
+                //         print(value);
+                //         showDialog(
+                //           context: context,
+                //           builder: (context) {
+                //             return AlertDialog(
+                //               backgroundColor: Colors.white,
+                //               title: const Center(
+                //                   child: const Text('Diagonstic Results')),
+                //               content: Container(
+                //                 width: double.minPositive,
+                //                 child: ListView.builder(
+                //                   shrinkWrap: true,
+                //                   itemCount: deviceNames.length,
+                //                   itemBuilder: (context, index) {
+                //                     return ListTile(
+                //                       title: Text(
+                //                         deviceNames[index],
+                //                         style: homeScreenDialogTextStyle,
+                //                       ),
+                //                       trailing: value[index] == -1
+                //                           ? const Icon(
+                //                               Icons.warning,
+                //                               color: Colors.red,
+                //                             )
+                //                           : value[index] == 0
+                //                               ? const Icon(
+                //                                   Icons.check_circle,
+                //                                   color: Colors.green,
+                //                                 )
+                //                               : const Icon(
+                //                                   Icons.info,
+                //                                   color: Colors.orange,
+                //                                 ),
+                //                     );
+                //                   },
+                //                 ),
+                //               ),
+                //             );
+                //           },
+                //         );
+                //       });
+                //     },
+                //     width: MediaQuery.of(context).size.width * 0.5,
+                //   ),
+                // ),
+                Center(
+                  child: ElevatedButton(
+                    onPressed: () async {
+                  
+                      await getDiagonsticData().then((value) {
+                        print(value);
+                         
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              backgroundColor: Colors.white,
+                              title: const Center(
+                                  child: const Text('Diagonstic Results')),
+                              content: Container(
+                                width: double.minPositive,
+                                child: ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: deviceNames.length,
+                                  itemBuilder: (context, index) {
+                                    return ListTile(
+                                      title: Text(
+                                        deviceNames[index],
+                                        style: homeScreenDialogTextStyle,
+                                      ),
+                                      trailing: value[index] == -1
+                                          ? const Icon(
+                                              Icons.warning,
+                                              color: Colors.red,
+                                            )
+                                          : value[index] == 0
+                                              ? const Icon(
+                                                  Icons.check_circle,
+                                                  color: Colors.green,
+                                                )
+                                              : const Icon(
+                                                  Icons.info,
+                                                  color: Colors.orange,
+                                                ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                         
+                      });
+                    },
+                    style: ButtonStyle(
+                        minimumSize: MaterialStateProperty.all<Size>(
+                            Size(MediaQuery.of(context).size.width, 20.0)),
+                        elevation: MaterialStateProperty.all(12),
+                        shadowColor: MaterialStateProperty.all<Color>(
+                            Colors.grey.shade500),
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            const Color(0xFF107896))),
+                    child: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Text(
+                        "Start Diagnostic",
+                        style: GoogleFonts.lexendDeca(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.03,
+                ),
+                // Center(
+                //   child: CircularProgressIndicator(
+                //     backgroundColor: Colors.white,
+                //     // color: Colors.white,
+                //     value: controller.value,
+                //     semanticsLabel: 'Linear progress indicator',
+                //   ),
+                // ),
+                // SizedBox(
+                //   height: 20.0,
+                // ),
+                CarouselSlider(
+                  items: items,
+                  options: CarouselOptions(
+                    height: MediaQuery.of(context).size.height * 0.23,
+                    viewportFraction: 0.63,
+                    enlargeCenterPage: true,
+                    // onPageChanged: callbackFunction,
+                    scrollDirection: Axis.horizontal,
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       ),
