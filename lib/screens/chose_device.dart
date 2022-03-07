@@ -1,4 +1,5 @@
 import 'package:animate_do/animate_do.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import "package:flutter/material.dart";
 import 'package:foka_app_v1/components/service.dart';
 import 'package:foka_app_v1/screens/make_sure.dart';
@@ -13,12 +14,12 @@ class SelectService extends StatefulWidget {
 
 class _SelectServiceState extends State<SelectService> {
   List<Service> services = [
-    Service('Location Tracker', 'https://img.icons8.com/stickers/344/worldwide-location.png'),
-    Service('THS Monitor', 'https://img.icons8.com/external-flatart-icons-flat-flatarticons/344/external-temperature-internet-of-things-flatart-icons-flat-flatarticons.png'),
-    Service('Security Monitor', 'https://img.icons8.com/color/344/wallmount-camera.png'),
-    Service('Smart Connect', 'https://img.icons8.com/color/344/share-2.png'),
-    Service('Fluid Monitor', 'https://img.icons8.com/color/344/water.png'),
-    Service('Float Sensor', 'https://img.icons8.com/color/344/period-slider.png'),
+    Service(const AutoSizeText('Location Tracker'), 'https://img.icons8.com/stickers/344/worldwide-location.png'),
+    Service(const AutoSizeText('THS Monitor'), 'https://img.icons8.com/external-flatart-icons-flat-flatarticons/344/external-temperature-internet-of-things-flatart-icons-flat-flatarticons.png'),
+    Service(const AutoSizeText('Security Monitor'), 'https://img.icons8.com/color/344/wallmount-camera.png'),
+    Service(const AutoSizeText('Smart Connect'), 'https://img.icons8.com/color/344/share-2.png'),
+    Service(const AutoSizeText('Fluid Monitor'), 'https://img.icons8.com/color/344/water.png'),
+    Service(const AutoSizeText('Float Sensor'), 'https://img.icons8.com/color/344/period-slider.png'),
   ];
 
   int selectedService = -1;
@@ -74,13 +75,13 @@ class _SelectServiceState extends State<SelectService> {
                       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         childAspectRatio: 1.0,
-                        crossAxisSpacing: 20.0,
-                        mainAxisSpacing: 20.0,
+                        crossAxisSpacing: 10.0,
+                        mainAxisSpacing: 10.0,
                       ),
                       physics: const NeverScrollableScrollPhysics(),
                       itemCount: services.length,
                       itemBuilder: (BuildContext context, int index) {
-                        return serviceContainer(services[index].imageURL, services[index].name, index);
+                        return serviceContainer(services[index].imageURL, services[index].name.data!, index);
                       }),
                 ),
               ]),

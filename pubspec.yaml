@@ -106,18 +106,8 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/apple.png
-    - assets/humidity.png
-    - assets/helm.png
-    - assets/location.png
-    - assets/animation.json
-    - assets/oops.json
-    - assets/message.json
-    - assets/alert.json
-    - assets/alert1.json
-    - assets/connected.json
-    - assets/pin.png
-    - assets/just-arrived.png
+    - assets/
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
