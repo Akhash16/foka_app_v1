@@ -4,7 +4,8 @@ import 'package:foka_app_v1/utils/authentication.dart';
 import 'package:http/http.dart' as http;
 
 class ApiCalls {
-  final String _apiUrl = 'https://9998-183-82-25-113.ngrok.io';
+  final String _apiUrl = 'http://164.52.212.96:3000';
+  // final String _apiUrl = 'http://10.3.141.236';
   final String _ip = 'http://192.168.4.1';
 
   List<dynamic> boats = [];
@@ -14,6 +15,16 @@ class ApiCalls {
     'https://www.viewbug.com/media/mediafiles/2019/05/27/84896105_large.jpg',
     'https://i.pinimg.com/736x/b3/df/17/b3df17c88af0b6e56988d42cb2c35e63.jpg',
   ];
+
+  void addUserData(String email, String token) async {
+    Uri url = Uri.parse(_apiUrl + '/userData');
+    http.Response response = await http.post(url, body: {
+      "email": email,
+      "token": token,
+    });
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+  }
 
   Future getBoatsApi(String email) async {
     Uri url = Uri.parse(_apiUrl + '/boatData?user=' + email);
@@ -218,7 +229,7 @@ class ApiCalls {
   }
 
   void sample() async {
-    var url = Uri.parse('http://54ae-183-82-204-6.ngrok.io/hubConnectionManager?hubid=DEMOHUB001');
+    var url = Uri.parse(_apiUrl);
     var response = await http.get(url);
     print(response.body);
   }

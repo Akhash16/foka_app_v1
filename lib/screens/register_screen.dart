@@ -4,6 +4,7 @@ import 'package:foka_app_v1/components/constants.dart';
 import 'package:foka_app_v1/components/rounded_button.dart';
 import 'package:foka_app_v1/screens/login_screen.dart';
 import 'package:foka_app_v1/screens/onboarding.dart';
+import 'package:foka_app_v1/utils/apiCalls.dart';
 import 'package:foka_app_v1/utils/authentication.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -316,6 +317,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   isPasswordNotMatching = false;
                                 });
                                 if (Authentication().emailRegisterAuth(email, password1)) {
+                                  // ApiCalls().addUserData(email, Authentication().getCurrentUserId());
                                   Navigator.popAndPushNamed(context, Onboarding.id);
                                 }
                               } else {

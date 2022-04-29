@@ -36,7 +36,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   late AnimationController controller;
 
   bool showSpinner = true;
-  
 
   List<String> deviceNames = [
     'THS Monitor',
@@ -45,6 +44,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     'Smart Connect',
     'Location Tracker',
     'Security Monitor',
+    'Battery Monitor',
   ];
 
   late List<int> activeOrNot = [];
@@ -87,14 +87,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     List hubDevices = await ApiCalls().getHubDevicesCount(hubId);
     List connectedDevices = await ApiCalls().getConnectedDevicesCount(hubId);
     for (int i = 0; i < hubDevices.length; i++) {
-      activeOrNot
-          .add(hubDevices[i] == 0 ? -1 : hubDevices[i] - connectedDevices[i]);
+      activeOrNot.add(hubDevices[i] == 0 ? -1 : hubDevices[i] - connectedDevices[i]);
     }
-    
 
     return Future<List>.value(activeOrNot);
-   
-    
   }
 
   List<Widget> buildItems(dynamic devices) {
@@ -104,10 +100,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         onTap: devices[0].length == 0
             ? () {}
             : () async {
+                setState(() {
+                  showSpinner = true;
+                });
                 getDevices();
-                await ApiCalls()
-                    .getTHSSettingsApi(devices[0][0]['serial'])
-                    .then((value) {
+                await ApiCalls().getTHSSettingsApi(devices[0][0]['serial']).then((value) {
                   print(value);
                   Data().setDevices(devices[0]);
                   Data().setSettings(value);
@@ -134,16 +131,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 // }));
               },
         child: DeviceCard(
-          color: devices[0].length == 0
-              ? Colors.pink.shade600.withOpacity(0.2)
-              : Colors.pink.shade600,
+          color: devices[0].length == 0 ? Colors.pink.shade600.withOpacity(0.2) : Colors.pink.shade600,
           title: "THS Monitor",
           description: "Tap here to more info",
           icon: Icon(
             Icons.thermostat,
-            color: devices[0].length == 0
-                ? Colors.white.withOpacity(0.2)
-                : const Color(0xffffffff),
+            color: devices[0].length == 0 ? Colors.white.withOpacity(0.2) : const Color(0xffffffff),
             size: 44,
           ),
           opacity: devices[0].length == 0 ? 0.2 : 1,
@@ -153,10 +146,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         onTap: devices[1].length == 0 && devices[2] == 0
             ? () {}
             : () async {
+                setState(() {
+                  showSpinner = true;
+                });
                 getDevices();
-                await ApiCalls()
-                    .getUltrasonicSettingsApi(devices[1][0]['serial'])
-                    .then((value) {
+                await ApiCalls().getUltrasonicSettingsApi(devices[1][0]['serial']).then((value) {
                   print(value);
                   Data().setSettings(value);
                   Data().setDevices(devices[1]);
@@ -178,16 +172,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 // }));
               },
         child: DeviceCard(
-          color: devices[1].length == 0 && devices[2].length == 0
-              ? const Color(0xff4b39ef).withOpacity(0.2)
-              : const Color(0xff4b39ef),
+          color: devices[1].length == 0 && devices[2].length == 0 ? const Color(0xff4b39ef).withOpacity(0.2) : const Color(0xff4b39ef),
           title: "Fluid Monitor",
           description: "Tap here to monitor fluid levels",
           icon: Icon(
             Icons.water,
-            color: devices[1].length == 0
-                ? Colors.white.withOpacity(0.2)
-                : const Color(0xffffffff),
+            color: devices[1].length == 0 ? Colors.white.withOpacity(0.2) : const Color(0xffffffff),
             size: 44,
           ),
           opacity: devices[1].length == 0 ? 0.2 : 1,
@@ -197,6 +187,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         onTap: devices[2].length == 0
             ? () {}
             : () {
+                setState(() {
+                  showSpinner = true;
+                });
                 Data().setDevices(devices[2]);
                 Navigator.pushNamed(context, FloatSensor.id);
                 // Navigator.push(context, MaterialPageRoute(builder: (context) {
@@ -208,16 +201,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               },
         child: DeviceCard(
           // color: Color(0xff4b39ef),
-          color: devices[2].length == 0
-              ? Colors.grey.shade900.withOpacity(0.2)
-              : Colors.grey.shade900,
+          color: devices[2].length == 0 ? Colors.grey.shade900.withOpacity(0.2) : Colors.grey.shade900,
           title: "Float Sensor",
           description: "Tap here to more details",
           icon: Icon(
             Icons.water,
-            color: devices[2].length == 0
-                ? Colors.white.withOpacity(0.2)
-                : const Color(0xffffffff),
+            color: devices[2].length == 0 ? Colors.white.withOpacity(0.2) : const Color(0xffffffff),
             size: 44,
           ),
           opacity: devices[2].length == 0 ? 0.2 : 1,
@@ -227,10 +216,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         onTap: devices[3].length == 0
             ? () {}
             : () async {
+                setState(() {
+                  showSpinner = true;
+                });
                 getDevices();
-                await ApiCalls()
-                    .getSmartConnectSettingsApi(devices[3][0]['serial'])
-                    .then((value) {
+                await ApiCalls().getSmartConnectSettingsApi(devices[3][0]['serial']).then((value) {
                   print(value);
                   Data().setSettings(value);
                   Data().setDevices(devices[3]);
@@ -246,16 +236,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               },
         child: DeviceCard(
           // color: Color(0xff4b39ef),
-          color: devices[3].length == 0
-              ? Colors.pink.withOpacity(0.2)
-              : Colors.pink,
+          color: devices[3].length == 0 ? Colors.pink.withOpacity(0.2) : Colors.pink,
           title: "Smart Connect",
           description: "Tap here to more details",
           icon: Icon(
             Icons.water,
-            color: devices[3].length == 0
-                ? Colors.white.withOpacity(0.2)
-                : const Color(0xffffffff),
+            color: devices[3].length == 0 ? Colors.white.withOpacity(0.2) : const Color(0xffffffff),
             size: 44,
           ),
           opacity: devices[3].length == 0 ? 0.2 : 1,
@@ -265,9 +251,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         onTap: devices[4].length == 0
             ? () {}
             : () async {
-                await ApiCalls()
-                    .getLocationSettingsApi(devices[4][0]['serial'])
-                    .then((value) {
+                setState(() {
+                  showSpinner = true;
+                });
+                await ApiCalls().getLocationSettingsApi(devices[4][0]['serial']).then((value) {
                   print(value);
                   Data().setDevices(devices[4]);
                   Data().setSettings(value);
@@ -290,16 +277,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 // }));
               },
         child: DeviceCard(
-          color: devices[4].length == 0
-              ? const Color(0xff8b0f32).withOpacity(0.2)
-              : const Color(0xff8b0f32),
+          color: devices[4].length == 0 ? const Color(0xff8b0f32).withOpacity(0.2) : const Color(0xff8b0f32),
           title: "Location Tracker",
           description: "Tap here to locate your boat",
           icon: Icon(
             Icons.location_on,
-            color: devices[4].length == 0
-                ? Colors.white.withOpacity(0.2)
-                : const Color(0xffffffff),
+            color: devices[4].length == 0 ? Colors.white.withOpacity(0.2) : const Color(0xffffffff),
             size: 44,
           ),
           opacity: devices[4].length == 0 ? 0.2 : 1,
@@ -309,20 +292,19 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         onTap: devices[5].length == 0
             ? () {}
             : () {
+                setState(() {
+                  showSpinner = true;
+                });
                 Data().setDevices(devices[5]);
                 Navigator.pushNamed(context, SecurityScreen.id);
               },
         child: DeviceCard(
-          color: devices[5].length == 0
-              ? Colors.orange.shade600.withOpacity(0.2)
-              : Colors.orange.shade600,
+          color: devices[5].length == 0 ? Colors.orange.shade600.withOpacity(0.2) : Colors.orange.shade600,
           title: "Security Monitor",
           description: "Tap here to monitor your boat",
           icon: Icon(
             Icons.security,
-            color: devices[5].length == 0
-                ? Colors.white.withOpacity(0.2)
-                : const Color(0xffffffff),
+            color: devices[5].length == 0 ? Colors.white.withOpacity(0.2) : const Color(0xffffffff),
             size: 44,
           ),
           opacity: devices[5].length == 0 ? 0.2 : 1,
@@ -332,20 +314,19 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         onTap: devices[6].length == 0
             ? () {}
             : () {
+                setState(() {
+                  showSpinner = true;
+                });
                 Data().setDevices(devices[6]);
                 Navigator.pushNamed(context, BatteryMonitor.id);
               },
         child: DeviceCard(
-          color: devices[6].length == 0
-              ? Colors.teal.withOpacity(0.2)
-              : Colors.teal,
+          color: devices[6].length == 0 ? Colors.teal.withOpacity(0.2) : Colors.teal,
           title: "Battery Monitor",
           description: "Tap here to monitor your boat",
           icon: Icon(
             Icons.security,
-            color: devices[6].length == 0
-                ? Colors.white.withOpacity(0.2)
-                : const Color(0xffffffff),
+            color: devices[6].length == 0 ? Colors.white.withOpacity(0.2) : const Color(0xffffffff),
             size: 44,
           ),
           opacity: devices[6].length == 0 ? 0.2 : 1,
@@ -358,12 +339,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return ModalProgressHUD(
-      
       opacity: 0.75,
       color: Colors.black,
       inAsyncCall: showSpinner,
       child: Scaffold(
-        
         backgroundColor: const Color(0xff090f13),
         body: SafeArea(
           child: Padding(
@@ -374,20 +353,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               children: [
                 Text(
                   "Your Boat",
-                  style: GoogleFonts.lexendDeca(
-                      color: const Color(0xff95a1ac),
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400),
+                  style: GoogleFonts.lexendDeca(color: const Color(0xff95a1ac), fontSize: 14, fontWeight: FontWeight.w400),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                       Data().getBoatName(),
-                      style: GoogleFonts.lexendDeca(
-                          color: const Color(0xffffffff),
-                          fontSize: 28,
-                          fontWeight: FontWeight.w700),
+                      style: GoogleFonts.lexendDeca(color: const Color(0xffffffff), fontSize: 28, fontWeight: FontWeight.w700),
                     ),
                     // RaisedButton(
                     //   elevation: 10,
@@ -428,9 +401,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       onPressed: () {
                         Navigator.pushNamed(context, SelectService.id);
                       },
-                      style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(
-                              Colors.pink.shade500)),
+                      style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.pink.shade500)),
                       child: Row(
                         children: [
                           const Icon(
@@ -598,17 +569,21 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 Center(
                   child: ElevatedButton(
                     onPressed: () async {
-                  
+                      setState(() {
+                        showSpinner = true;
+                      });
                       await getDiagonsticData().then((value) {
+                        setState(() {
+                          showSpinner = false;
+                        });
                         print(value);
-                         
+
                         showDialog(
                           context: context,
                           builder: (context) {
                             return AlertDialog(
                               backgroundColor: Colors.white,
-                              title: const Center(
-                                  child: const Text('Diagonstic Results')),
+                              title: const Center(child: const Text('Diagonstic Results')),
                               content: Container(
                                 width: double.minPositive,
                                 child: ListView.builder(
@@ -641,17 +616,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                             );
                           },
                         );
-                         
                       });
                     },
-                    style: ButtonStyle(
-                        minimumSize: MaterialStateProperty.all<Size>(
-                            Size(MediaQuery.of(context).size.width, 20.0)),
-                        elevation: MaterialStateProperty.all(12),
-                        shadowColor: MaterialStateProperty.all<Color>(
-                            Colors.grey.shade500),
-                        backgroundColor: MaterialStateProperty.all<Color>(
-                            const Color(0xFF107896))),
+                    style: ButtonStyle(minimumSize: MaterialStateProperty.all<Size>(Size(MediaQuery.of(context).size.width, 20.0)), elevation: MaterialStateProperty.all(12), shadowColor: MaterialStateProperty.all<Color>(Colors.grey.shade500), backgroundColor: MaterialStateProperty.all<Color>(const Color(0xFF107896))),
                     child: Padding(
                       padding: const EdgeInsets.all(10.0),
                       child: Text(
@@ -743,9 +710,7 @@ class DeviceCard extends StatelessWidget {
             child: AutoSizeText(
               title,
               textAlign: TextAlign.center,
-              style: GoogleFonts.lexendDeca(
-                  color: const Color(0xffffffff).withOpacity(opacity),
-                  textStyle: const TextStyle(fontSize: 18)),
+              style: GoogleFonts.lexendDeca(color: const Color(0xffffffff).withOpacity(opacity), textStyle: const TextStyle(fontSize: 18)),
             ),
           ),
           Padding(

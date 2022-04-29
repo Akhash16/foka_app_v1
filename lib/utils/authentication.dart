@@ -3,7 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class Authentication {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  static final FirebaseAuth _auth = FirebaseAuth.instance;
   // GoogleSignIn _googleSignIn = GoogleSignIn();
   GoogleSignIn _googleSignIn = GoogleSignIn();
 
@@ -79,7 +79,11 @@ class Authentication {
   }
 
   User getCurrentUser() {
-    return FirebaseAuth.instance.currentUser!;
+    return _auth.currentUser!;
+  }
+
+  String getCurrentUserId() {
+    return getCurrentUser().uid;
   }
 
   String? getCurrentUserEmail() {

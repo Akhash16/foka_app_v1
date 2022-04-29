@@ -211,7 +211,7 @@ class _BatteryMonitorState extends State<BatteryMonitor> with TickerProviderStat
                           style: GoogleFonts.montserrat(color: Colors.white, fontSize: 35, fontWeight: FontWeight.w500),
                           children: <TextSpan>[
                             TextSpan(text: b1Percentage.toStringAsFixed(0)),
-                            const TextSpan(text: " %", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                            const TextSpan(text: " V", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
                           ],
                         ),
                       ),
@@ -244,7 +244,7 @@ class _BatteryMonitorState extends State<BatteryMonitor> with TickerProviderStat
                           style: GoogleFonts.montserrat(color: Colors.white, fontSize: 35, fontWeight: FontWeight.w500),
                           children: <TextSpan>[
                             TextSpan(text: b2Percentage.toStringAsFixed(0)),
-                            const TextSpan(text: " %", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                            const TextSpan(text: " V", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
                           ],
                         ),
                       ),

@@ -376,6 +376,52 @@ class _FluidMonitorState extends State<FluidMonitor> with TickerProviderStateMix
         //   )
         // ],
         actions: [
+          IconButton(
+            icon: const Icon(Icons.adjust),
+            onPressed: () {
+              showModalBottomSheet(
+                  context: context,
+                  builder: (context) {
+                    return Container(
+                      height: MediaQuery.of(context).size.height * 0.3,
+                      decoration: const BoxDecoration(
+                        color: Color(0xfff8f8f8),
+                        borderRadius: BorderRadius.only(topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
+                      ),
+                      child: Center(
+                          child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 18.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Tank Settings',
+                              style: GoogleFonts.montserrat(
+                                color: Colors.black,
+                                fontSize: 30,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 10.0,
+                            ),
+                            RoundedButton(
+                              title: 'Tap to Calibrate',
+                              color: Colors.indigo.shade900,
+                              onPressed: () {
+                                setState(() {
+                                  capacity = value;
+                                });
+                              },
+                              width: MediaQuery.of(context).size.width * 0.7,
+                            ),
+                          ],
+                        ),
+                      )),
+                    );
+                  });
+            },
+          ),
           Builder(
             builder: (context) => IconButton(
               icon: const Icon(Icons.settings),
