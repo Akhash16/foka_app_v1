@@ -22,6 +22,7 @@ import 'package:foka_app_v1/screens/qr_code.dart';
 import 'package:foka_app_v1/screens/register_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:foka_app_v1/screens/security_monitor.dart';
+import 'package:foka_app_v1/screens/settings_screen.dart';
 import 'package:foka_app_v1/screens/smart_connect.dart';
 import 'package:foka_app_v1/screens/snaps_screen.dart';
 import 'package:foka_app_v1/screens/splash_screen.dart';
@@ -48,11 +49,7 @@ class MyApp extends StatelessWidget {
           backgroundColor: Colors.black54.withOpacity(0),
         ),
       ),
-      title: "Foka Tech",
-      // home: LocationScreen(
-      //   hubId: 'DEMOHUB001',
-      //   deviceId: 'FKB001LT',
-      // ),
+      title: "Foka Tech",   
       initialRoute: SplashScreen.id,
       routes: {
         LoginScreen.id: (context) => const LoginScreen(),
@@ -82,6 +79,7 @@ class MyApp extends StatelessWidget {
         SecurityScreen.id: (context) => const SecurityScreen(),
         SnapsScreen.id: (context) => const SnapsScreen(),
         BatteryMonitor.id: (context) => const BatteryMonitor(),
+        SettingScreen.id: (context) => const SettingScreen(),
       },
     );
   }
