@@ -17,7 +17,9 @@ import 'package:foka_app_v1/screens/home_screen.dart';
 import 'package:foka_app_v1/screens/location_tracker.dart';
 import 'package:foka_app_v1/screens/login_screen.dart';
 import 'package:foka_app_v1/screens/make_sure.dart';
+import 'package:foka_app_v1/screens/manage_boats_screen.dart';
 import 'package:foka_app_v1/screens/onboarding.dart';
+import 'package:foka_app_v1/screens/profile_screen.dart';
 import 'package:foka_app_v1/screens/qr_code.dart';
 import 'package:foka_app_v1/screens/register_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -80,6 +82,8 @@ class MyApp extends StatelessWidget {
         SnapsScreen.id: (context) => const SnapsScreen(),
         BatteryMonitor.id: (context) => const BatteryMonitor(),
         SettingScreen.id: (context) => const SettingScreen(),
+        ProfileScreen.id: (context) => const ProfileScreen(),
+        ManageBoats.id: (context) => const ManageBoats(),
       },
     );
   }

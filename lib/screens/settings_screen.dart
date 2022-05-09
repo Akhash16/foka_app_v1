@@ -2,6 +2,8 @@ import "package:flutter/material.dart";
 import 'package:foka_app_v1/components/constants.dart';
 import 'package:foka_app_v1/screens/home_screen.dart';
 import 'package:foka_app_v1/screens/login_screen.dart';
+import 'package:foka_app_v1/screens/manage_boats_screen.dart';
+import 'package:foka_app_v1/screens/profile_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class SettingScreen extends StatefulWidget {
@@ -47,7 +49,7 @@ class _SettingScreenState extends State<SettingScreen> {
       const SizedBox(height: 20,),
       InkWell(
         onTap: (() {
-          
+           Navigator.pushNamed(context, ProfileScreen.id);
         }),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -74,7 +76,7 @@ class _SettingScreenState extends State<SettingScreen> {
       const SizedBox(height: 20,),
       InkWell(
          onTap: (() {
-          
+          Navigator.pushNamed(context, ManageBoats.id);
         }),
         child: Center(
           child: Padding(
