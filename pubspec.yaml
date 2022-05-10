@@ -71,6 +71,7 @@ dependencies:
   syncfusion_flutter_charts: ^19.4.53 
   fl_chart: ^0.45.0
   draw_graph: ^1.0.0
+  shared_preferences: ^2.0.13
 
   
 dev_dependencies:

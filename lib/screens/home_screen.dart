@@ -78,8 +78,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     connectedDevices = await ApiCalls().getConnectedDevices(hubId);
     setState(() {
       items = buildItems(devices);
+      showSpinner = false;
     });
-    showSpinner = false;
   }
 
   Future<List> getDiagonsticData() async {
@@ -221,6 +221,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 });
                 getDevices();
                 await ApiCalls().getSmartConnectSettingsApi(devices[3][0]['serial']).then((value) {
+                  setState(() {
+                    showSpinner = false;
+                  });
                   print(value);
                   Data().setSettings(value);
                   Data().setDevices(devices[3]);
@@ -255,7 +258,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   showSpinner = true;
                 });
                 await ApiCalls().getLocationSettingsApi(devices[4][0]['serial']).then((value) {
-                  print(value);
+                  setState(() {
+                    showSpinner = false;
+                  });
+                  print('value $value');
                   Data().setDevices(devices[4]);
                   Data().setSettings(value);
                   Navigator.pushNamed(context, LocationScreen.id);

@@ -4,7 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:foka_app_v1/components/constants.dart';
 import 'package:foka_app_v1/main.dart';
 import 'package:foka_app_v1/utils/data.dart';
+import 'package:foka_app_v1/utils/userSimplePreferences.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
+import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 
@@ -25,10 +28,14 @@ class _FloatSensorState extends State<FloatSensor> {
   late String hubId;
   late String deviceId;
 
-  late int floatValue = 0;
+  late int floatValue = Preferences.getFloatValue() ?? 0;
 
   late String deviceName;
   late bool bilgeState = false;
+
+  bool showSpinner = true;
+
+  int floatSensorTimer = 30;
 
   late dynamic settings = [];
 
@@ -92,6 +99,9 @@ class _FloatSensorState extends State<FloatSensor> {
       print('Received message:$payload from topic: ${c[0].topic}>');
       floatValue = int.parse(payload);
 
+      showSpinner = false;
+      floatSensorTimer = 30;
+
       print("message_received : $floatValue");
     });
 
@@ -135,8 +145,11 @@ class _FloatSensorState extends State<FloatSensor> {
   }
 
   void change() {
-    setState(() {});
-    floatValue = floatValue;
+    setState(() {
+      if (floatSensorTimer-- < 0) showSpinner = true;
+      floatValue = floatValue;
+    });
+    Preferences.setFloatValue(floatValue);
   }
 
   void getSettings() {
@@ -218,39 +231,44 @@ class _FloatSensorState extends State<FloatSensor> {
         ),
       ),
       backgroundColor: const Color(0xff090f13),
-      body: Center(
-        child: Container(
-          height: MediaQuery.of(context).size.height * 0.2,
-          width: MediaQuery.of(context).size.width * 0.7,
-          decoration: BoxDecoration(
-            color: Colors.white12,
-            borderRadius: BorderRadius.circular(10.0),
-            boxShadow: const [
-              BoxShadow(
-                color: Colors.white10,
-                offset: Offset(3.0, 3.0),
-                blurRadius: 5.0,
-                spreadRadius: 2.0,
-              ),
-            ],
-          ),
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.all(18.0),
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Text(
-                      'Bilge Status',
-                      style: GoogleFonts.montserrat(color: Colors.white, fontSize: 30, fontWeight: FontWeight.w700),
+      body: ModalProgressHUD(
+        inAsyncCall: showSpinner,
+        progressIndicator: Lottie.network('https://assets9.lottiefiles.com/packages/lf20_6s2xGI.json'),
+        opacity: 0.8,
+        child: Center(
+          child: Container(
+            height: MediaQuery.of(context).size.height * 0.2,
+            width: MediaQuery.of(context).size.width * 0.7,
+            decoration: BoxDecoration(
+              color: Colors.white12,
+              borderRadius: BorderRadius.circular(10.0),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.white10,
+                  offset: Offset(3.0, 3.0),
+                  blurRadius: 5.0,
+                  spreadRadius: 2.0,
+                ),
+              ],
+            ),
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(18.0),
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Text(
+                        'Bilge Status',
+                        style: GoogleFonts.montserrat(color: Colors.white, fontSize: 30, fontWeight: FontWeight.w700),
+                      ),
                     ),
-                  ),
-                  Text(
-                    floatValue == 0 ? 'Normal' : 'Check Bilge',
-                    style: GoogleFonts.montserrat(color: floatValue == 0 ? Colors.green : Colors.red, fontSize: 25, fontWeight: FontWeight.w500),
-                  ),
-                ],
+                    Text(
+                      floatValue == 0 ? 'Normal' : 'Check Bilge',
+                      style: GoogleFonts.montserrat(color: floatValue == 0 ? Colors.green : Colors.red, fontSize: 25, fontWeight: FontWeight.w500),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

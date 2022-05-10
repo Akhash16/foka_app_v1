@@ -5,6 +5,7 @@ import 'package:foka_app_v1/screens/geofence.dart';
 import 'package:foka_app_v1/utils/apiCalls.dart';
 import 'package:foka_app_v1/utils/data.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 
@@ -50,6 +51,9 @@ class _LocationScreenState extends State<LocationScreen> {
   late String deviceId;
 
   late MqttServerClient client;
+
+  bool showSpinner = true;
+  int locationTrackerTimer = 30;
 
   final Completer<GoogleMapController> _controller = Completer();
 
@@ -107,6 +111,9 @@ class _LocationScreenState extends State<LocationScreen> {
 
       print('Received message:$payload from topic: ${c[0].topic}>');
 
+      showSpinner = false;
+      locationTrackerTimer = 30;
+
       parts = payload.split(',');
       print("message_received : $parts");
     });
@@ -148,6 +155,7 @@ class _LocationScreenState extends State<LocationScreen> {
 
   void change() {
     setState(() {
+      if (locationTrackerTimer-- < 0) showSpinner = true;
       lat = double.parse(parts[0]);
       long = double.parse(parts[1]);
     });
@@ -235,50 +243,53 @@ class _LocationScreenState extends State<LocationScreen> {
           });
         },
       ),
-      floatingActionButton: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          FloatingActionButton.extended(
-            heroTag: "Geofence",
-            elevation: 9,
-            onPressed: () async {
-              print('lat $lat');
-              print('long $long');
+      floatingActionButton: Visibility(
+        visible: !showSpinner,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            FloatingActionButton.extended(
+              heroTag: "Geofence",
+              elevation: 9,
+              onPressed: () async {
+                print('lat $lat');
+                print('long $long');
 
-              await ApiCalls().getLocationSettingsApi(deviceId).then((value) {
-                print(value);
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return GeoFence(
-                    lat: lat,
-                    long: long,
-                    settings: value,
-                  );
-                }));
-              });
+                await ApiCalls().getLocationSettingsApi(deviceId).then((value) {
+                  print(value);
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return GeoFence(
+                      lat: lat,
+                      long: long,
+                      settings: value,
+                    );
+                  }));
+                });
 
-              // Navigator.push(context, MaterialPageRoute(builder: (context) {
-              //   return GeoFence(
-              //     lat: lat,
-              //     long: long,
-              //     settings: widget.settings,
-              //   );
-              // }));
-            },
-            label: const Text('Geofence'),
-            icon: const Icon(Icons.gps_fixed_outlined),
-            backgroundColor: const Color(0xff090f13).withOpacity(0.8),
-          ),
-          SizedBox(
-            width: MediaQuery.of(context).size.width * 0.05,
-          ),
-          FloatingActionButton.extended(
-            elevation: 9,
-            onPressed: _goToTheBoat,
-            label: const Text('Locate'),
-            icon: const Icon(Icons.location_on),
-            backgroundColor: const Color(0xff090f13).withOpacity(0.8),
-          ),
-        ],
+                // Navigator.push(context, MaterialPageRoute(builder: (context) {
+                //   return GeoFence(
+                //     lat: lat,
+                //     long: long,
+                //     settings: widget.settings,
+                //   );
+                // }));
+              },
+              label: const Text('Geofence'),
+              icon: const Icon(Icons.gps_fixed_outlined),
+              backgroundColor: const Color(0xff090f13).withOpacity(0.8),
+            ),
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.05,
+            ),
+            FloatingActionButton.extended(
+              elevation: 9,
+              onPressed: _goToTheBoat,
+              label: const Text('Locate'),
+              icon: const Icon(Icons.location_on),
+              backgroundColor: const Color(0xff090f13).withOpacity(0.8),
+            ),
+          ],
+        ),
       ),
     );
   }

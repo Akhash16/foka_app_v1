@@ -9,8 +9,11 @@ import 'package:foka_app_v1/screens/bilge.dart';
 import 'package:foka_app_v1/screens/fluid_settings_page.dart';
 import 'package:foka_app_v1/utils/apiCalls.dart';
 import 'package:foka_app_v1/utils/data.dart';
+import 'package:foka_app_v1/utils/userSimplePreferences.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
+import 'package:lottie/lottie.dart';
+import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 import 'package:concentric_transition/concentric_transition.dart';
@@ -44,7 +47,7 @@ class _FluidMonitorState extends State<FluidMonitor> with TickerProviderStateMix
   late String hubId;
 
   int capacity = 100;
-  int value = 0;
+  int value = Preferences.getFluidValue() ?? 0;
   int floatValue = 0;
   double toPrint = 0;
   late String deviceId;
@@ -62,6 +65,9 @@ class _FluidMonitorState extends State<FluidMonitor> with TickerProviderStateMix
   late Animation _animation;
 
   late MqttServerClient client;
+
+  bool showSpinner = true;
+  int fluidMonitorTimer = 30;
 
   @override
   void initState() {
@@ -131,6 +137,9 @@ class _FluidMonitorState extends State<FluidMonitor> with TickerProviderStateMix
       // value = int.parse(parts[0]);
       // floatValue = int.parse(parts[1]);
 
+      fluidMonitorTimer = 30;
+      showSpinner = false;
+
       value = int.parse(payload);
       print("message_received : $value");
     });
@@ -177,9 +186,11 @@ class _FluidMonitorState extends State<FluidMonitor> with TickerProviderStateMix
 
   void change() {
     setState(() {
+      if (fluidMonitorTimer-- < 0) showSpinner = true;
       toPrint = (capacity - value) / capacity; // * 100
       floatValue = floatValue;
     });
+    Preferences.setFluidValue(value);
   }
 
   void getSettings(dynamic settings) {
@@ -517,48 +528,53 @@ class _FluidMonitorState extends State<FluidMonitor> with TickerProviderStateMix
         ),
       ),
       backgroundColor: const Color(0xff090f13),
-      body: Center(
-        child: Container(
-          height: MediaQuery.of(context).size.height * 0.5,
-          width: MediaQuery.of(context).size.width * 0.45,
-          decoration: BoxDecoration(
-            shape: BoxShape.rectangle,
-            borderRadius: BorderRadius.circular(10.0),
-            color: const Color.fromARGB(255, 27, 28, 30),
-            boxShadow: [
-              BoxShadow(
-                // color: Color.fromARGB(130, 237, 125, 58),
-                color: toPrint >= currentLowerValue / 100 ? Colors.blue : Colors.red,
-                blurRadius: _animation.value,
-                spreadRadius: _animation.value * 0.1,
-              ),
-            ],
-          ),
-          child: LiquidLinearProgressIndicator(
-            center: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.baseline,
-              textBaseline: TextBaseline.alphabetic,
-              children: [
-                Text(
-                  (toPrint * 100).toStringAsFixed(0),
-                  // glowColor: Colors.blue,
-                  style: GoogleFonts.montserrat(color: Colors.white, fontSize: 40, fontWeight: FontWeight.w500),
-                ),
-                Text(
-                  '%',
-                  style: GoogleFonts.montserrat(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w500),
+      body: ModalProgressHUD(
+        inAsyncCall: showSpinner,
+        progressIndicator: Lottie.network('https://assets9.lottiefiles.com/packages/lf20_6s2xGI.json'),
+        opacity: 0.8,
+        child: Center(
+          child: Container(
+            height: MediaQuery.of(context).size.height * 0.5,
+            width: MediaQuery.of(context).size.width * 0.45,
+            decoration: BoxDecoration(
+              shape: BoxShape.rectangle,
+              borderRadius: BorderRadius.circular(10.0),
+              color: const Color.fromARGB(255, 27, 28, 30),
+              boxShadow: [
+                BoxShadow(
+                  // color: Color.fromARGB(130, 237, 125, 58),
+                  color: toPrint >= currentLowerValue / 100 ? Colors.blue : Colors.red,
+                  blurRadius: _animation.value,
+                  spreadRadius: _animation.value * 0.1,
                 ),
               ],
             ),
-            backgroundColor: Colors.black12,
-            valueColor: toPrint >= currentLowerValue / 100 ? const AlwaysStoppedAnimation(Colors.blue) : const AlwaysStoppedAnimation(Colors.red),
-            value: toPrint,
-            borderRadius: 10.0,
-            borderWidth: 1.0,
-            borderColor: Colors.black12,
-            // borderColor: toPrint >= 25 ? Colors.blue : Colors.red,
-            direction: Axis.vertical,
+            child: LiquidLinearProgressIndicator(
+              center: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.baseline,
+                textBaseline: TextBaseline.alphabetic,
+                children: [
+                  Text(
+                    (toPrint * 100).toStringAsFixed(0),
+                    // glowColor: Colors.blue,
+                    style: GoogleFonts.montserrat(color: Colors.white, fontSize: 40, fontWeight: FontWeight.w500),
+                  ),
+                  Text(
+                    '%',
+                    style: GoogleFonts.montserrat(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w500),
+                  ),
+                ],
+              ),
+              backgroundColor: Colors.black12,
+              valueColor: toPrint >= currentLowerValue / 100 ? const AlwaysStoppedAnimation(Colors.blue) : const AlwaysStoppedAnimation(Colors.red),
+              value: toPrint,
+              borderRadius: 10.0,
+              borderWidth: 1.0,
+              borderColor: Colors.black12,
+              // borderColor: toPrint >= 25 ? Colors.blue : Colors.red,
+              direction: Axis.vertical,
+            ),
           ),
         ),
       ),

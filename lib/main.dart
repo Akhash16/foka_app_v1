@@ -28,10 +28,14 @@ import 'package:foka_app_v1/screens/splash_screen.dart';
 import 'package:foka_app_v1/screens/ths_monitor.dart';
 import 'package:foka_app_v1/screens/ths_settings_page.dart';
 import 'package:foka_app_v1/screens/wifi_screen.dart';
+import 'package:foka_app_v1/utils/userSimplePreferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+
+  await Preferences.init();
+
   runApp(const MyApp());
 }
 

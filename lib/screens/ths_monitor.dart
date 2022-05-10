@@ -10,7 +10,10 @@ import 'package:foka_app_v1/screens/home_screen.dart';
 import 'package:foka_app_v1/screens/ths_settings_page.dart';
 import 'package:foka_app_v1/utils/apiCalls.dart';
 import 'package:foka_app_v1/utils/data.dart';
+import 'package:foka_app_v1/utils/userSimplePreferences.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
+import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
@@ -48,9 +51,9 @@ class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMix
   late MqttServerClient client;
 
   int indexValue = 0;
-  double temperature = 21.0;
-  double humidity = 34.0;
-  int gas = 6000;
+  double temperature = Preferences.getTemperature() ?? 21.0;
+  double humidity = Preferences.getHumidity() ?? 34.0;
+  int gas = Preferences.getGas() ?? 6000;
 
   late bool tempState;
   late int tempCurrentLowerValue;
@@ -64,8 +67,11 @@ class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMix
   late int humidityCurrentLowerValue;
   late int humidityCurrentUpperValue;
 
-  List<String> parts = ['6000', '21.0', '34.0'];
   late String deviceId;
+
+  bool showSpinner = true;
+
+  int ths = 30;
 
   List<String> xLabel = ['', '', '', '', '', '', '', '', '', '', '', ''];
   List<int> gasList = [];
@@ -138,8 +144,15 @@ class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMix
 
       print('Received message:$payload from topic: ${c[0].topic}>');
 
-      parts = payload.split(',');
+      List parts = payload.split(',');
       print("message_received : $parts");
+
+      showSpinner = false;
+      ths = 30;
+
+      gas = int.parse(parts[0]);
+      temperature = double.parse(parts[1]);
+      humidity = double.parse(parts[2]) <= 100 ? double.parse(parts[2]) : 100;
     });
 
     // client.subscribe("/DEMOHUB001/FKB001THS", MqttQos.atLeastOnce);
@@ -186,14 +199,13 @@ class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMix
 
   void change() {
     setState(() {
-      gas = int.parse(parts[0]);
-      temperature = double.parse(parts[1]);
-      humidity = double.parse(parts[2]) <= 100 ? double.parse(parts[2]) : 100;
       // xLabel.add('');
       // gasList.add(gas);
+      if (ths-- < 0) showSpinner = true;
       data.add(gas / 10000);
       data.removeAt(0);
       print('data' + data.toString());
+      Preferences.setTHS(gas, temperature, humidity);
     });
   }
 
@@ -562,227 +574,232 @@ class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMix
           ),
         ),
       ),
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(8, 18, 8, 8),
-          child: Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, crossAxisAlignment: CrossAxisAlignment.center, children: [
-            // Here, default theme colors are used for activeBgColor, activeFgColor, inactiveBgColor and inactiveFgColor
-            ToggleSwitch(
-              cornerRadius: 20,
-              animate: true,
-              fontSize: 15,
-              inactiveBgColor: Colors.grey.shade900,
-              inactiveFgColor: Colors.white,
-              minWidth: MediaQuery.of(context).size.width * 0.35,
-              initialLabelIndex: indexValue,
-              totalSwitches: 2,
-              labels: const ['Temperature', 'Smoke'],
-              customTextStyles: [
-                GoogleFonts.montserrat(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w400,
-                  color: Colors.white,
-                ),
-                GoogleFonts.montserrat(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w400,
-                  color: Colors.white,
-                ),
-              ],
-              onToggle: (index) {
-                // print('switched to: $index');
-                indexValue = index;
-              },
-            ),
-            const SizedBox(
-              height: 70,
-            ),
-            Stack(
-              children: [
-                AnimatedOpacity(
-                  duration: const Duration(milliseconds: 500),
-                  opacity: indexValue == 0 ? 1.0 : 0.0,
-                  child: Container(
-                    width: 200,
-                    height: 200,
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            temperature.toStringAsFixed(1),
-                            style: GoogleFonts.montserrat(
-                              color: Colors.white,
-                              fontSize: 45,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          // const SizedBox(
-                          //   width: 20.0,
-                          //   child: Divider(
-                          //     thickness: 2,
-                          //     color: Colors.blue,
-                          //   ),
-                          // ),
-                          Text(
-                            "°C",
-                            style: GoogleFonts.montserrat(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: const Color.fromARGB(255, 27, 28, 30),
-                      boxShadow: [
-                        BoxShadow(
-                            // color: Color.fromARGB(130, 237, 125, 58),
-                            color: temperature > tempCurrentUpperValue
-                                ? Colors.red
-                                : temperature < tempCurrentLowerValue
-                                    ? Colors.red
-                                    : Colors.blue,
-                            blurRadius: _animation.value,
-                            spreadRadius: _animation.value)
-                      ],
-                    ),
+      body: ModalProgressHUD(
+        inAsyncCall: showSpinner,
+        progressIndicator: Lottie.network('https://assets9.lottiefiles.com/packages/lf20_6s2xGI.json'),
+        opacity: 0.8,
+        child: Container(
+          width: double.infinity,
+          height: double.infinity,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(8, 18, 8, 8),
+            child: Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, crossAxisAlignment: CrossAxisAlignment.center, children: [
+              // Here, default theme colors are used for activeBgColor, activeFgColor, inactiveBgColor and inactiveFgColor
+              ToggleSwitch(
+                cornerRadius: 20,
+                animate: true,
+                fontSize: 15,
+                inactiveBgColor: Colors.grey.shade900,
+                inactiveFgColor: Colors.white,
+                minWidth: MediaQuery.of(context).size.width * 0.35,
+                initialLabelIndex: indexValue,
+                totalSwitches: 2,
+                labels: const ['Temperature', 'Smoke'],
+                customTextStyles: [
+                  GoogleFonts.montserrat(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.white,
                   ),
-                ),
-
-                // just to diff
-
-                AnimatedOpacity(
-                  duration: const Duration(milliseconds: 500),
-                  opacity: indexValue == 1 ? 1.0 : 0.0,
-                  child: Container(
-                    width: 200,
-                    height: 200,
-                    child: Center(
-                      child: Text(
-                        gas < gasCurrentLowerValue
-                            ? 'Low'
-                            : gas < gasCurrentUpperValue
-                                ? 'Medium'
-                                : 'High',
-                        style: GoogleFonts.montserrat(
-                          color: Colors.white,
-                          fontSize: 30,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: const Color.fromARGB(255, 27, 28, 30),
-                      boxShadow: [
-                        BoxShadow(
-                            // color: Color.fromARGB(130, 237, 125, 58),
-                            color: gas < gasCurrentLowerValue
-                                ? Colors.green
-                                : gas < gasCurrentUpperValue
-                                    ? Colors.yellow
-                                    : Colors.red,
-                            blurRadius: _animation.value,
-                            spreadRadius: _animation.value)
-                      ],
-                    ),
+                  GoogleFonts.montserrat(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.white,
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 40,
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: Stack(
+                ],
+                onToggle: (index) {
+                  // print('switched to: $index');
+                  indexValue = index;
+                },
+              ),
+              const SizedBox(
+                height: 70,
+              ),
+              Stack(
                 children: [
                   AnimatedOpacity(
                     duration: const Duration(milliseconds: 500),
                     opacity: indexValue == 0 ? 1.0 : 0.0,
                     child: Container(
-                      width: MediaQuery.of(context).size.width * 0.85,
-                      height: 140,
-                      decoration: BoxDecoration(
-                        // color: Colors.white12,
-                        color: const Color(0xff1d2429),
-                        borderRadius: BorderRadius.circular(20),
+                      width: 200,
+                      height: 200,
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              temperature.toStringAsFixed(1),
+                              style: GoogleFonts.montserrat(
+                                color: Colors.white,
+                                fontSize: 45,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            // const SizedBox(
+                            //   width: 20.0,
+                            //   child: Divider(
+                            //     thickness: 2,
+                            //     color: Colors.blue,
+                            //   ),
+                            // ),
+                            Text(
+                              "°C",
+                              style: GoogleFonts.montserrat(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.all(10.0),
-                            child: Text(
-                              "Humidity",
-                              style: GoogleFonts.montserrat(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w400),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 8.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Image.asset(
-                                  'assets/humidity.png',
-                                  height: 35,
-                                  width: 35,
-                                  color: Colors.white,
-                                ),
-                                const SizedBox(
-                                  width: 20,
-                                ),
-                                Text(
-                                  humidity.toStringAsFixed(1) + " %",
-                                  style: GoogleFonts.montserrat(color: Colors.white, fontSize: 35, fontWeight: FontWeight.w500),
-                                ),
-                              ],
-                            ),
-                          ),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: const Color.fromARGB(255, 27, 28, 30),
+                        boxShadow: [
+                          BoxShadow(
+                              // color: Color.fromARGB(130, 237, 125, 58),
+                              color: temperature > tempCurrentUpperValue
+                                  ? Colors.red
+                                  : temperature < tempCurrentLowerValue
+                                      ? Colors.red
+                                      : Colors.blue,
+                              blurRadius: _animation.value,
+                              spreadRadius: _animation.value)
                         ],
                       ),
                     ),
                   ),
+
+                  // just to diff
+
                   AnimatedOpacity(
                     duration: const Duration(milliseconds: 500),
                     opacity: indexValue == 1 ? 1.0 : 0.0,
                     child: Container(
-                      width: MediaQuery.of(context).size.width * 0.85,
-                      height: 180,
-                      decoration: BoxDecoration(
-                        // color: Colors.white12,
-                        color: const Color(0xff1d2429),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(18.0),
-                        child: LineGraph(
-                          features: features,
-                          size: const Size(320, 400),
-                          labelX: xLabel,
-                          // labelX: const ['6:30', '7:30'],
-                          // labelX: const ['6:30', '7:30', '8:30', '9:30', '10:30', '21:30', '26:30', '27:30', '28:30', '29:30', '30:30', '31:30'],
-                          labelY: const ['2000', '4000', '6000', '8000', '10000'],
-                          graphColor: Colors.white30,
-                          graphOpacity: 0.2,
-                          descriptionHeight: 130,
+                      width: 200,
+                      height: 200,
+                      child: Center(
+                        child: Text(
+                          gas < gasCurrentLowerValue
+                              ? 'Low'
+                              : gas < gasCurrentUpperValue
+                                  ? 'Medium'
+                                  : 'High',
+                          style: GoogleFonts.montserrat(
+                            color: Colors.white,
+                            fontSize: 30,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
+                      ),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: const Color.fromARGB(255, 27, 28, 30),
+                        boxShadow: [
+                          BoxShadow(
+                              // color: Color.fromARGB(130, 237, 125, 58),
+                              color: gas < gasCurrentLowerValue
+                                  ? Colors.green
+                                  : gas < gasCurrentUpperValue
+                                      ? Colors.yellow
+                                      : Colors.red,
+                              blurRadius: _animation.value,
+                              spreadRadius: _animation.value)
+                        ],
                       ),
                     ),
                   ),
                 ],
               ),
-            ),
-            Row(
-              children: [],
-            )
-          ]),
+              const SizedBox(
+                height: 40,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Stack(
+                  children: [
+                    AnimatedOpacity(
+                      duration: const Duration(milliseconds: 500),
+                      opacity: indexValue == 0 ? 1.0 : 0.0,
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * 0.85,
+                        height: 140,
+                        decoration: BoxDecoration(
+                          // color: Colors.white12,
+                          color: const Color(0xff1d2429),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.all(10.0),
+                              child: Text(
+                                "Humidity",
+                                style: GoogleFonts.montserrat(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w400),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 8.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Image.asset(
+                                    'assets/humidity.png',
+                                    height: 35,
+                                    width: 35,
+                                    color: Colors.white,
+                                  ),
+                                  const SizedBox(
+                                    width: 20,
+                                  ),
+                                  Text(
+                                    humidity.toStringAsFixed(1) + " %",
+                                    style: GoogleFonts.montserrat(color: Colors.white, fontSize: 35, fontWeight: FontWeight.w500),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    AnimatedOpacity(
+                      duration: const Duration(milliseconds: 500),
+                      opacity: indexValue == 1 ? 1.0 : 0.0,
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * 0.85,
+                        height: 180,
+                        decoration: BoxDecoration(
+                          // color: Colors.white12,
+                          color: const Color(0xff1d2429),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(18.0),
+                          child: LineGraph(
+                            features: features,
+                            size: const Size(320, 400),
+                            labelX: xLabel,
+                            // labelX: const ['6:30', '7:30'],
+                            // labelX: const ['6:30', '7:30', '8:30', '9:30', '10:30', '21:30', '26:30', '27:30', '28:30', '29:30', '30:30', '31:30'],
+                            labelY: const ['2000', '4000', '6000', '8000', '10000'],
+                            graphColor: Colors.white30,
+                            graphOpacity: 0.2,
+                            descriptionHeight: 130,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Row(
+                children: [],
+              )
+            ]),
+          ),
         ),
       ),
     );
