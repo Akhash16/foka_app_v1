@@ -1,10 +1,12 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:foka_app_v1/components/constants.dart';
 import 'package:foka_app_v1/screens/chose_device.dart';
 import 'package:foka_app_v1/screens/home_screen.dart';
 import 'package:foka_app_v1/screens/add_boat_screen.dart';
 import 'package:fab_circular_menu/fab_circular_menu.dart';
 import 'package:foka_app_v1/screens/login_screen.dart';
+import 'package:foka_app_v1/screens/settings_screen.dart';
 import 'package:foka_app_v1/utils/authentication.dart';
 import 'package:foka_app_v1/utils/data.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -93,7 +95,7 @@ class _BoatsPageState extends State<BoatsPage> {
           ),
           IconButton(
             onPressed: () {
-              Navigator.pushNamed(context, SelectService.id);
+              Navigator.pushNamed(context, SettingScreen.id);
             },
             icon: const Icon(
               Icons.settings,

@@ -38,3 +38,9 @@ TextStyle homeScreenDialogTextStyle = GoogleFonts.getFont(
   'Lexend Deca',
   fontSize: 15,
 );
+
+TextStyle menuTextStyle = GoogleFonts.montserrat(
+  color: Color(0xffCACBCB),
+  fontSize: 20,
+  fontWeight: FontWeight.w500,
+);
