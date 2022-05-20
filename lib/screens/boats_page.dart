@@ -46,6 +46,7 @@ class _BoatsPageState extends State<BoatsPage> {
   void initState() {
     super.initState();
     getBoats(Data().getBoatData());
+    print("getboatsapi " + Data().getBoatData().toString());
   }
 
   void getBoats(boatData) {

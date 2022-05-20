@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:foka_app_v1/screens/add_device_name.dart';
 import 'package:foka_app_v1/screens/boats_page.dart';
 import 'package:foka_app_v1/screens/home_screen.dart';
 import 'package:foka_app_v1/screens/make_sure.dart';
@@ -108,14 +109,15 @@ class _QrScreenState extends State<QrScreen> {
       setState(() {
         result = scanData;
       });
-      dynamic data = jsonDecode(result!.code!);
-      ApiCalls().addHub(data['ssid'].toString(), data['password'].toString()).then((value) {
-        if (value) {
-          Navigator.popUntil(context, ModalRoute.withName(HomeScreen.id));
-        } else {
-          print("post failed");
-        }
-      });
+      var data = jsonDecode(result!.code!);
+      Navigator.popUntil(context, ModalRoute.withName(HomeScreen.id));
+      // ApiCalls().addHub(data['ssid'].toString(), data['password'].toString()).then((value) {
+      //   if (value) {
+      //     Navigator.popUntil(context, ModalRoute.withName(HomeScreen.id));
+      //   } else {
+      //     print("post failed");
+      //   }
+      // });
     });
   }
 

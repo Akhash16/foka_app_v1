@@ -89,4 +89,8 @@ class Authentication {
   String? getCurrentUserEmail() {
     return _auth.currentUser?.email;
   }
+
+  Future<void> deleteUserAccount() async {
+    await _auth.currentUser!.delete();
+  }
 }

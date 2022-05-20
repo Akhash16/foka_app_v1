@@ -47,13 +47,24 @@ class ApiCalls {
     return boats;
   }
 
-  void addBoatsApi(String hubId, String boatName, String otp) async {
+  void addBoatsApi(String hubId, String boatName) async {
     String email = Authentication().getCurrentUserEmail() as String;
     Uri url = Uri.parse(_apiUrl + '/boatData');
     http.Response response = await http.post(url, body: {
       "hubid": hubId,
       "boatname": boatName,
       "user": email,
+    });
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+  }
+
+  void addDeviceApi(String hubId, String serial, String deviceName) async {
+    Uri url = Uri.parse(_apiUrl + '/deviceSyncManager');
+    http.Response response = await http.post(url, body: {
+      "hubid": hubId,
+      "serial": serial,
+      "devicename": deviceName,
     });
     print('Response status: ${response.statusCode}');
     print('Response body: ${response.body}');

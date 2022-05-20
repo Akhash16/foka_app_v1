@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_verification_code/flutter_verification_code.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:foka_app_v1/screens/boats_page.dart';
 import 'package:foka_app_v1/screens/login_screen.dart';
 import 'package:foka_app_v1/screens/splash_screen.dart';
 import 'package:foka_app_v1/utils/apiCalls.dart';
+import 'package:foka_app_v1/utils/authentication.dart';
+import 'package:foka_app_v1/utils/data.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:slide_to_confirm/slide_to_confirm.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
 class AddBoatVerification extends StatefulWidget {
-  // const AddBoatVerification({Key? key}) : super(key: key);
-  AddBoatVerification({this.hubId, this.boatName});
-
-  final hubId;
-  final boatName;
+  const AddBoatVerification({Key? key}) : super(key: key);
 
   static const String id = 'add_boat_verification';
 
@@ -28,6 +27,7 @@ class _AddBoatVerificationState extends State<AddBoatVerification> {
 
   @override
   Widget build(BuildContext context) {
+    print("hubId set ${Data().getHubId()}");
     return Scaffold(
       backgroundColor: const Color(0xff1A1E20),
       body: ModalProgressHUD(
@@ -86,11 +86,16 @@ class _AddBoatVerificationState extends State<AddBoatVerification> {
                 delay: const Duration(milliseconds: 700),
                 duration: const Duration(milliseconds: 900),
                 child: ConfirmationSlider(
-                  onConfirmation: () {
-                    // if (textController.text != '') {
-                    // ApiCalls().addBoatsApi(widget.hubId, widget.boatName, textController.text);
-                    // Navigator.popAndPushNamed(context, SplashScreen.id);
-                    // }
+                  onConfirmation: () async {
+                    if (textController.text != '') {
+                      ApiCalls().addBoatsApi(Data().getHubId(), textController.text);
+                      await ApiCalls().getBoatsApi(Authentication().getCurrentUserEmail()!).then(
+                        (value) {
+                          Data().setBoatData(value);
+                          Navigator.popAndPushNamed(context, BoatsPage.id);
+                        },
+                      );
+                    }
                   },
                   height: 60,
                   width: 260,

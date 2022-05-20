@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:foka_app_v1/screens/add_boat_verification.dart';
+import 'package:foka_app_v1/screens/add_device_name.dart';
 import 'package:foka_app_v1/screens/battery_monitor.dart';
 import 'package:foka_app_v1/screens/bilge.dart';
 import 'package:foka_app_v1/screens/chose_device.dart';
@@ -55,7 +56,7 @@ class MyApp extends StatelessWidget {
           backgroundColor: Colors.black54.withOpacity(0),
         ),
       ),
-      title: "Foka Tech",   
+      title: "Foka Tech",
       initialRoute: SplashScreen.id,
       routes: {
         LoginScreen.id: (context) => const LoginScreen(),
@@ -88,6 +89,7 @@ class MyApp extends StatelessWidget {
         SettingScreen.id: (context) => const SettingScreen(),
         ProfileScreen.id: (context) => const ProfileScreen(),
         ManageBoats.id: (context) => const ManageBoats(),
+        AddDeviceName.id: (context) => const AddDeviceName(),
       },
     );
   }
