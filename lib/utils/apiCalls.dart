@@ -4,7 +4,8 @@ import 'package:foka_app_v1/utils/authentication.dart';
 import 'package:http/http.dart' as http;
 
 class ApiCalls {
-  final String _apiUrl = 'http://164.52.212.96:3000';
+  final String _apiUrl = 'https://c708-183-82-204-2.ngrok.io/';
+  // final String _apiUrl = 'http://164.52.212.96:3000';
   // final String _apiUrl = 'http://10.3.141.236';
   final String _ip = 'http://192.168.4.1';
 
@@ -59,12 +60,13 @@ class ApiCalls {
     print('Response body: ${response.body}');
   }
 
-  void addDeviceApi(String hubId, String serial, String deviceName) async {
+  Future<void> addDeviceApi(String hubId, String serial, String deviceName, String deviceType) async {
     Uri url = Uri.parse(_apiUrl + '/deviceSyncManager');
     http.Response response = await http.post(url, body: {
       "hubid": hubId,
       "serial": serial,
       "devicename": deviceName,
+      "type": deviceType,
     });
     print('Response status: ${response.statusCode}');
     print('Response body: ${response.body}');
@@ -227,16 +229,18 @@ class ApiCalls {
     return Future<List>.value(hubDevices);
   }
 
-  Future<bool> addHub(String ssid, String password) async {
-    Uri url = Uri.parse(_ip + '/');
+  Future<String> addHub(String ssid, String password) async {
+    // Uri url = Uri.parse(_ip + '/');
+    Uri url = Uri.parse(_apiUrl + '/devTest');
     http.Response response = await http.post(url, body: {
       "ssid": ssid,
       "password": password,
     });
     if (response.statusCode == 200) {
-      return Future<bool>.value(true);
+      print('bodyresp' + response.body);
+      return Future<String>.value(response.body);
     }
-    return Future<bool>.value(false);
+    return Future<String>.value("false");
   }
 
   void sample() async {

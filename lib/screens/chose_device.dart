@@ -3,6 +3,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import "package:flutter/material.dart";
 import 'package:foka_app_v1/components/service.dart';
 import 'package:foka_app_v1/screens/make_sure.dart';
+import 'package:foka_app_v1/utils/data.dart';
 
 class SelectService extends StatefulWidget {
   const SelectService({Key? key}) : super(key: key);
@@ -33,6 +34,8 @@ class _SelectServiceState extends State<SelectService> {
         floatingActionButton: selectedService >= 0
             ? FloatingActionButton(
                 onPressed: () {
+                  print("selectedService " + selectedService.toString());
+                  Data().setDeviceType("${selectedService + 1}");
                   Navigator.pushNamed(context, MakeSure.id);
                 },
                 child: const Icon(

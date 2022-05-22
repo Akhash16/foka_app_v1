@@ -72,6 +72,7 @@ dependencies:
   fl_chart: ^0.45.0
   draw_graph: ^1.0.0
   shared_preferences: ^2.0.13
+  firebase_messaging: ^11.4.0
 
   
 dev_dependencies:

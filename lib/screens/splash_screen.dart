@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:foka_app_v1/screens/boats_page.dart';
 import 'package:foka_app_v1/screens/login_screen.dart';
@@ -28,6 +29,9 @@ class _SplashScreenState extends State<SplashScreen> {
       //   return BoatsPage(boatData: value);
       // }));
       print(value);
+
+      getToken(email);
+
       Data().setBoatData(value);
       Navigator.popAndPushNamed(context, BoatsPage.id);
     });
@@ -36,6 +40,14 @@ class _SplashScreenState extends State<SplashScreen> {
     // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
     //   return BoatsPage(boatData: boatData);
     // }));
+  }
+
+  void pushToken(String email, String token) {
+    ApiCalls().addUserData(email, token);
+  }
+
+  void getToken(String email) async {
+    await FirebaseMessaging.instance.getToken().then((value) => pushToken(email, value!));
   }
 
   @override

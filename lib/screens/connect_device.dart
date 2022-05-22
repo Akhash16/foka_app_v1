@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:foka_app_v1/screens/add_device_screen.dart';
 import 'package:foka_app_v1/screens/qr_code.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
@@ -13,7 +14,8 @@ class ConnectDevice extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.blue,
         onPressed: () {
-          Navigator.pushNamed(context, QrScreen.id);
+          // Navigator.pushNamed(context, QrScreen.id);
+          Navigator.pushNamed(context, AddDeviceScreen.id);
         },
         child: const Icon(
           Icons.navigate_next,
@@ -39,7 +41,12 @@ class ConnectDevice extends StatelessWidget {
             child: Text(
               "Connect to your device wifi now(eg. Fokatech ultrasonic fkbxxx)",
               textAlign: TextAlign.center,
-              style: GoogleFonts.montserrat(fontStyle: FontStyle.normal, fontSize: 25, color: Colors.white, fontWeight: FontWeight.w500,),
+              style: GoogleFonts.montserrat(
+                fontStyle: FontStyle.normal,
+                fontSize: 25,
+                color: Colors.white,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           )
         ],

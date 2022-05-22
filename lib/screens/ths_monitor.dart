@@ -477,51 +477,51 @@ class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMix
                   trailing: settingsTrailingIcon,
                 ),
                 settingsPageDivider,
-                Text('Gas Settings', style: settingsHeadingTextStyle),
-                ListTile(
-                  title: Text(
-                    'Enable Alerts',
-                    style: settingsLeadingTextStyle,
-                  ),
-                  trailing: Switch(
-                    value: gasState,
-                    onChanged: (value) {
-                      setState(() {
-                        gasState = value;
-                        settingsUpdate();
-                      });
-                    },
-                    inactiveTrackColor: Colors.white,
-                    inactiveThumbColor: Colors.blueGrey,
-                  ),
-                ),
-                ListTile(
-                  onTap: () => showPickerNumberGas(context, false),
-                  leading: Text(
-                    'Lower Limit',
-                    style: settingsLeadingTextStyle,
-                  ),
-                  title: Text(
-                    gasCurrentLowerValue.toString(),
-                    style: settingsTitleTextStyle,
-                    textAlign: TextAlign.end,
-                  ),
-                  trailing: settingsTrailingIcon,
-                ),
-                ListTile(
-                  onTap: () => showPickerNumberGas(context, true),
-                  leading: Text(
-                    'Upper Limit',
-                    style: settingsLeadingTextStyle,
-                  ),
-                  title: Text(
-                    gasCurrentUpperValue.toString(),
-                    style: settingsTitleTextStyle,
-                    textAlign: TextAlign.end,
-                  ),
-                  trailing: settingsTrailingIcon,
-                ),
-                settingsPageDivider,
+                // Text('Gas Settings', style: settingsHeadingTextStyle),
+                // ListTile(
+                //   title: Text(
+                //     'Enable Alerts',
+                //     style: settingsLeadingTextStyle,
+                //   ),
+                //   trailing: Switch(
+                //     value: gasState,
+                //     onChanged: (value) {
+                //       setState(() {
+                //         gasState = value;
+                //         settingsUpdate();
+                //       });
+                //     },
+                //     inactiveTrackColor: Colors.white,
+                //     inactiveThumbColor: Colors.blueGrey,
+                //   ),
+                // ),
+                // ListTile(
+                //   onTap: () => showPickerNumberGas(context, false),
+                //   leading: Text(
+                //     'Lower Limit',
+                //     style: settingsLeadingTextStyle,
+                //   ),
+                //   title: Text(
+                //     gasCurrentLowerValue.toString(),
+                //     style: settingsTitleTextStyle,
+                //     textAlign: TextAlign.end,
+                //   ),
+                //   trailing: settingsTrailingIcon,
+                // ),
+                // ListTile(
+                //   onTap: () => showPickerNumberGas(context, true),
+                //   leading: Text(
+                //     'Upper Limit',
+                //     style: settingsLeadingTextStyle,
+                //   ),
+                //   title: Text(
+                //     gasCurrentUpperValue.toString(),
+                //     style: settingsTitleTextStyle,
+                //     textAlign: TextAlign.end,
+                //   ),
+                //   trailing: settingsTrailingIcon,
+                // ),
+                // settingsPageDivider,
                 Text(
                   'Humidity Settings',
                   style: settingsHeadingTextStyle,

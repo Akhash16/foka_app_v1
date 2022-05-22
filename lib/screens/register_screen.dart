@@ -317,7 +317,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   isPasswordNotMatching = false;
                                 });
                                 if (Authentication().emailRegisterAuth(email, password1)) {
-                                  // ApiCalls().addUserData(email, Authentication().getCurrentUserId());
                                   Navigator.popAndPushNamed(context, Onboarding.id);
                                 }
                               } else {
