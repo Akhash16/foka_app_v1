@@ -40,7 +40,7 @@ class _SettingScreenState extends State<SettingScreen> {
         actions: [
           IconButton(
             onPressed: () {
-              // Navigator.pushNamed(context, THSSettingsPage.id);
+             
             },
             icon: const Icon(Icons.settings),
           ),
@@ -51,102 +51,53 @@ class _SettingScreenState extends State<SettingScreen> {
           const SizedBox(
             height: 20,
           ),
-          InkWell(
-            onTap: (() {
+          SettingsOptions(
+            icon: const Icon(
+              Icons.edit,
+              color: Color(0xff7E8187),
+            ),
+            title: 'Edit Profile',
+            onPressed: () {
               Navigator.pushNamed(context, ProfileScreen.id);
-            }),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Center(
-                child: Row(children: [
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  const Icon(
-                    Icons.edit,
-                    color: Color(0xff7E8187),
-                  ),
-                  const SizedBox(
-                    width: 20,
-                  ),
-                  Text(
-                    "Edit Profile",
-                    style: menuTextStyle,
-                  )
-                ]),
-              ),
-            ),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          InkWell(
-            onTap: (() {
-              Navigator.pushNamed(context, ManageBoats.id);
-            }),
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  child: Row(children: [
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    const Icon(
-                      Icons.manage_accounts,
-                      color: Color(0xff7E8187),
-                    ),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    Text(
-                      "Manage Boats",
-                      style: menuTextStyle,
-                    )
-                  ]),
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          InkWell(
-            onTap: () {
-              Authentication().signOut().then((value) => Navigator.popAndPushNamed(context, SplashScreen.id));
             },
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  child: Row(children: [
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    const Icon(
-                      Icons.logout,
-                      color: const Color(0xff7E8187),
-                    ),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    Text(
-                      "Log Out",
-                      style: menuTextStyle,
-                    )
-                  ]),
-                ),
-              ),
-            ),
           ),
+          const SizedBox(
+            height: 20,
+          ),
+          SettingsOptions(
+            icon: const Icon(
+              Icons.manage_accounts,
+              color: Color(0xff7E8187),
+            ),
+            title: 'Manage Boats',
+            onPressed: () {
+              Navigator.pushNamed(context, ManageBoats.id);
+            },
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          SettingsOptions(
+              icon: const Icon(
+                Icons.logout,
+                color: const Color(0xff7E8187),
+              ),
+              title: 'Log Out',
+              onPressed: () {
+                Authentication().signOut().then((value) =>
+                    Navigator.popAndPushNamed(context, SplashScreen.id));
+              }),
           SizedBox(
             height: MediaQuery.of(context).size.height * 0.53,
           ),
           ElevatedButton(
             onPressed: () {
-              Authentication().deleteUserAccount().then((value) => Navigator.pushNamed(context, SplashScreen.id));
+              Authentication().deleteUserAccount().then(
+                  (value) => Navigator.pushNamed(context, SplashScreen.id));
             },
-            style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.red.shade700)),
+            style: ButtonStyle(
+                backgroundColor:
+                    MaterialStateProperty.all<Color>(Colors.red.shade700)),
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Container(
@@ -175,6 +126,44 @@ class _SettingScreenState extends State<SettingScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class SettingsOptions extends StatelessWidget {
+  const SettingsOptions({
+    Key? key,
+    required this.icon,
+    required this.title,
+    required this.onPressed,
+  }) : super(key: key);
+
+  final Icon icon;
+  final String title;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onPressed,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Center(
+          child: Row(children: [
+            const SizedBox(
+              width: 10,
+            ),
+            icon,
+            const SizedBox(
+              width: 20,
+            ),
+            Text(
+              title,
+              style: menuTextStyle,
+            )
+          ]),
+        ),
       ),
     );
   }
