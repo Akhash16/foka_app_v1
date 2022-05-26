@@ -60,7 +60,7 @@ class _GeoFenceState extends State<GeoFence> {
 
   void setSettings() {
     print('$lat $long $isGeofence $_radiusValue');
-    ApiCalls().updateLocationSettingsApi(deviceId, {
+    ApiCalls.updateLocationSettingsApi(deviceId, {
       "dock_point": "$lat,$long",
       "geofence_enable": isGeofence ? '1' : '0',
       "radius": _radiusValue.toString(),

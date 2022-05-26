@@ -7,6 +7,7 @@ import 'package:foka_app_v1/main.dart';
 import 'package:foka_app_v1/utils/apiCalls.dart';
 import 'package:foka_app_v1/utils/data.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
@@ -45,17 +46,20 @@ class _SmartConnectState extends State<SmartConnect> {
     {"name": "Relay 8", "value": 0, "usable": true},
   ];
 
+  bool showSpinner = true;
+
   late MqttServerClient client;
 
   @override
   void initState() {
     getValues();
     super.initState();
-    Timer timer = Timer.periodic(const Duration(seconds: 1), (Timer t) => change());
+    // Timer timer = Timer.periodic(const Duration(seconds: 1), (Timer t) => change());
 
     void start() async {
       await connectClient();
-      client.subscribe("/$hubId/$deviceId", MqttQos.atLeastOnce);
+      client.subscribe("/$deviceId", MqttQos.atLeastOnce);
+      initialPublish();
     }
 
     start();
@@ -98,6 +102,9 @@ class _SmartConnectState extends State<SmartConnect> {
 
       print('Received message:$payload from topic: ${c[0].topic}>');
       values = payload.split(',').map(int.parse).toList();
+      setState(() {
+        showSpinner = false;
+      });
     });
 
     return client;
@@ -138,15 +145,25 @@ class _SmartConnectState extends State<SmartConnect> {
     print('Ping response client callback invoked');
   }
 
-  void publish(String toPublish) {
-    final pubTopic = '/$hubId/$deviceId/InputNode';
+  void initialPublish() {
+    final pubTopic = '/InputNode/$deviceId/wake';
+    final builder = MqttClientPayloadBuilder();
+    builder.addString('WAKE');
+    client.publishMessage(pubTopic, MqttQos.atLeastOnce, builder.payload!);
+  }
+
+  void publish(String toPublish, String port) {
+    final pubTopic = '/$deviceId/InputNode/$port';
     final builder = MqttClientPayloadBuilder();
     builder.addString(toPublish);
     client.publishMessage(pubTopic, MqttQos.atLeastOnce, builder.payload!);
   }
 
-  void changePublish(int index) {
-    publish('{"serial": "$deviceId", "relaynumber": "relay${index + 1}", "val": ${values[index]}}');
+  void changePublish(int index, String value) {
+    publish('{"serial": "$deviceId", "relaynumber": "relay${index + 1}", "val": $value}', '${index + 1}');
+    setState(() {
+      showSpinner = true;
+    });
   }
 
   void change() {
@@ -205,7 +222,7 @@ class _SmartConnectState extends State<SmartConnect> {
   }
 
   settingsUpdate() {
-    ApiCalls().updateSmartConnectSettingsApi(deviceId, {
+    ApiCalls.updateSmartConnectSettingsApi(deviceId, {
       "p1_enable": relay[0]['usable'] ? '1' : '0',
       "p1_name": relay[0]['name'],
       "p2_enable": relay[1]['usable'] ? '1' : '0',
@@ -288,7 +305,7 @@ class _SmartConnectState extends State<SmartConnect> {
           dropdownList: dropdownItemList,
           onChange: (_) async {
             await connectClient();
-            client.subscribe("/$hubId/" + _['value'], MqttQos.atLeastOnce);
+            client.subscribe("/" + _['value'], MqttQos.atLeastOnce);
             deviceId = _['value'];
             print("The device number is " + _['value']);
           },
@@ -411,13 +428,28 @@ class _SmartConnectState extends State<SmartConnect> {
                             relay[index]['usable'] = value;
                           });
                           settingsUpdate();
-                          changePublish(index);
+                          changePublish(index, '0');
                         },
                         inactiveTrackColor: Colors.white,
                         inactiveThumbColor: Colors.blueGrey,
                       ),
                     );
                   }),
+              Center(
+                child: ElevatedButton(
+                  onPressed: () {
+                    ApiCalls.deleteDevice(deviceId);
+                  },
+                  style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.red.shade600)),
+                  child: Text(
+                    "Delete Device",
+                    style: GoogleFonts.lexendDeca(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w300,
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ),
@@ -447,64 +479,67 @@ class _SmartConnectState extends State<SmartConnect> {
       //   ),
       // ),
       backgroundColor: const Color(0xff090f13),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 18),
-          child: GridView.builder(
-              itemCount: relay.length,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                mainAxisSpacing: 10.0,
-                crossAxisSpacing: 10.0,
-              ),
-              itemBuilder: (context, index) {
-                return AnimatedOpacity(
-                  opacity: relay[index]['usable'] ? 1 : 0.3,
-                  duration: const Duration(milliseconds: 500),
-                  child: Card(
-                    color: const Color(0xff1d2429),
-                    shape: BeveledRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
+      body: ModalProgressHUD(
+        inAsyncCall: showSpinner,
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 18),
+            child: GridView.builder(
+                itemCount: relay.length,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 10.0,
+                  crossAxisSpacing: 10.0,
+                ),
+                itemBuilder: (context, index) {
+                  return AnimatedOpacity(
+                    opacity: relay[index]['usable'] ? 1 : 0.3,
+                    duration: const Duration(milliseconds: 500),
+                    child: Card(
+                      color: const Color(0xff1d2429),
+                      shape: BeveledRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Text(
+                            relay[index]['name'],
+                            style: GoogleFonts.montserrat(color: Colors.white, fontWeight: FontWeight.w400, fontSize: 25),
+                          ),
+                          // const SizedBox(
+                          //   height: 20,
+                          // ),
+                          ToggleSwitch(
+                            cornerRadius: 20,
+                            animate: true,
+                            fontSize: 10,
+                            inactiveBgColor: const Color(0xff303030),
+                            inactiveFgColor: Colors.white,
+                            minWidth: MediaQuery.of(context).size.width * 0.15,
+                            // initialLabelIndex: relay[index]['value'],
+                            initialLabelIndex: values[index],
+                            totalSwitches: 2,
+                            labels: const ['OFF', 'ON'],
+                            customTextStyles: [
+                              GoogleFonts.montserrat(fontWeight: FontWeight.w400, color: Colors.white),
+                              GoogleFonts.montserrat(fontWeight: FontWeight.w400, color: Colors.white),
+                            ],
+                            changeOnTap: relay[index]['usable'],
+                            onToggle: (value) {
+                              // print('switched to: $index');
+                              // relay[index]['value'] = value;
+                              // values[index] = value;
+                              changePublish(index, value.toString());
+                              settingsUpdate();
+                            },
+                          ),
+                        ],
+                      ),
                     ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Text(
-                          relay[index]['name'],
-                          style: GoogleFonts.montserrat(color: Colors.white, fontWeight: FontWeight.w400, fontSize: 25),
-                        ),
-                        // const SizedBox(
-                        //   height: 20,
-                        // ),
-                        ToggleSwitch(
-                          cornerRadius: 20,
-                          animate: true,
-                          fontSize: 10,
-                          inactiveBgColor: const Color(0xff303030),
-                          inactiveFgColor: Colors.white,
-                          minWidth: MediaQuery.of(context).size.width * 0.15,
-                          // initialLabelIndex: relay[index]['value'],
-                          initialLabelIndex: values[index],
-                          totalSwitches: 2,
-                          labels: const ['OFF', 'ON'],
-                          customTextStyles: [
-                            GoogleFonts.montserrat(fontWeight: FontWeight.w400, color: Colors.white),
-                            GoogleFonts.montserrat(fontWeight: FontWeight.w400, color: Colors.white),
-                          ],
-                          changeOnTap: relay[index]['usable'],
-                          onToggle: (value) {
-                            // print('switched to: $index');
-                            // relay[index]['value'] = value;
-                            values[index] = value;
-                            changePublish(index);
-                            settingsUpdate();
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              }),
+                  );
+                }),
+          ),
         ),
       ),
     );

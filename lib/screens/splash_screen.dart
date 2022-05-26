@@ -24,7 +24,7 @@ class _SplashScreenState extends State<SplashScreen> {
   // }
 
   void getBoatDataAndPush(String email) async {
-    await ApiCalls().getBoatsApi(email).then((value) {
+    await ApiCalls.getBoatsApi(email).then((value) {
       // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
       //   return BoatsPage(boatData: value);
       // }));
@@ -43,7 +43,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void pushToken(String email, String token) {
-    ApiCalls().addUserData(email, token);
+    ApiCalls.addUserData(email, token);
   }
 
   void getToken(String email) async {
@@ -53,7 +53,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    // ApiCalls().sample();
+    // ApiCalls.sample();
     onRefresh(Authentication().getCurrentUserEmail());
     Future.delayed(const Duration(seconds: 5), () {
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginScreen()));

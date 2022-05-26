@@ -74,8 +74,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   getDevices() async {
-    devices = await ApiCalls().getHubDevices(hubId);
-    connectedDevices = await ApiCalls().getConnectedDevices(hubId);
+    devices = await ApiCalls.getHubDevices(hubId);
+    connectedDevices = await ApiCalls.getConnectedDevices(hubId);
     setState(() {
       items = buildItems(devices);
       showSpinner = false;
@@ -84,8 +84,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   Future<List> getDiagonsticData() async {
     activeOrNot.clear();
-    List hubDevices = await ApiCalls().getHubDevicesCount(hubId);
-    List connectedDevices = await ApiCalls().getConnectedDevicesCount(hubId);
+    List hubDevices = await ApiCalls.getHubDevicesCount(hubId);
+    List connectedDevices = await ApiCalls.getConnectedDevicesCount(hubId);
     for (int i = 0; i < hubDevices.length; i++) {
       activeOrNot.add(hubDevices[i] == 0 ? -1 : hubDevices[i] - connectedDevices[i]);
     }
@@ -104,7 +104,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   showSpinner = true;
                 });
                 getDevices();
-                await ApiCalls().getTHSSettingsApi(devices[0][0]['serial']).then((value) {
+                await ApiCalls.getTHSSettingsApi(devices[0][0]['serial']).then((value) {
                   print(value);
                   Data().setDevices(devices[0]);
                   Data().setSettings(value);
@@ -117,7 +117,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   //   );
                   // }));
                 });
-                // await ApiCalls().getTHSSettingsApi(deviceName).then((value) {
+                // await ApiCalls.getTHSSettingsApi(deviceName).then((value) {
                 //   print(value);
                 //   Navigator.push(context, MaterialPageRoute(builder: (context) {
                 //     return THSSettingsPage(settings: value);
@@ -150,7 +150,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   showSpinner = true;
                 });
                 getDevices();
-                await ApiCalls().getUltrasonicSettingsApi(devices[1][0]['serial']).then((value) {
+                await ApiCalls.getUltrasonicSettingsApi(devices[1][0]['serial']).then((value) {
                   print(value);
                   Data().setSettings(value);
                   Data().setDevices(devices[1]);
@@ -220,7 +220,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   showSpinner = true;
                 });
                 getDevices();
-                await ApiCalls().getSmartConnectSettingsApi(devices[3][0]['serial']).then((value) {
+                await ApiCalls.getSmartConnectSettingsApi(devices[3][0]['serial']).then((value) {
                   setState(() {
                     showSpinner = false;
                   });
@@ -257,7 +257,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 setState(() {
                   showSpinner = true;
                 });
-                await ApiCalls().getLocationSettingsApi(devices[4][0]['serial']).then((value) {
+                await ApiCalls.getLocationSettingsApi(devices[4][0]['serial']).then((value) {
                   setState(() {
                     showSpinner = false;
                   });

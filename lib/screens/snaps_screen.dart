@@ -30,7 +30,7 @@ class _SnapsScreenState extends State<SnapsScreen> {
   }
 
   getSnapData() async {
-    snapData = await ApiCalls().snapScreenApi(Data().getHubId());
+    snapData = await ApiCalls.snapScreenApi(Data().getHubId());
   }
 
   @override

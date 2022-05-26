@@ -15,12 +15,13 @@ class SelectService extends StatefulWidget {
 
 class _SelectServiceState extends State<SelectService> {
   List<Service> services = [
-    Service(const AutoSizeText('Location Tracker'), 'https://img.icons8.com/stickers/344/worldwide-location.png'),
     Service(const AutoSizeText('THS Monitor'), 'https://img.icons8.com/external-flatart-icons-flat-flatarticons/344/external-temperature-internet-of-things-flatart-icons-flat-flatarticons.png'),
-    Service(const AutoSizeText('Security Monitor'), 'https://img.icons8.com/color/344/wallmount-camera.png'),
-    Service(const AutoSizeText('Smart Connect'), 'https://img.icons8.com/color/344/share-2.png'),
     Service(const AutoSizeText('Fluid Monitor'), 'https://img.icons8.com/color/344/water.png'),
     Service(const AutoSizeText('Float Sensor'), 'https://img.icons8.com/color/344/period-slider.png'),
+    Service(const AutoSizeText('Smart Connect'), 'https://img.icons8.com/color/344/share-2.png'),
+    Service(const AutoSizeText('Location Tracker'), 'https://img.icons8.com/stickers/344/worldwide-location.png'),
+    Service(const AutoSizeText('Security Monitor'), 'https://img.icons8.com/color/344/wallmount-camera.png'),
+    Service(const AutoSizeText('Battery Monitor'), 'https://img.icons8.com/stickers/344/worldwide-location.png'),
   ];
 
   int selectedService = -1;

@@ -13,7 +13,7 @@ class Data {
   setDevices(devices) => _devices = devices;
   setSettings(settings) => _settings = settings;
   setDeviceId(deviceId) => _deviceId = deviceId;
-  setDeviceType(deviceType) => _deviceId = _deviceType;
+  setDeviceType(deviceType) => _deviceType = deviceType;
 
   List<dynamic> getBoatData() => _boatData;
   String getBoatName() => _boatName;

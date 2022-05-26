@@ -88,8 +88,8 @@ class _AddBoatVerificationState extends State<AddBoatVerification> {
                 child: ConfirmationSlider(
                   onConfirmation: () async {
                     if (textController.text != '') {
-                      ApiCalls().addBoatsApi(Data().getHubId(), textController.text);
-                      await ApiCalls().getBoatsApi(Authentication().getCurrentUserEmail()!).then(
+                      ApiCalls.addBoatsApi(Data().getHubId(), textController.text);
+                      await ApiCalls.getBoatsApi(Authentication().getCurrentUserEmail()!).then(
                         (value) {
                           Data().setBoatData(value);
                           Navigator.popAndPushNamed(context, BoatsPage.id);

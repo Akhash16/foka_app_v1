@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({ Key? key }) : super(key: key);
+  const ProfileScreen({Key? key}) : super(key: key);
   static const String id = "profile_screen";
 
   @override
@@ -11,8 +11,11 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      
+    return Center(
+      child: Container(
+        color: Colors.white,
+        child: Text('to be done'),
+      ),
     );
   }
 }

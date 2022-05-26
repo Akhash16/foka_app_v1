@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:foka_app_v1/screens/add_boat_verification.dart';
 import 'package:foka_app_v1/screens/add_device_name.dart';
@@ -13,6 +14,7 @@ import 'package:foka_app_v1/screens/add_boat_screen.dart';
 import 'package:foka_app_v1/screens/boat_add_data.dart';
 import 'package:foka_app_v1/screens/boats_page.dart';
 import 'package:foka_app_v1/screens/fluid_settings_page.dart';
+import 'package:foka_app_v1/screens/for_api.dart';
 import 'package:foka_app_v1/screens/forgot_password.dart';
 import 'package:foka_app_v1/screens/geofence.dart';
 import 'package:foka_app_v1/screens/home_screen.dart';
@@ -34,6 +36,7 @@ import 'package:foka_app_v1/screens/ths_monitor.dart';
 import 'package:foka_app_v1/screens/ths_settings_page.dart';
 import 'package:foka_app_v1/screens/wifi_screen.dart';
 import 'package:foka_app_v1/utils/userSimplePreferences.dart';
+import 'package:mqtt_client/mqtt_client.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -51,6 +54,24 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      print('Got a message whilst in the foreground!');
+      print('Message data: ${message.data}');
+
+      if (message.notification != null) {
+        print('Message also contained a notification: ${message.notification!.title}');
+
+        showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text(message.notification!.title!),
+                content: Text(message.notification!.body!),
+              );
+            });
+      }
+    });
+
     return MaterialApp(
       theme: ThemeData(
         bottomSheetTheme: BottomSheetThemeData(
@@ -58,7 +79,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       title: "Foka Tech",
-      initialRoute: SplashScreen.id,
+      initialRoute: ForAPI.id,
       routes: {
         LoginScreen.id: (context) => const LoginScreen(),
         RegisterScreen.id: (context) => const RegisterScreen(),
@@ -92,6 +113,7 @@ class MyApp extends StatelessWidget {
         ManageBoats.id: (context) => const ManageBoats(),
         AddDeviceName.id: (context) => const AddDeviceName(),
         AddDeviceScreen.id: (context) => const AddDeviceScreen(),
+        ForAPI.id: (context) => const ForAPI(),
       },
     );
   }

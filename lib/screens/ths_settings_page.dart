@@ -54,7 +54,7 @@ class _THSSettingsPageState extends State<THSSettingsPage> {
   }
 
   settingsUpdate() {
-    ApiCalls().updateTHSSettingsApi(deviceName, {
+    ApiCalls.updateTHSSettingsApi(deviceName, {
       "alert_temp": tempState ? '1' : '0',
       "low_temp": tempCurrentLowerValue.toString(),
       "high_temp": tempCurrentUpperValue.toString(),

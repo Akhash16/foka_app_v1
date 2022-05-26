@@ -3,8 +3,10 @@ import 'dart:async';
 import 'package:draw_graph/draw_graph.dart';
 import 'package:draw_graph/models/feature.dart';
 import 'package:flutter/material.dart';
+import 'package:foka_app_v1/components/constants.dart';
 import 'package:foka_app_v1/main.dart';
 import 'package:foka_app_v1/screens/home_screen.dart';
+import 'package:foka_app_v1/utils/apiCalls.dart';
 import 'package:foka_app_v1/utils/data.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mqtt_client/mqtt_client.dart';
@@ -29,7 +31,7 @@ class _BatteryMonitorState extends State<BatteryMonitor> with TickerProviderStat
 
   bool isMqttValueRecieved = false;
 
-  double b1Percentage = 75.0, b2Percentage = 95.0;
+  double b1Percentage = 10.0, b2Percentage = 20.0;
   List<Color> colors = [const Color(0xff45C55C), const Color(0xff5BBBFC)];
   List<Feature> features = [
     Feature(
@@ -43,6 +45,11 @@ class _BatteryMonitorState extends State<BatteryMonitor> with TickerProviderStat
       data: [0.25, 0.69, 0.57, 0.62, 0.83, 0.61],
     ),
   ];
+
+  bool alertState = false;
+
+  String houseBatteryDropdown = '12V';
+  String engineBatteryDropdown = '12V';
 
   @override
   void initState() {
@@ -184,11 +191,117 @@ class _BatteryMonitorState extends State<BatteryMonitor> with TickerProviderStat
         ),
         centerTitle: true,
         actions: [
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.settings),
+          Builder(
+            builder: (context) => IconButton(
+              icon: const Icon(Icons.settings),
+              onPressed: () => Scaffold.of(context).openEndDrawer(),
+              tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
+            ),
           ),
         ],
+      ),
+      endDrawer: Drawer(
+        backgroundColor: Colors.black,
+        child: Column(
+          children: [
+            const SizedBox(
+              height: 40,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Text(
+                'Battery Settings',
+                style: settingsHeadingTextStyle,
+              ),
+            ),
+            ListTile(
+              title: Text(
+                'Enable Alerts',
+                style: settingsLeadingTextStyle,
+              ),
+              trailing: Switch(
+                value: alertState,
+                onChanged: (value) {
+                  setState(() {
+                    alertState = value;
+                    // settingsUpdate();
+                  });
+                },
+                inactiveTrackColor: Colors.white,
+                inactiveThumbColor: Colors.blueGrey,
+              ),
+            ),
+            ListTile(
+              title: Text(
+                'House Battery',
+                style: settingsLeadingTextStyle,
+              ),
+              trailing: DropdownButton<String>(
+                value: houseBatteryDropdown,
+                icon: const Icon(Icons.arrow_drop_down),
+                elevation: 16,
+                style: const TextStyle(color: Colors.deepPurple),
+                underline: Container(
+                  height: 2,
+                  color: Colors.deepPurpleAccent,
+                ),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    houseBatteryDropdown = newValue!;
+                  });
+                },
+                items: <String>['12V', '24V', '48V'].map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+              ),
+            ),
+            ListTile(
+              title: Text(
+                'Engine Battery',
+                style: settingsLeadingTextStyle,
+              ),
+              trailing: DropdownButton<String>(
+                value: engineBatteryDropdown,
+                icon: const Icon(Icons.arrow_drop_down),
+                elevation: 16,
+                style: const TextStyle(color: Colors.deepPurple),
+                underline: Container(
+                  height: 2,
+                  color: Colors.deepPurpleAccent,
+                ),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    engineBatteryDropdown = newValue!;
+                  });
+                },
+                items: <String>['12V', '24V', '48V'].map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+              ),
+            ),
+            Center(
+              child: ElevatedButton(
+                onPressed: () {
+                  // ApiCalls.deleteDevice(deviceId);
+                },
+                style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.red.shade600)),
+                child: Text(
+                  "Delete Device",
+                  style: GoogleFonts.lexendDeca(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w300,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -196,71 +309,131 @@ class _BatteryMonitorState extends State<BatteryMonitor> with TickerProviderStat
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              CircularStepProgressIndicator(
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        Icons.flash_on,
-                        color: Colors.white,
-                        size: 40,
+              Column(
+                children: [
+                  CircularStepProgressIndicator(
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.flash_on,
+                            color: Colors.white,
+                            size: 40,
+                          ),
+                          RichText(
+                            text: TextSpan(
+                              style: GoogleFonts.montserrat(color: Colors.white, fontSize: 35, fontWeight: FontWeight.w500),
+                              children: <TextSpan>[
+                                TextSpan(text: b1Percentage.toStringAsFixed(1)),
+                                const TextSpan(text: " V", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                      RichText(
-                        text: TextSpan(
-                          style: GoogleFonts.montserrat(color: Colors.white, fontSize: 35, fontWeight: FontWeight.w500),
-                          children: <TextSpan>[
-                            TextSpan(text: b1Percentage.toStringAsFixed(1)),
-                            const TextSpan(text: " V", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-                          ],
-                        ),
-                      ),
-                    ],
+                    ),
+                    totalSteps: 100,
+                    currentStep: animation1.value.toInt(),
+                    stepSize: 12,
+                    selectedColor: Colors.lightBlueAccent,
+                    unselectedColor: Colors.grey[700],
+                    padding: 0,
+                    width: MediaQuery.of(context).size.width * 0.4,
+                    height: MediaQuery.of(context).size.width * 0.4,
+                    selectedStepSize: 12,
+                    roundedCap: (_, __) => true,
                   ),
-                ),
-                totalSteps: 100,
-                currentStep: animation1.value.toInt(),
-                stepSize: 12,
-                selectedColor: Colors.lightBlueAccent,
-                unselectedColor: Colors.grey[700],
-                padding: 0,
-                width: MediaQuery.of(context).size.width * 0.4,
-                height: MediaQuery.of(context).size.width * 0.4,
-                selectedStepSize: 12,
-                roundedCap: (_, __) => true,
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    b1Percentage > 13.05
+                        ? 'Overload'
+                        : b1Percentage > 12.37
+                            ? 'Excellent'
+                            : b1Percentage > 11.96
+                                ? 'Good'
+                                : b1Percentage > 11.66
+                                    ? 'Poor'
+                                    : 'Critical',
+                    style: TextStyle(
+                      color: b1Percentage > 13.05
+                          ? Colors.red
+                          : b1Percentage > 12.37
+                              ? Colors.green
+                              : b1Percentage > 11.96
+                                  ? Colors.lightGreenAccent
+                                  : b1Percentage > 11.66
+                                      ? Colors.yellow
+                                      : Colors.red,
+                      fontSize: 20.0,
+                    ),
+                  ),
+                ],
               ),
-              CircularStepProgressIndicator(
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        Icons.flash_on,
-                        color: Colors.white,
-                        size: 40,
+              Column(
+                children: [
+                  CircularStepProgressIndicator(
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.flash_on,
+                            color: Colors.white,
+                            size: 40,
+                          ),
+                          RichText(
+                            text: TextSpan(
+                              style: GoogleFonts.montserrat(color: Colors.white, fontSize: 35, fontWeight: FontWeight.w500),
+                              children: <TextSpan>[
+                                TextSpan(text: b2Percentage.toStringAsFixed(1)),
+                                const TextSpan(text: " V", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                      RichText(
-                        text: TextSpan(
-                          style: GoogleFonts.montserrat(color: Colors.white, fontSize: 35, fontWeight: FontWeight.w500),
-                          children: <TextSpan>[
-                            TextSpan(text: b2Percentage.toStringAsFixed(1)),
-                            const TextSpan(text: " V", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-                          ],
-                        ),
-                      ),
-                    ],
+                    ),
+                    totalSteps: 100,
+                    currentStep: animation1.value.toInt(),
+                    stepSize: 12,
+                    selectedColor: Colors.greenAccent,
+                    unselectedColor: Colors.grey[700],
+                    padding: 0,
+                    width: MediaQuery.of(context).size.width * 0.4,
+                    height: MediaQuery.of(context).size.width * 0.4,
+                    selectedStepSize: 12,
+                    roundedCap: (_, __) => true,
                   ),
-                ),
-                totalSteps: 100,
-                currentStep: animation1.value.toInt(),
-                stepSize: 12,
-                selectedColor: Colors.greenAccent,
-                unselectedColor: Colors.grey[700],
-                padding: 0,
-                width: MediaQuery.of(context).size.width * 0.4,
-                height: MediaQuery.of(context).size.width * 0.4,
-                selectedStepSize: 12,
-                roundedCap: (_, __) => true,
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    b2Percentage > 24.74
+                        ? 'Overload'
+                        : b2Percentage > 23.92
+                            ? 'Excellent'
+                            : b2Percentage > 23.32
+                                ? 'Good'
+                                : b2Percentage > 23.02
+                                    ? 'Poor'
+                                    : 'Critical',
+                    style: TextStyle(
+                      color: b2Percentage > 24.74
+                          ? Colors.red
+                          : b2Percentage > 23.92
+                              ? Colors.green
+                              : b2Percentage > 23.32
+                                  ? Colors.greenAccent
+                                  : b2Percentage > 23.02
+                                      ? Colors.yellow
+                                      : Colors.red,
+                      fontSize: 20.0,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

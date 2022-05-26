@@ -4,20 +4,27 @@ import 'package:foka_app_v1/utils/authentication.dart';
 import 'package:http/http.dart' as http;
 
 class ApiCalls {
-  final String _apiUrl = 'https://c708-183-82-204-2.ngrok.io/';
+  static String _apiUrl = 'http://164.52.212.96:3000';
+  // final String _apiUrl = 'https://7fcd-183-82-31-23.ngrok.io';
   // final String _apiUrl = 'http://164.52.212.96:3000';
   // final String _apiUrl = 'http://10.3.141.236';
-  final String _ip = 'http://192.168.4.1';
+  static final String _ip = 'http://192.168.4.1';
 
-  List<dynamic> boats = [];
+  static List<dynamic> boats = [];
 
-  List<String> imageUrl = [
+  static List<String> imageUrl = [
     'https://i.pinimg.com/550x/a7/f5/90/a7f5904f50f65424dbfb69f18e8f7753.jpg',
     'https://www.viewbug.com/media/mediafiles/2019/05/27/84896105_large.jpg',
     'https://i.pinimg.com/736x/b3/df/17/b3df17c88af0b6e56988d42cb2c35e63.jpg',
   ];
 
-  void addUserData(String email, String token) async {
+  static void updateApi(String api) {
+    _apiUrl = api;
+    print('apiurl ' + _apiUrl);
+    print('api ' + api);
+  }
+
+  static void addUserData(String email, String token) async {
     Uri url = Uri.parse(_apiUrl + '/userData');
     http.Response response = await http.post(url, body: {
       "email": email,
@@ -27,7 +34,15 @@ class ApiCalls {
     print('Response body: ${response.body}');
   }
 
-  Future getBoatsApi(String email) async {
+  static void deleteDevice(String deviceId) async {
+    Uri url = Uri.parse(_apiUrl + '/$deviceId');
+    http.Response response = await http.delete(url);
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+  }
+
+  static Future getBoatsApi(String email) async {
+    print(_apiUrl);
     Uri url = Uri.parse(_apiUrl + '/boatData?user=' + email);
     // password abcdefg
     http.Response response = await http.get(url);
@@ -48,7 +63,7 @@ class ApiCalls {
     return boats;
   }
 
-  void addBoatsApi(String hubId, String boatName) async {
+  static void addBoatsApi(String hubId, String boatName) async {
     String email = Authentication().getCurrentUserEmail() as String;
     Uri url = Uri.parse(_apiUrl + '/boatData');
     http.Response response = await http.post(url, body: {
@@ -60,7 +75,7 @@ class ApiCalls {
     print('Response body: ${response.body}');
   }
 
-  Future<void> addDeviceApi(String hubId, String serial, String deviceName, String deviceType) async {
+  static Future<void> addDeviceApi(String hubId, String serial, String deviceName, String deviceType) async {
     Uri url = Uri.parse(_apiUrl + '/deviceSyncManager');
     http.Response response = await http.post(url, body: {
       "hubid": hubId,
@@ -72,7 +87,7 @@ class ApiCalls {
     print('Response body: ${response.body}');
   }
 
-  Future<dynamic> getTHSSettingsApi(String deviceName) async {
+  static Future<dynamic> getTHSSettingsApi(String deviceName) async {
     Uri url = Uri.parse(_apiUrl + "/settingsManager/THS?serial=" + deviceName);
     print(url);
     http.Response response = await http.get(url);
@@ -83,7 +98,7 @@ class ApiCalls {
     return decodedData[0];
   }
 
-  void updateTHSSettingsApi(String deviceName, dynamic settings) async {
+  static void updateTHSSettingsApi(String deviceName, dynamic settings) async {
     Uri url = Uri.parse(_apiUrl + "/settingsManager/THS/" + deviceName);
     http.Response response = await http.put(url, body: settings);
     //   if (response.statusCode == 200) {
@@ -92,7 +107,7 @@ class ApiCalls {
     //   return Future<bool>.value(false);
   }
 
-  Future<dynamic> getUltrasonicSettingsApi(String deviceName) async {
+  static Future<dynamic> getUltrasonicSettingsApi(String deviceName) async {
     Uri url = Uri.parse(_apiUrl + "/settingsManager/Ultrasonic?serial=" + deviceName);
     http.Response response = await http.get(url);
     var jsonResponse = jsonDecode(response.body);
@@ -100,7 +115,7 @@ class ApiCalls {
     return decodedData[0];
   }
 
-  void updateUltrasonicSettingsApi(String deviceName, dynamic settings) async {
+  static void updateUltrasonicSettingsApi(String deviceName, dynamic settings) async {
     Uri url = Uri.parse(_apiUrl + "/settingsManager/Ultrasonic/" + deviceName);
     http.Response response = await http.put(url, body: settings);
     // if (response.statusCode == 200) {
@@ -109,7 +124,7 @@ class ApiCalls {
     // return Future<bool>.value(false);
   }
 
-  Future<dynamic> getBilgeSettingsApi(String deviceName) async {
+  static Future<dynamic> getBilgeSettingsApi(String deviceName) async {
     Uri url = Uri.parse(_apiUrl + "/settingsManager/Ultrasonic?serial=" + deviceName);
     http.Response response = await http.get(url);
     var jsonResponse = jsonDecode(response.body);
@@ -117,7 +132,7 @@ class ApiCalls {
     return decodedData[0];
   }
 
-  void updateBilgeSettingsApi(String deviceName, dynamic settings) async {
+  static void updateBilgeSettingsApi(String deviceName, dynamic settings) async {
     Uri url = Uri.parse(_apiUrl + "/settingsManager/Ultrasonic/" + deviceName);
     http.Response response = await http.put(url, body: settings);
     // if (response.statusCode == 200) {
@@ -126,7 +141,7 @@ class ApiCalls {
     // return Future<bool>.value(false);
   }
 
-  Future<dynamic> getSmartConnectSettingsApi(String deviceName) async {
+  static Future<dynamic> getSmartConnectSettingsApi(String deviceName) async {
     Uri url = Uri.parse(_apiUrl + "/settingsManager/SmartConnect?serial=" + deviceName);
     http.Response response = await http.get(url);
     var jsonResponse = jsonDecode(response.body);
@@ -134,14 +149,14 @@ class ApiCalls {
     return decodedData[0];
   }
 
-  void updateSmartConnectSettingsApi(String deviceName, dynamic settings) async {
+  static void updateSmartConnectSettingsApi(String deviceName, dynamic settings) async {
     Uri url = Uri.parse(_apiUrl + '/settingsManager/SmartConnect/' + deviceName);
     http.Response response = await http.put(url, body: settings);
     print(settings);
     print(response.statusCode);
   }
 
-  Future<dynamic> getLocationSettingsApi(String deviceName) async {
+  static Future<dynamic> getLocationSettingsApi(String deviceName) async {
     Uri url = Uri.parse(_apiUrl + "/settingsManager/Location?serial=" + deviceName);
     http.Response response = await http.get(url);
     var jsonResponse = jsonDecode(response.body);
@@ -150,13 +165,13 @@ class ApiCalls {
     return decodedData[0];
   }
 
-  void updateLocationSettingsApi(String deviceName, dynamic settings) async {
+  static void updateLocationSettingsApi(String deviceName, dynamic settings) async {
     Uri url = Uri.parse(_apiUrl + '/settingsManager/Location/' + deviceName);
     http.Response response = await http.put(url, body: settings);
     print(response.statusCode);
   }
 
-  Future<dynamic> snapScreenApi(String deviceName) async {
+  static Future<dynamic> snapScreenApi(String deviceName) async {
     Uri url = Uri.parse(_apiUrl + '/securityURLHandler?hubid=' + deviceName);
     http.Response response = await http.get(url);
     var jsonResponse = jsonDecode(response.body);
@@ -165,7 +180,7 @@ class ApiCalls {
     return decodedData;
   }
 
-  Future<List> getHubDevices(String hubId) async {
+  static Future<List> getHubDevices(String hubId) async {
     Uri url = Uri.parse(_apiUrl + "/deviceSyncManager?hubid=" + hubId);
     http.Response response = await http.get(url);
     var jsonResponse = jsonDecode(response.body);
@@ -181,7 +196,7 @@ class ApiCalls {
     return Future<List>.value(hubDevices);
   }
 
-  Future<List> getConnectedDevices(String hubId) async {
+  static Future<List> getConnectedDevices(String hubId) async {
     Uri url = Uri.parse(_apiUrl + "/hubConnectionManager?hubid=" + hubId);
     http.Response response = await http.get(url);
     var jsonResponse = jsonDecode(response.body);
@@ -197,7 +212,7 @@ class ApiCalls {
     return Future<List>.value(connectedDevices);
   }
 
-  Future<List> getConnectedDevicesCount(String hubId) async {
+  static Future<List> getConnectedDevicesCount(String hubId) async {
     Uri url = Uri.parse(_apiUrl + "/hubConnectionManager?hubid=" + hubId);
     http.Response response = await http.get(url);
     var jsonResponse = jsonDecode(response.body);
@@ -213,7 +228,7 @@ class ApiCalls {
     return Future<List>.value(connectedDevices);
   }
 
-  Future<List> getHubDevicesCount(String hubId) async {
+  static Future<List> getHubDevicesCount(String hubId) async {
     Uri url = Uri.parse(_apiUrl + "/deviceSyncManager?hubid=" + hubId);
     http.Response response = await http.get(url);
     var jsonResponse = jsonDecode(response.body);
@@ -229,7 +244,7 @@ class ApiCalls {
     return Future<List>.value(hubDevices);
   }
 
-  Future<String> addHub(String ssid, String password) async {
+  static Future<String> addHub(String ssid, String password) async {
     // Uri url = Uri.parse(_ip + '/');
     Uri url = Uri.parse(_apiUrl + '/devTest');
     http.Response response = await http.post(url, body: {
@@ -243,7 +258,7 @@ class ApiCalls {
     return Future<String>.value("false");
   }
 
-  void sample() async {
+  static void sample() async {
     var url = Uri.parse(_apiUrl);
     var response = await http.get(url);
     print(response.body);

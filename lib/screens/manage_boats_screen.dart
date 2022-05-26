@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:foka_app_v1/screens/settings_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../utils/data.dart';
+
 class ManageBoats extends StatefulWidget {
   const ManageBoats({Key? key}) : super(key: key);
   static const String id = "manage_boats_screen";
@@ -11,6 +13,8 @@ class ManageBoats extends StatefulWidget {
 }
 
 class _ManageBoatsState extends State<ManageBoats> {
+  var boatData = Data().getBoatData();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,14 +45,10 @@ class _ManageBoatsState extends State<ManageBoats> {
         ],
       ),
       body: Container(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          primary: false,
-          shrinkWrap: true,
-          scrollDirection: Axis.vertical,
-          children: [
-            SizedBox(height: 10,),
-            Padding(
+        child: ListView.builder(
+          itemCount: Data().getBoatData().length,
+          itemBuilder: ((context, index) {
+            return Padding(
               padding: EdgeInsetsDirectional.fromSTEB(16, 4, 16, 8),
               child: Container(
                 width: double.infinity,
@@ -87,562 +87,65 @@ class _ManageBoatsState extends State<ManageBoats> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                "Boat name",
-                                style: TextStyle(
-                                      fontFamily: 'Outfit',
-                                      color: Color(0xFF1D2429),
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.normal,
-                                    ),
+                              Text(
+                                boatData[index]['title'],
+                                style: const TextStyle(
+                                  fontFamily: 'Outfit',
+                                  color: Color(0xFF1D2429),
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.normal,
+                                ),
                               ),
-                              Row(
-                                mainAxisSize: MainAxisSize.max,
-                                children: const [
-                                  Text(
-                                    'sample text',
-                                    style: TextStyle(
-                                          fontFamily: 'Outfit',
-                                          color: Color(0xFF57636C),
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.normal,
-                                        ),
-                                  ),
-                                ],
-                              ),
+                              // Row(
+                              //   mainAxisSize: MainAxisSize.max,
+                              //   children: [
+                              //     Text(
+                              //       boatData[index]['description'],
+                              //       style: const TextStyle(
+                              //         fontFamily: 'Outfit',
+                              //         color: Color(0xFF57636C),
+                              //         fontSize: 14,
+                              //         fontWeight: FontWeight.normal,
+                              //       ),
+                              //     ),
+                              //   ],
+                              // ),
                             ],
                           ),
                         ),
                       ),
-                     ElevatedButton(
-                  onPressed: () {
-                    
-                  },
-                  style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.red.shade700)),
-                  child: Container(
-                    
-                    child: Row(
-                     mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(
-                        
-                          Icons.delete_forever,
-                          color: Colors.white,
-                          size: 20,
-                        ),
-      const SizedBox(width: 5,),
-                        Text(
-                          "Delete",
-                          style: GoogleFonts.lexendDeca(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-           Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(16, 4, 16, 8),
-              child: Container(
-                width: double.infinity,
-                height: 70,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: const [
-                    BoxShadow(
-                      blurRadius: 4,
-                      color: Color(0x32000000),
-                      offset: Offset(0, 2),
-                    )
-                  ],
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(8, 0, 8, 0),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(26),
-                        child: Image.network(
-                          'https://images.pexels.com/photos/163236/luxury-yacht-boat-speed-water-163236.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
-                          width: 46,
-                          height: 46,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.max,
+                      ElevatedButton(
+                        onPressed: () {},
+                        style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.red.shade700)),
+                        child: Container(
+                          child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                "Boat name",
-                                style: TextStyle(
-                                      fontFamily: 'Outfit',
-                                      color: Color(0xFF1D2429),
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.normal,
-                                    ),
+                              const Icon(
+                                Icons.delete_forever,
+                                color: Colors.white,
+                                size: 20,
                               ),
-                              Row(
-                                mainAxisSize: MainAxisSize.max,
-                                children: const [
-                                  Text(
-                                    'sample text',
-                                    style: TextStyle(
-                                          fontFamily: 'Outfit',
-                                          color: Color(0xFF57636C),
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.normal,
-                                        ),
-                                  ),
-                                ],
+                              const SizedBox(
+                                width: 5,
+                              ),
+                              Text(
+                                "Delete",
+                                style: GoogleFonts.lexendDeca(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w400,
+                                ),
                               ),
                             ],
                           ),
                         ),
                       ),
-                     ElevatedButton(
-                  onPressed: () {
-                    
-                  },
-                  style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.red.shade700)),
-                  child: Container(
-                    
-                    child: Row(
-                     mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(
-                        
-                          Icons.delete_forever,
-                          color: Colors.white,
-                          size: 20,
-                        ),
-      const SizedBox(width: 5,),
-                        Text(
-                          "Delete",
-                          style: GoogleFonts.lexendDeca(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
                     ],
                   ),
                 ),
               ),
-            ),
-            Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(16, 4, 16, 8),
-              child: Container(
-                width: double.infinity,
-                height: 70,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: const [
-                    BoxShadow(
-                      blurRadius: 4,
-                      color: Color(0x32000000),
-                      offset: Offset(0, 2),
-                    )
-                  ],
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(8, 0, 8, 0),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(26),
-                        child: Image.network(
-                          'https://images.pexels.com/photos/163236/luxury-yacht-boat-speed-water-163236.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
-                          width: 46,
-                          height: 46,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                "Boat name",
-                                style: TextStyle(
-                                      fontFamily: 'Outfit',
-                                      color: Color(0xFF1D2429),
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.normal,
-                                    ),
-                              ),
-                              Row(
-                                mainAxisSize: MainAxisSize.max,
-                                children: const [
-                                  Text(
-                                    'sample text',
-                                    style: TextStyle(
-                                          fontFamily: 'Outfit',
-                                          color: Color(0xFF57636C),
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.normal,
-                                        ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                     ElevatedButton(
-                  onPressed: () {
-                    
-                  },
-                  style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.red.shade700)),
-                  child: Container(
-                    
-                    child: Row(
-                     mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(
-                        
-                          Icons.delete_forever,
-                          color: Colors.white,
-                          size: 20,
-                        ),
-      const SizedBox(width: 5,),
-                        Text(
-                          "Delete",
-                          style: GoogleFonts.lexendDeca(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(16, 4, 16, 8),
-              child: Container(
-                width: double.infinity,
-                height: 70,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: const [
-                    BoxShadow(
-                      blurRadius: 4,
-                      color: Color(0x32000000),
-                      offset: Offset(0, 2),
-                    )
-                  ],
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(8, 0, 8, 0),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(26),
-                        child: Image.network(
-                          'https://images.pexels.com/photos/163236/luxury-yacht-boat-speed-water-163236.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
-                          width: 46,
-                          height: 46,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                "Boat name",
-                                style: TextStyle(
-                                      fontFamily: 'Outfit',
-                                      color: Color(0xFF1D2429),
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.normal,
-                                    ),
-                              ),
-                              Row(
-                                mainAxisSize: MainAxisSize.max,
-                                children: const [
-                                  Text(
-                                    'sample text',
-                                    style: TextStyle(
-                                          fontFamily: 'Outfit',
-                                          color: Color(0xFF57636C),
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.normal,
-                                        ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                     ElevatedButton(
-                  onPressed: () {
-                    
-                  },
-                  style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.red.shade700)),
-                  child: Container(
-                    
-                    child: Row(
-                     mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(
-                        
-                          Icons.delete_forever,
-                          color: Colors.white,
-                          size: 20,
-                        ),
-      const SizedBox(width: 5,),
-                        Text(
-                          "Delete",
-                          style: GoogleFonts.lexendDeca(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(16, 4, 16, 8),
-              child: Container(
-                width: double.infinity,
-                height: 70,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: const [
-                    BoxShadow(
-                      blurRadius: 4,
-                      color: Color(0x32000000),
-                      offset: Offset(0, 2),
-                    )
-                  ],
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(8, 0, 8, 0),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(26),
-                        child: Image.network(
-                          'https://images.pexels.com/photos/163236/luxury-yacht-boat-speed-water-163236.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
-                          width: 46,
-                          height: 46,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                "Boat name",
-                                style: TextStyle(
-                                      fontFamily: 'Outfit',
-                                      color: Color(0xFF1D2429),
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.normal,
-                                    ),
-                              ),
-                              Row(
-                                mainAxisSize: MainAxisSize.max,
-                                children: const [
-                                  Text(
-                                    'sample text',
-                                    style: TextStyle(
-                                          fontFamily: 'Outfit',
-                                          color: Color(0xFF57636C),
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.normal,
-                                        ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                     ElevatedButton(
-                  onPressed: () {
-                    
-                  },
-                  style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.red.shade700)),
-                  child: Container(
-                    
-                    child: Row(
-                     mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(
-                        
-                          Icons.delete_forever,
-                          color: Colors.white,
-                          size: 20,
-                        ),
-      const SizedBox(width: 5,),
-                        Text(
-                          "Delete",
-                          style: GoogleFonts.lexendDeca(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(16, 4, 16, 8),
-              child: Container(
-                width: double.infinity,
-                height: 70,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: const [
-                    BoxShadow(
-                      blurRadius: 4,
-                      color: Color(0x32000000),
-                      offset: Offset(0, 2),
-                    )
-                  ],
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(8, 0, 8, 0),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(26),
-                        child: Image.network(
-                          'https://images.pexels.com/photos/163236/luxury-yacht-boat-speed-water-163236.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
-                          width: 46,
-                          height: 46,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                "Boat name",
-                                style: TextStyle(
-                                      fontFamily: 'Outfit',
-                                      color: Color(0xFF1D2429),
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.normal,
-                                    ),
-                              ),
-                              Row(
-                                mainAxisSize: MainAxisSize.max,
-                                children: const [
-                                  Text(
-                                    'sample text',
-                                    style: TextStyle(
-                                          fontFamily: 'Outfit',
-                                          color: Color(0xFF57636C),
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.normal,
-                                        ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                     ElevatedButton(
-                  onPressed: () {
-                    
-                  },
-                  style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.red.shade700)),
-                  child: Container(
-                    
-                    child: Row(
-                     mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(
-                        
-                          Icons.delete_forever,
-                          color: Colors.white,
-                          size: 20,
-                        ),
-      const SizedBox(width: 5,),
-                        Text(
-                          "Delete",
-                          style: GoogleFonts.lexendDeca(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ],
+            );
+          }),
         ),
       ),
     );

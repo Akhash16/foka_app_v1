@@ -101,7 +101,7 @@ class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMix
 
     void start() async {
       await connectClient();
-      client.subscribe("/$hubId/$deviceId", MqttQos.atLeastOnce);
+      client.subscribe("/$deviceId", MqttQos.atLeastOnce);
     }
 
     start();
@@ -239,7 +239,7 @@ class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMix
   }
 
   settingsUpdate() {
-    ApiCalls().updateTHSSettingsApi(deviceId, {
+    ApiCalls.updateTHSSettingsApi(deviceId, {
       "alert_temp": tempState ? '1' : '0',
       "low_temp": tempCurrentLowerValue.toString(),
       "high_temp": tempCurrentUpperValue.toString(),
@@ -253,7 +253,7 @@ class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMix
   }
 
   // void getTHSSettingsDataAndPush(String deviceId) async {
-  //   await ApiCalls().getTHSSettingsApi(deviceId).then((value) {
+  //   await ApiCalls.getTHSSettingsApi(deviceId).then((value) {
   //     print(value);
   //     Navigator.push(context, MaterialPageRoute(builder: (context) {
   //       return THSSettingsPage(settings: value);
@@ -393,10 +393,13 @@ class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMix
           isTriangle: false,
           dropdownList: dropdownItemList,
           onChange: (_) async {
+            setState(() {
+              ths = 0;
+            });
             await connectClient();
-            client.subscribe("/$hubId/" + _['value'], MqttQos.atLeastOnce);
+            client.subscribe("/" + _['value'], MqttQos.atLeastOnce);
             deviceId = _['value'];
-            await ApiCalls().getTHSSettingsApi(deviceId).then((value) {
+            await ApiCalls.getTHSSettingsApi(deviceId).then((value) {
               getSettings(value);
               print("done");
             });
@@ -568,6 +571,21 @@ class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMix
                     textAlign: TextAlign.end,
                   ),
                   trailing: settingsTrailingIcon,
+                ),
+                Center(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      ApiCalls.deleteDevice(deviceId);
+                    },
+                    style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.red.shade600)),
+                    child: Text(
+                      "Delete Device",
+                      style: GoogleFonts.lexendDeca(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w300,
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),

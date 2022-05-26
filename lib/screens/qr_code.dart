@@ -111,7 +111,7 @@ class _QrScreenState extends State<QrScreen> {
       });
       var data = jsonDecode(result!.code!);
       Navigator.popUntil(context, ModalRoute.withName(HomeScreen.id));
-      // ApiCalls().addHub(data['ssid'].toString(), data['password'].toString()).then((value) {
+      // ApiCalls.addHub(data['ssid'].toString(), data['password'].toString()).then((value) {
       //   if (value) {
       //     Navigator.popUntil(context, ModalRoute.withName(HomeScreen.id));
       //   } else {

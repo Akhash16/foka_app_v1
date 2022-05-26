@@ -89,7 +89,7 @@ class _FluidMonitorState extends State<FluidMonitor> with TickerProviderStateMix
 
     void start() async {
       await connectClient();
-      client.subscribe("/$hubId/$deviceId", MqttQos.atLeastOnce);
+      client.subscribe("/$deviceId", MqttQos.atLeastOnce);
       // client.subscribe("/DEMOHUB001/FKB001FLOAT", MqttQos.atLeastOnce);
     }
 
@@ -198,6 +198,7 @@ class _FluidMonitorState extends State<FluidMonitor> with TickerProviderStateMix
     deviceName = this.settings['serial'];
     fluidState = this.settings['alert_fluid'] == 1 ? true : false;
     currentLowerValue = this.settings['low_tank'];
+    capacity = this.settings['calibration_val'];
   }
 
   void getValues() {
@@ -218,9 +219,10 @@ class _FluidMonitorState extends State<FluidMonitor> with TickerProviderStateMix
   }
 
   settingsUpdate() {
-    ApiCalls().updateUltrasonicSettingsApi(deviceId, {
+    ApiCalls.updateUltrasonicSettingsApi(deviceId, {
       "alert_fluid": fluidState ? '1' : '0',
       "low_tank": currentLowerValue.toString(),
+      "calibration_val": capacity.toString(),
     });
   }
 
@@ -247,7 +249,7 @@ class _FluidMonitorState extends State<FluidMonitor> with TickerProviderStateMix
   }
 
   void getUltrasonicSettingsDataAndPush(String deviceId) async {
-    await ApiCalls().getUltrasonicSettingsApi(deviceId).then((value) {
+    await ApiCalls.getUltrasonicSettingsApi(deviceId).then((value) {
       print(value);
       Navigator.push(context, MaterialPageRoute(builder: (context) {
         return FluidSettingsPage(settings: value);
@@ -256,7 +258,7 @@ class _FluidMonitorState extends State<FluidMonitor> with TickerProviderStateMix
   }
 
   void getFloatSettingsDataAndPush(String deviceId) async {
-    await ApiCalls().getBilgeSettingsApi(deviceId).then((value) {
+    await ApiCalls.getBilgeSettingsApi(deviceId).then((value) {
       print(value);
       Navigator.push(context, MaterialPageRoute(builder: (context) {
         return BilgeSettingsPage(settings: value);
@@ -321,7 +323,7 @@ class _FluidMonitorState extends State<FluidMonitor> with TickerProviderStateMix
             client.subscribe("/DEMOHUB001/" + _['value'], MqttQos.atLeastOnce);
             // client.subscribe("/DEMOHUB001/" + _['value'] + "FLOAT", MqttQos.atLeastOnce);
             deviceId = _['value'];
-            await ApiCalls().getUltrasonicSettingsApi(deviceId).then((value) {
+            await ApiCalls.getUltrasonicSettingsApi(deviceId).then((value) {
               getSettings(value);
             });
             print("The device number is " + deviceId);
@@ -422,6 +424,7 @@ class _FluidMonitorState extends State<FluidMonitor> with TickerProviderStateMix
                               onPressed: () {
                                 setState(() {
                                   capacity = value;
+                                  settingsUpdate();
                                 });
                               },
                               width: MediaQuery.of(context).size.width * 0.7,
@@ -523,6 +526,21 @@ class _FluidMonitorState extends State<FluidMonitor> with TickerProviderStateMix
               //     inactiveThumbColor: Colors.blueGrey,
               //   ),
               // ),
+              Center(
+                child: ElevatedButton(
+                  onPressed: () {
+                    ApiCalls.deleteDevice(deviceId);
+                  },
+                  style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.red.shade600)),
+                  child: Text(
+                    "Delete Device",
+                    style: GoogleFonts.lexendDeca(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w300,
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ),

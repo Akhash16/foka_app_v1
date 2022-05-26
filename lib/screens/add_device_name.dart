@@ -85,8 +85,8 @@ class _AddDeviceNameState extends State<AddDeviceName> {
                 child: ConfirmationSlider(
                   onConfirmation: () async {
                     if (textController.text != '') {
-                      ApiCalls().addDeviceApi(Data().getHubId(), Data().getDeviceId(), textController.text, Data().getDeviceType()).then((value) => Navigator.popAndPushNamed(context, HomeScreen.id));
-                      // await ApiCalls().getHubDevices(Data().getHubId()).then(
+                      ApiCalls.addDeviceApi(Data().getHubId(), Data().getDeviceId(), textController.text, Data().getDeviceType()).then((value) => Navigator.popAndPushNamed(context, HomeScreen.id));
+                      // await ApiCalls.getHubDevices(Data().getHubId()).then(
                       //   (value) {
                       //     Data().setDevices(value);
                       //     Navigator.popAndPushNamed(context, BoatsPage.id);

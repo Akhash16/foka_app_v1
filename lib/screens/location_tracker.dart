@@ -68,7 +68,7 @@ class _LocationScreenState extends State<LocationScreen> {
 
     void start() async {
       await connectClient();
-      client.subscribe("/$hubId/$deviceId", MqttQos.atLeastOnce);
+      client.subscribe("/$deviceId", MqttQos.atLeastOnce);
     }
 
     start();
@@ -243,53 +243,50 @@ class _LocationScreenState extends State<LocationScreen> {
           });
         },
       ),
-      floatingActionButton: Visibility(
-        visible: !showSpinner,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            FloatingActionButton.extended(
-              heroTag: "Geofence",
-              elevation: 9,
-              onPressed: () async {
-                print('lat $lat');
-                print('long $long');
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          FloatingActionButton.extended(
+            heroTag: "Geofence",
+            elevation: 9,
+            onPressed: () async {
+              print('lat $lat');
+              print('long $long');
 
-                await ApiCalls().getLocationSettingsApi(deviceId).then((value) {
-                  print(value);
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return GeoFence(
-                      lat: lat,
-                      long: long,
-                      settings: value,
-                    );
-                  }));
-                });
+              await ApiCalls.getLocationSettingsApi(deviceId).then((value) {
+                print(value);
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return GeoFence(
+                    lat: lat,
+                    long: long,
+                    settings: value,
+                  );
+                }));
+              });
 
-                // Navigator.push(context, MaterialPageRoute(builder: (context) {
-                //   return GeoFence(
-                //     lat: lat,
-                //     long: long,
-                //     settings: widget.settings,
-                //   );
-                // }));
-              },
-              label: const Text('Geofence'),
-              icon: const Icon(Icons.gps_fixed_outlined),
-              backgroundColor: const Color(0xff090f13).withOpacity(0.8),
-            ),
-            SizedBox(
-              width: MediaQuery.of(context).size.width * 0.05,
-            ),
-            FloatingActionButton.extended(
-              elevation: 9,
-              onPressed: _goToTheBoat,
-              label: const Text('Locate'),
-              icon: const Icon(Icons.location_on),
-              backgroundColor: const Color(0xff090f13).withOpacity(0.8),
-            ),
-          ],
-        ),
+              // Navigator.push(context, MaterialPageRoute(builder: (context) {
+              //   return GeoFence(
+              //     lat: lat,
+              //     long: long,
+              //     settings: widget.settings,
+              //   );
+              // }));
+            },
+            label: const Text('Geofence'),
+            icon: const Icon(Icons.gps_fixed_outlined),
+            backgroundColor: const Color(0xff090f13).withOpacity(0.8),
+          ),
+          SizedBox(
+            width: MediaQuery.of(context).size.width * 0.05,
+          ),
+          FloatingActionButton.extended(
+            elevation: 9,
+            onPressed: _goToTheBoat,
+            label: const Text('Locate'),
+            icon: const Icon(Icons.location_on),
+            backgroundColor: const Color(0xff090f13).withOpacity(0.8),
+          ),
+        ],
       ),
     );
   }

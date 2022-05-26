@@ -7,6 +7,7 @@ import 'package:foka_app_v1/components/rounded_button.dart';
 import 'package:foka_app_v1/main.dart';
 import 'package:foka_app_v1/screens/home_screen.dart';
 import 'package:foka_app_v1/screens/snaps_screen.dart';
+import 'package:foka_app_v1/utils/apiCalls.dart';
 import 'package:foka_app_v1/utils/data.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
@@ -73,7 +74,7 @@ class _SecurityScreenState extends State<SecurityScreen> with TickerProviderStat
 
     void start() async {
       await connectClient();
-      client.subscribe("/$hubId/$deviceId", MqttQos.atLeastOnce);
+      client.subscribe("/$deviceId", MqttQos.atLeastOnce);
       // client.subscribe("/DEMOHUB001/FKB001FLOAT", MqttQos.atLeastOnce);
     }
 
@@ -153,7 +154,7 @@ class _SecurityScreenState extends State<SecurityScreen> with TickerProviderStat
   }
 
   void publish(String toPublish) {
-    final pubTopic = '/$hubId/$deviceId/InputNode';
+    final pubTopic = '/$deviceId/InputNode';
     final builder = MqttClientPayloadBuilder();
     builder.addString(toPublish);
     client.publishMessage(pubTopic, MqttQos.atLeastOnce, builder.payload!);
@@ -248,6 +249,21 @@ class _SecurityScreenState extends State<SecurityScreen> with TickerProviderStat
               min: 100,
               max: 5000,
               label: sliderValue.toString(),
+            ),
+            Center(
+              child: ElevatedButton(
+                onPressed: () {
+                  ApiCalls.deleteDevice(deviceId);
+                },
+                style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.red.shade600)),
+                child: Text(
+                  "Delete Device",
+                  style: GoogleFonts.lexendDeca(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w300,
+                  ),
+                ),
+              ),
             ),
           ],
         ),

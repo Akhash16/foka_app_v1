@@ -34,7 +34,7 @@ class _BilgeSettingsPageState extends State<BilgeSettingsPage> {
   }
 
   settingsUpdate() {
-    ApiCalls().updateBilgeSettingsApi(deviceName, {
+    ApiCalls.updateBilgeSettingsApi(deviceName, {
       "alert_fluid": bilgeState ? '1' : '0',
     });
   }

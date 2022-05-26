@@ -41,7 +41,7 @@ class _FluidSettingsPageState extends State<FluidSettingsPage> {
   }
 
   settingsUpdate() {
-    ApiCalls().updateUltrasonicSettingsApi(deviceName, {
+    ApiCalls.updateUltrasonicSettingsApi(deviceName, {
       "alert_fluid": fluidState ? '1' : '0',
       "low_tank": currentLowerValue.toString(),
     });

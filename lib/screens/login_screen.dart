@@ -32,7 +32,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool showSpinner = false;
 
   void getBoatDataAndPush(String email) async {
-    var boatData = await ApiCalls().getBoatsApi(email);
+    var boatData = await ApiCalls.getBoatsApi(email);
     Data().setBoatData(boatData);
     Navigator.popAndPushNamed(context, BoatsPage.id);
     // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
