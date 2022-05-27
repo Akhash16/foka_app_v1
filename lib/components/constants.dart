@@ -41,6 +41,6 @@ TextStyle homeScreenDialogTextStyle = GoogleFonts.getFont(
 
 TextStyle menuTextStyle = GoogleFonts.montserrat(
   color: Color(0xffCACBCB),
-  fontSize: 20,
-  fontWeight: FontWeight.w500,
+  fontSize: 18,
+  fontWeight: FontWeight.w400,
 );

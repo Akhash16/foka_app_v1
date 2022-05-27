@@ -28,7 +28,7 @@ class _ManageBoatsState extends State<ManageBoats> {
           },
         ),
         title: const Text(
-          'Settings',
+          'Manage Boats',
           style: TextStyle(
             fontSize: 20,
             color: Colors.white,
