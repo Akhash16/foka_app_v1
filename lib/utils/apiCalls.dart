@@ -4,7 +4,7 @@ import 'package:foka_app_v1/utils/authentication.dart';
 import 'package:http/http.dart' as http;
 
 class ApiCalls {
-  static String _apiUrl = 'http://164.52.212.96:3000';
+  static String _apiUrl = 'http://14.99.10.249:3000';
   // final String _apiUrl = 'https://7fcd-183-82-31-23.ngrok.io';
   // final String _apiUrl = 'http://164.52.212.96:3000';
   // final String _apiUrl = 'http://10.3.141.236';

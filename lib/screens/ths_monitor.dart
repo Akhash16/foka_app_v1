@@ -225,9 +225,9 @@ class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMix
   }
 
   void getValues() {
-    hubId = Data().getHubId();
-    getSettings(Data().getSettings());
-    List tempDevices = Data().getDevices();
+    hubId = Data.getHubId();
+    getSettings(Data.getSettings());
+    List tempDevices = Data.getDevices();
     for (final device in tempDevices) {
       dropdownItemList.add({
         'label': device['devicename'],
@@ -249,7 +249,7 @@ class _THSScreenState extends State<THSScreen> with SingleTickerProviderStateMix
       "low_hum": humidityCurrentLowerValue.toString(),
       "high_hum": humidityCurrentUpperValue.toString(),
     });
-    Data().setSettings(settings);
+    Data.setSettings(settings);
   }
 
   // void getTHSSettingsDataAndPush(String deviceId) async {

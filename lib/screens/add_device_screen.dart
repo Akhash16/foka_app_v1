@@ -47,20 +47,20 @@ class _AddDeviceScreenState extends State<AddDeviceScreen> {
       print("set state done");
       data = jsonDecode(result!.code!);
       print("printing data" + data['ssid'].toString() + data['password'].toString());
-      // Data().setDeviceId(data['serial']);
+      // Data.setDeviceId(data['serial']);
       print("hubid set");
 
       ApiCalls.addHub(data['ssid'].toString(), data['password'].toString()).then((value) {
         if (value != "false") {
           value = value.replaceAll('"', '');
           print("device value " + value);
-          Data().setDeviceId(value);
+          Data.setDeviceId(value);
           Navigator.pushNamed(context, AddDeviceName.id);
         }
       });
 
       // Navigator.popAndPushNamed(context, AddBoatVerification.id);
-      // ApiCalls.addDeviceApi(Data().getHubId(), data["serial"], )then((value) {
+      // ApiCalls.addDeviceApi(Data.getHubId(), data["serial"], )then((value) {
       //   if (value) {
       //     Navigator.of(context).popUntil(ModalRoute.withName(HomeScreen.id));
       //   } else {

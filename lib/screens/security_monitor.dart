@@ -35,8 +35,8 @@ class _SecurityScreenState extends State<SecurityScreen> with TickerProviderStat
 
   late MqttServerClient client;
 
-  String hubId = Data().getHubId();
-  String deviceId = Data().getDevices()[0]['serial'];
+  String hubId = Data.getHubId();
+  String deviceId = Data.getDevices()[0]['serial'];
 
   @override
   void initState() {

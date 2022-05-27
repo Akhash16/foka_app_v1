@@ -208,9 +208,9 @@ class _SmartConnectState extends State<SmartConnect> {
   }
 
   void getValues() {
-    hubId = Data().getHubId();
-    getSettings(Data().getSettings());
-    List tempDevices = Data().getDevices();
+    hubId = Data.getHubId();
+    getSettings(Data.getSettings());
+    List tempDevices = Data.getDevices();
     for (final device in tempDevices) {
       dropdownItemList.add({
         'label': device['devicename'],

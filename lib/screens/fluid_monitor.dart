@@ -202,12 +202,12 @@ class _FluidMonitorState extends State<FluidMonitor> with TickerProviderStateMix
   }
 
   void getValues() {
-    getSettings(Data().getSettings());
-    hubId = Data().getHubId();
+    getSettings(Data.getSettings());
+    hubId = Data.getHubId();
 
     dropdownItemListUltrasonic.clear();
 
-    List tempDevicesUS = Data().getDevices();
+    List tempDevicesUS = Data.getDevices();
     for (final device in tempDevicesUS) {
       dropdownItemListUltrasonic.add({
         'label': device['devicename'],

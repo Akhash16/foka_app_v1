@@ -8,6 +8,7 @@ import 'package:foka_app_v1/screens/battery_monitor.dart';
 import 'package:foka_app_v1/screens/bilge.dart';
 import 'package:foka_app_v1/screens/chose_device.dart';
 import 'package:foka_app_v1/screens/connect_device.dart';
+import 'package:foka_app_v1/screens/door_security.dart';
 import 'package:foka_app_v1/screens/float_sensor.dart';
 import 'package:foka_app_v1/screens/fluid_monitor.dart';
 import 'package:foka_app_v1/screens/add_boat_screen.dart';
@@ -79,7 +80,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       title: "Foka Tech",
-      initialRoute: ForAPI.id,
+      initialRoute: SplashScreen.id,
       routes: {
         LoginScreen.id: (context) => const LoginScreen(),
         RegisterScreen.id: (context) => const RegisterScreen(),
@@ -113,6 +114,7 @@ class MyApp extends StatelessWidget {
         ManageBoats.id: (context) => const ManageBoats(),
         AddDeviceName.id: (context) => const AddDeviceName(),
         AddDeviceScreen.id: (context) => const AddDeviceScreen(),
+        DoorSecurity.id: (context) => const DoorSecurity(),
         ForAPI.id: (context) => const ForAPI(),
       },
     );

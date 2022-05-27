@@ -1,62 +1,54 @@
 import 'dart:async';
 
+import 'package:cool_dropdown/cool_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:foka_app_v1/components/constants.dart';
 import 'package:foka_app_v1/main.dart';
-import 'package:foka_app_v1/utils/apiCalls.dart';
-import 'package:foka_app_v1/utils/data.dart';
-import 'package:foka_app_v1/utils/userSimplePreferences.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 
-class FloatSensor extends StatefulWidget {
-  const FloatSensor({Key? key}) : super(key: key);
+class DoorSecurity extends StatefulWidget {
+  const DoorSecurity({Key? key}) : super(key: key);
 
-  // FloatSensor({this.hubId, this.deviceId});
-
-  // final hubId, deviceId;
-
-  static const String id = 'float_sensor';
+  static const String id = 'door_security';
 
   @override
-  _FloatSensorState createState() => _FloatSensorState();
+  State<DoorSecurity> createState() => _DoorSecurityState();
 }
 
-class _FloatSensorState extends State<FloatSensor> {
-  late String hubId;
-  late String deviceId;
-
-  late int floatValue = Preferences.getFloatValue() ?? 0;
-
-  late String deviceName;
-  late bool bilgeState = false;
-
+class _DoorSecurityState extends State<DoorSecurity> {
+  int doorValue = 0;
+  int doorSensorTimer = 30;
   bool showSpinner = true;
+  bool doorState = false;
 
-  int floatSensorTimer = 30;
+  List dropdownItemListDoorMonitor = [
+    {'label': 'Door Sensor 1', 'value': 'FKB001DM'},
+    {'label': 'Door Sensor 2', 'value': 'FKB002DM'},
+  ];
 
-  late dynamic settings = [];
+  String deviceId = 'FKB001DM';
 
   late MqttServerClient client;
 
   @override
   void initState() {
-    getValues();
-    // getSettings();
-    // deviceName = settings['serial'];
-    // bilgeState = settings['alert_bilge'] == 1 ? true : false;
-    print('running init');
     // TODO: implement initState
     super.initState();
-    Timer timer = Timer.periodic(const Duration(seconds: 1), (Timer t) => change());
+    Timer timer = Timer.periodic(const Duration(seconds: 1), (Timer t) {
+      if (doorSensorTimer-- < 0) {
+        setState(() {
+          showSpinner = true;
+        });
+      }
+    });
 
     void start() async {
       await connectClient();
-      client.subscribe("/$deviceId", MqttQos.atLeastOnce);
-      // client.subscribe("/DEMOHUB001/FKB001FLOAT", MqttQos.atLeastOnce);
+      client.subscribe("/FKB001DM", MqttQos.atLeastOnce);
     }
 
     start();
@@ -98,12 +90,14 @@ class _FloatSensorState extends State<FloatSensor> {
       final payload = MqttPublishPayload.bytesToStringAsString(message.payload.message);
 
       print('Received message:$payload from topic: ${c[0].topic}>');
-      floatValue = int.parse(payload);
+      doorValue = int.parse(payload);
 
       showSpinner = false;
-      floatSensorTimer = 30;
+      doorSensorTimer = 30;
 
-      print("message_received : $floatValue");
+      setState(() {});
+
+      print("message_received : $doorValue");
     });
 
     return client;
@@ -145,29 +139,6 @@ class _FloatSensorState extends State<FloatSensor> {
     print('Ping response client callback invoked');
   }
 
-  void change() {
-    setState(() {
-      if (floatSensorTimer-- < 0) showSpinner = true;
-      floatValue = floatValue;
-    });
-    Preferences.setFloatValue(floatValue);
-  }
-
-  void getSettings() {
-    // settings = widget.settings;
-  }
-
-  void getValues() {
-    hubId = Data.getHubId();
-    deviceId = Data.getDevices()[0]['serial'];
-  }
-
-  settingsUpdate() {
-    // ApiCalls.updateBilgeSettingsApi(deviceName, {
-    //   "alert_fluid": bilgeState ? '1' : '0',
-    // });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -182,14 +153,59 @@ class _FloatSensorState extends State<FloatSensor> {
             Navigator.pop(context);
           },
         ),
-        title: const Text(
-          'Float Sensor',
-          style: TextStyle(
+        centerTitle: true,
+        title: CoolDropdown(
+          dropdownHeight: dropdownItemListDoorMonitor.length * 70 > 300 ? 300 : dropdownItemListDoorMonitor.length * 70,
+
+          resultWidth: 200,
+          dropdownItemAlign: Alignment.center,
+          resultAlign: Alignment.center,
+          dropdownBD: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: Colors.black,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.3),
+                spreadRadius: 1,
+                blurRadius: 10,
+                offset: const Offset(0, 1),
+              ),
+            ],
+          ),
+          selectedItemBD: BoxDecoration(
+            color: const Color(0xff090f13),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          selectedItemTS: const TextStyle(color: const Color(0xFF6FCC76), fontSize: 20),
+          unselectedItemTS: const TextStyle(
             fontSize: 20,
             color: Colors.white,
           ),
+          resultBD: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: const Color(0xff090f13),
+          ),
+          resultTS: const TextStyle(
+            fontSize: 20,
+            color: Colors.white,
+          ),
+
+          isTriangle: false,
+          dropdownList: dropdownItemListDoorMonitor,
+          onChange: (_) async {
+            await connectClient();
+            client.subscribe("/" + _['value'], MqttQos.atLeastOnce);
+            // client.subscribe("/" + _['value'] + "FLOAT", MqttQos.atLeastOnce);
+            deviceId = _['value'];
+            // await ApiCalls.getUltrasonicSettingsApi(deviceId).then((value) {
+            //   getSettings(value);
+            // });
+            print("The device number is " + deviceId);
+            setState(() {});
+          },
+          defaultValue: dropdownItemListDoorMonitor[0],
+          // placeholder: 'insert...',
         ),
-        centerTitle: true,
         actions: [
           Builder(
             builder: (context) => IconButton(
@@ -205,23 +221,23 @@ class _FloatSensorState extends State<FloatSensor> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.all(10.0),
+              padding: const EdgeInsets.fromLTRB(10.0, 50.0, 10.0, 10.0),
               child: Text(
-                'Bilge Settings',
+                'Door Settings',
                 style: settingsHeadingTextStyle,
               ),
             ),
             ListTile(
               title: Text(
                 'Enable Alerts',
-                style: settingsLeadingTextStyle,
+                style: settingsHeadingTextStyle,
               ),
               trailing: Switch(
-                value: bilgeState,
+                value: doorState,
                 onChanged: (value) {
                   setState(() {
-                    bilgeState = value;
-                    settingsUpdate();
+                    doorState = value;
+                    // settingsUpdate();
                   });
                 },
                 inactiveTrackColor: Colors.white,
@@ -231,7 +247,7 @@ class _FloatSensorState extends State<FloatSensor> {
             Center(
               child: ElevatedButton(
                 onPressed: () {
-                  ApiCalls.deleteDevice(deviceId);
+                  // ApiCalls.deleteDevice(deviceId);
                 },
                 style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.red.shade600)),
                 child: Text(
@@ -275,13 +291,13 @@ class _FloatSensorState extends State<FloatSensor> {
                     Padding(
                       padding: const EdgeInsets.all(10.0),
                       child: Text(
-                        'Bilge Status',
+                        'Door Status',
                         style: GoogleFonts.montserrat(color: Colors.white, fontSize: 30, fontWeight: FontWeight.w700),
                       ),
                     ),
                     Text(
-                      floatValue == 0 ? 'Normal' : 'Check Bilge',
-                      style: GoogleFonts.montserrat(color: floatValue == 0 ? Colors.green : Colors.red, fontSize: 25, fontWeight: FontWeight.w500),
+                      doorValue == 0 ? 'Normal' : 'Check Door',
+                      style: GoogleFonts.montserrat(color: doorValue == 0 ? Colors.green : Colors.red, fontSize: 25, fontWeight: FontWeight.w500),
                     ),
                   ],
                 ),

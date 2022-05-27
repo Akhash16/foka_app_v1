@@ -32,7 +32,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
       getToken(email);
 
-      Data().setBoatData(value);
+      Data.setBoatData(value);
       Navigator.popAndPushNamed(context, BoatsPage.id);
     });
     // print(boatData);

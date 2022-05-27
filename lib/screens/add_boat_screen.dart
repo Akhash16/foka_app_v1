@@ -45,7 +45,7 @@ class _AddBoatScreenState extends State<AddBoatScreen> {
       print("set state done");
       data = jsonDecode(result!.code!);
       print("printing data" + data['hubId'].toString());
-      Data().setHubId(data['hubId']);
+      Data.setHubId(data['hubId']);
       print("hubid set");
       Navigator.popAndPushNamed(context, AddBoatVerification.id);
       // ApiCalls.addHub(data['ssid'].toString(), data['password'].toString()).then((value) {

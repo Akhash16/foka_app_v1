@@ -77,7 +77,7 @@ class _BatteryMonitorState extends State<BatteryMonitor> with TickerProviderStat
 
     void start() async {
       await connectClient();
-      client.subscribe("/${Data().getHubId()}/${Data().getDevices()[0]['serial']}", MqttQos.atLeastOnce);
+      client.subscribe("/${Data.getHubId()}/${Data.getDevices()[0]['serial']}", MqttQos.atLeastOnce);
       // client.subscribe("/DEMOHUB001/FKB001FLOAT", MqttQos.atLeastOnce);
     }
 

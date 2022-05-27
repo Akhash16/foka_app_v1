@@ -33,7 +33,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void getBoatDataAndPush(String email) async {
     var boatData = await ApiCalls.getBoatsApi(email);
-    Data().setBoatData(boatData);
+    Data.setBoatData(boatData);
     Navigator.popAndPushNamed(context, BoatsPage.id);
     // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
     //   return BoatsPage(boatData: boatData);

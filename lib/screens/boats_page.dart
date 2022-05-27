@@ -45,8 +45,8 @@ class _BoatsPageState extends State<BoatsPage> {
   @override
   void initState() {
     super.initState();
-    getBoats(Data().getBoatData());
-    print("getboatsapi " + Data().getBoatData().toString());
+    getBoats(Data.getBoatData());
+    print("getboatsapi " + Data.getBoatData.toString());
   }
 
   void getBoats(boatData) {
@@ -203,8 +203,8 @@ class _BoatsPageState extends State<BoatsPage> {
                               //   }));
                               // },
                               onTap: () {
-                                Data().setHubId(boat['hubid']);
-                                Data().setBoatName(boat['title']);
+                                Data.setHubId(boat['hubid']);
+                                Data.setBoatName(boat['title']);
                                 Navigator.pushNamed(context, HomeScreen.id);
                               },
                               child: Container(

@@ -13,7 +13,7 @@ class ManageBoats extends StatefulWidget {
 }
 
 class _ManageBoatsState extends State<ManageBoats> {
-  var boatData = Data().getBoatData();
+  var boatData = Data.getBoatData();
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +46,7 @@ class _ManageBoatsState extends State<ManageBoats> {
       ),
       body: Container(
         child: ListView.builder(
-          itemCount: Data().getBoatData().length,
+          itemCount: Data.getBoatData().length,
           itemBuilder: ((context, index) {
             return Padding(
               padding: EdgeInsetsDirectional.fromSTEB(16, 4, 16, 8),

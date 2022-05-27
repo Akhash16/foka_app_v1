@@ -27,7 +27,7 @@ class _AddBoatVerificationState extends State<AddBoatVerification> {
 
   @override
   Widget build(BuildContext context) {
-    print("hubId set ${Data().getHubId()}");
+    print("hubId set ${Data.getHubId()}");
     return Scaffold(
       backgroundColor: const Color(0xff1A1E20),
       body: ModalProgressHUD(
@@ -88,10 +88,10 @@ class _AddBoatVerificationState extends State<AddBoatVerification> {
                 child: ConfirmationSlider(
                   onConfirmation: () async {
                     if (textController.text != '') {
-                      ApiCalls.addBoatsApi(Data().getHubId(), textController.text);
+                      ApiCalls.addBoatsApi(Data.getHubId(), textController.text);
                       await ApiCalls.getBoatsApi(Authentication().getCurrentUserEmail()!).then(
                         (value) {
-                          Data().setBoatData(value);
+                          Data.setBoatData(value);
                           Navigator.popAndPushNamed(context, BoatsPage.id);
                         },
                       );

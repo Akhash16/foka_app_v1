@@ -7,19 +7,29 @@ class Data {
   static late String _deviceId;
   static late String _deviceType;
 
-  setBoatData(data) => _boatData = data;
-  setBoatName(name) => _boatName = name;
-  setHubId(hubId) => _hubId = hubId;
-  setDevices(devices) => _devices = devices;
-  setSettings(settings) => _settings = settings;
-  setDeviceId(deviceId) => _deviceId = deviceId;
-  setDeviceType(deviceType) => _deviceType = deviceType;
+  static setBoatData(data) => _boatData = data;
+  static setBoatName(name) => _boatName = name;
+  static setHubId(hubId) => _hubId = hubId;
+  static setDevices(devices) => _devices = devices;
+  static setSettings(settings) => _settings = settings;
+  static setDeviceId(deviceId) => _deviceId = deviceId;
+  static setDeviceType(deviceType) => _deviceType = deviceType;
 
-  List<dynamic> getBoatData() => _boatData;
-  String getBoatName() => _boatName;
-  String getHubId() => _hubId;
-  dynamic getDevices() => _devices;
-  dynamic getSettings() => _settings;
-  String getDeviceId() => _deviceId;
-  String getDeviceType() => _deviceType;
+  static List<dynamic> getBoatData() => _boatData;
+  static String getBoatName() => _boatName;
+  static String getHubId() => _hubId;
+  static dynamic getDevices() => _devices;
+  static dynamic getSettings() => _settings;
+  static String getDeviceId() => _deviceId;
+  static String getDeviceType() => _deviceType;
+
+  static void reset() {
+    _boatData = [];
+    _hubId = '';
+    _boatName = '';
+    _devices = '';
+    _settings = '';
+    _deviceId = '';
+    _deviceType = '';
+  }
 }

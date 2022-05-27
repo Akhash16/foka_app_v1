@@ -24,7 +24,7 @@ class _AddDeviceNameState extends State<AddDeviceName> {
   TextEditingController textController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    print("hubId set ${Data().getHubId()}");
+    print("hubId set ${Data.getHubId()}");
     return Scaffold(
       backgroundColor: const Color(0xff1A1E20),
       body: ModalProgressHUD(
@@ -85,10 +85,10 @@ class _AddDeviceNameState extends State<AddDeviceName> {
                 child: ConfirmationSlider(
                   onConfirmation: () async {
                     if (textController.text != '') {
-                      ApiCalls.addDeviceApi(Data().getHubId(), Data().getDeviceId(), textController.text, Data().getDeviceType()).then((value) => Navigator.popAndPushNamed(context, HomeScreen.id));
-                      // await ApiCalls.getHubDevices(Data().getHubId()).then(
+                      ApiCalls.addDeviceApi(Data.getHubId(), Data.getDeviceId(), textController.text, Data.getDeviceType()).then((value) => Navigator.popAndPushNamed(context, HomeScreen.id));
+                      // await ApiCalls.getHubDevices(Data.getHubId()).then(
                       //   (value) {
-                      //     Data().setDevices(value);
+                      //     Data.setDevices(value);
                       //     Navigator.popAndPushNamed(context, BoatsPage.id);
                       //   },
                       // );

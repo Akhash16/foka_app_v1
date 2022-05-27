@@ -59,8 +59,8 @@ class _LocationScreenState extends State<LocationScreen> {
 
   @override
   void initState() {
-    hubId = Data().getHubId();
-    deviceId = Data().getDevices()[0]['serial'];
+    hubId = Data.getHubId();
+    deviceId = Data.getDevices()[0]['serial'];
 
     super.initState();
     setCustomMarker();
@@ -167,7 +167,7 @@ class _LocationScreenState extends State<LocationScreen> {
         markerId: const MarkerId('id-1'),
         position: LatLng(lat, long),
         infoWindow: InfoWindow(
-          title: Data().getBoatName(),
+          title: Data.getBoatName(),
           snippet: "$lat,$long",
         ),
       ),
@@ -235,7 +235,7 @@ class _LocationScreenState extends State<LocationScreen> {
                 markerId: const MarkerId('id-1'),
                 position: LatLng(lat, long),
                 infoWindow: InfoWindow(
-                  title: Data().getBoatName(),
+                  title: Data.getBoatName(),
                   snippet: "$lat,$long",
                 ),
               ),

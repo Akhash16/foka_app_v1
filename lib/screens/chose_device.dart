@@ -36,7 +36,7 @@ class _SelectServiceState extends State<SelectService> {
             ? FloatingActionButton(
                 onPressed: () {
                   print("selectedService " + selectedService.toString());
-                  Data().setDeviceType("${selectedService + 1}");
+                  Data.setDeviceType("${selectedService + 1}");
                   Navigator.pushNamed(context, MakeSure.id);
                 },
                 child: const Icon(

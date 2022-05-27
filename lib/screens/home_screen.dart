@@ -5,6 +5,7 @@ import 'package:foka_app_v1/components/constants.dart';
 import 'package:foka_app_v1/components/rounded_button.dart';
 import 'package:foka_app_v1/screens/battery_monitor.dart';
 import 'package:foka_app_v1/screens/chose_device.dart';
+import 'package:foka_app_v1/screens/door_security.dart';
 import 'package:foka_app_v1/screens/float_sensor.dart';
 import 'package:foka_app_v1/screens/location_tracker.dart';
 import 'package:foka_app_v1/screens/security_monitor.dart';
@@ -55,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   @override
   void initState() {
-    hubId = Data().getHubId();
+    hubId = Data.getHubId();
     // TODO: implement initState
     controller = AnimationController(
       vsync: this,
@@ -106,8 +107,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 getDevices();
                 await ApiCalls.getTHSSettingsApi(devices[0][0]['serial']).then((value) {
                   print(value);
-                  Data().setDevices(devices[0]);
-                  Data().setSettings(value);
+                  Data.setDevices(devices[0]);
+                  Data.setSettings(value);
                   Navigator.pushNamed(context, THSScreen.id);
                   // Navigator.push(context, MaterialPageRoute(builder: (context) {
                   //   return THSScreen(
@@ -152,8 +153,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 getDevices();
                 await ApiCalls.getUltrasonicSettingsApi(devices[1][0]['serial']).then((value) {
                   print(value);
-                  Data().setSettings(value);
-                  Data().setDevices(devices[1]);
+                  Data.setSettings(value);
+                  Data.setDevices(devices[1]);
                   Navigator.pushNamed(context, FluidMonitor.id);
                   // Navigator.push(context, MaterialPageRoute(builder: (context) {
                   //   return FluidMonitor(
@@ -190,7 +191,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 setState(() {
                   showSpinner = true;
                 });
-                Data().setDevices(devices[2]);
+                Data.setDevices(devices[2]);
                 Navigator.pushNamed(context, FloatSensor.id);
                 // Navigator.push(context, MaterialPageRoute(builder: (context) {
                 //   return FloatSensor(
@@ -225,8 +226,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     showSpinner = false;
                   });
                   print(value);
-                  Data().setSettings(value);
-                  Data().setDevices(devices[3]);
+                  Data.setSettings(value);
+                  Data.setDevices(devices[3]);
                   Navigator.pushNamed(context, SmartConnect.id);
                   // Navigator.push(context, MaterialPageRoute(builder: (context) {
                   //   return SmartConnect(
@@ -262,14 +263,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     showSpinner = false;
                   });
                   print('value $value');
-                  Data().setDevices(devices[4]);
-                  Data().setSettings(value);
+                  Data.setDevices(devices[4]);
+                  Data.setSettings(value);
                   Navigator.pushNamed(context, LocationScreen.id);
                   // Navigator.push(context, MaterialPageRoute(builder: (context) {
                   //   return LocationScreen(
                   //     hubId: hubId,
                   //     deviceId: devices[4][0]['serial'],
-                  //     boatName: Data().getBoatData(),
+                  //     boatName: Data.getBoatData(),
                   //     settings: value,
                   //   );
                   // }));
@@ -301,7 +302,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 setState(() {
                   showSpinner = true;
                 });
-                Data().setDevices(devices[5]);
+                Data.setDevices(devices[5]);
                 Navigator.pushNamed(context, SecurityScreen.id);
               },
         child: DeviceCard(
@@ -323,7 +324,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 setState(() {
                   showSpinner = true;
                 });
-                Data().setDevices(devices[6]);
+                Data.setDevices(devices[6]);
                 Navigator.pushNamed(context, BatteryMonitor.id);
               },
         child: DeviceCard(
@@ -338,6 +339,19 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           opacity: devices[6].length == 0 ? 0.2 : 1,
         ),
       ),
+      InkWell(
+        onTap: () => Navigator.pushNamed(context, DoorSecurity.id),
+        child: const DeviceCard(
+          color: Colors.black,
+          title: "Door Secuirty",
+          description: "Tap here to monitor Door Security",
+          icon: Icon(
+            Icons.door_sliding,
+            size: 44,
+            color: Colors.white,
+          ),
+        ),
+      )
     ];
     return items;
   }
@@ -365,7 +379,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      Data().getBoatName(),
+                      Data.getBoatName(),
                       style: GoogleFonts.lexendDeca(color: const Color(0xffffffff), fontSize: 28, fontWeight: FontWeight.w700),
                     ),
                     // RaisedButton(
@@ -526,7 +540,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 //     title: "Start Diagnostic",
                 //     color: const Color(0xFF107896),
                 //     onPressed: () async {
-                //       await getDiagonsticData().then((value) {
+                //       await getDiagonsticData.then((value) {
                 //         print(value);
                 //         showDialog(
                 //           context: context,
