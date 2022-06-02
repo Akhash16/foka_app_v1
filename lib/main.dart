@@ -35,6 +35,7 @@ import 'package:foka_app_v1/screens/snaps_screen.dart';
 import 'package:foka_app_v1/screens/splash_screen.dart';
 import 'package:foka_app_v1/screens/ths_monitor.dart';
 import 'package:foka_app_v1/screens/ths_settings_page.dart';
+import 'package:foka_app_v1/screens/triplog_screen.dart';
 import 'package:foka_app_v1/screens/wifi_screen.dart';
 import 'package:foka_app_v1/utils/userSimplePreferences.dart';
 import 'package:mqtt_client/mqtt_client.dart';
@@ -80,7 +81,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       title: "Foka Tech",
-      initialRoute: SplashScreen.id,
+      initialRoute: TripLog.id,
       routes: {
         LoginScreen.id: (context) => const LoginScreen(),
         RegisterScreen.id: (context) => const RegisterScreen(),
@@ -116,6 +117,7 @@ class MyApp extends StatelessWidget {
         AddDeviceScreen.id: (context) => const AddDeviceScreen(),
         DoorSecurity.id: (context) => const DoorSecurity(),
         ForAPI.id: (context) => const ForAPI(),
+        TripLog.id: (context) => const TripLog(),
       },
     );
   }
